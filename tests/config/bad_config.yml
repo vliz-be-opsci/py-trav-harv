@@ -1,0 +1,20 @@
+assert:
+  - subjects:
+      literal:
+        - http://marineregions.org/mrgid/63523
+        - http://marineregions.org/mrgid/2540
+        - http://marineregions.org/mrgid/12548
+    paths:
+      - "mr:hasGeometry"
+      - "mr:isPartOf"
+  - subjects:
+      SPARQL: >
+        PREFIX mr: <http://marineregions.org/ns/ontology#>
+        SELECT ?s
+        WHERE {
+          [] mr:isPartOf ?s .
+          ?s a mr:GeoObject .
+        }
+    paths:
+      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
+      - "mr:isPartOf/ <https://schema.org/geo>/<https://schema.org/longitude>"

@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "pyTravHarv"
+version = "0.1.0"
+description = ""
+authors = ["Decruw Cedric <cedric.decruw@vliz.be>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+rdflib = "^5.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^6.2.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
