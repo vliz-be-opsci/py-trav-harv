@@ -37,7 +37,7 @@ def get_arg_parser():
         "-cf",
         "--config-folder",
         type=str,
-        default=os.path.join(os.path.dirname(__file__), "config"),
+        default=os.path.join(os.getcwd(), "config"),
         help="Folder containing configuration files, relative to the folder or file this was called from",
     )
 
@@ -49,7 +49,7 @@ def get_arg_parser():
         "-o",
         "--output-folder",
         type=str,
-        default=os.path.join(os.path.dirname(__file__), "output"),
+        default=os.path.join(os.getcwd(), "output"),
         help="Folder to output files to",
     )
 

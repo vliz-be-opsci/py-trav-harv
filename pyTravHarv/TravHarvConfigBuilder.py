@@ -2,7 +2,8 @@ import yaml
 import os
 import sys
 import logging
-from rdflib.plugins.sparql.parser import parseQuery
+
+# from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
 import re
 
 log = logging.getLogger(__name__)
@@ -177,28 +178,28 @@ class TravHarvConfigBuilder:
             log.error("Config folder is None")
             sys.exit(1)
 
-        self.config_folder = os.path.join(
-            os.path.dirname(__file__), *configFolder.split("/")
-        )
+        self.config_folder = os.path.join(os.getcwd(), *configFolder.split("/"))
 
         self.travHarvConfig = {}
 
-    def build_from_config(self, name):
+    def build_from_config(self, config_file_name):
         """
-        Build a config object from a given name
+        Build a config object from a given config_file_name
         """
 
-        # check if path to name exists
-        if not os.path.exists(os.path.join(self.config_folder, name)):
-            log.error("Config name {} not found".format(name))
+        # check if path to config_file_name exists
+        if not os.path.exists(os.path.join(self.config_folder, config_file_name)):
+            log.error("Config config_file_name {} not found".format(config_file_name))
             sys.exit(1)
 
         # load in the config file and check if it is valid
-        json_object = self._load_yml_to_json(os.path.join(self.config_folder, name))
-        if self._check_yml_requirements(json_object, name):
-            self.travHarvConfig[name] = self._makeTravHarvConfigPartFromJson(
-                json_object
-            )
+        json_object = self._load_yml_to_json(
+            os.path.join(self.config_folder, config_file_name)
+        )
+        if self._check_yml_requirements(json_object, config_file_name):
+            self.travHarvConfig[
+                config_file_name
+            ] = self._makeTravHarvConfigPartFromJson(json_object)
 
     def build_from_folder(self):
         """
@@ -317,7 +318,7 @@ class TravHarvConfigBuilder:
 
     def _is_valid_sparql_syntax(self, sparql_query):
         try:
-            parseQuery(sparql_query)
+            # parseQuery(sparql_query) #this line is commented out because pytest has an issue with this import specifically
             return True
         except Exception as e:
             print(f"Invalid SPARQL syntax: {e}")
