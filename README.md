@@ -25,7 +25,7 @@ from pyTravHarv import pyTravHarv
 ### install dependencies
 
 ```bash
-pip install -r requirements.txt
+poetry install
 ```
 
 ### run tests

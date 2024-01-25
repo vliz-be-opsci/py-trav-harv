@@ -1,6 +1,5 @@
 # main function here
 
-import sys
 import os
 import logging
 import logging.config
@@ -43,6 +42,10 @@ def get_arg_parser():
     )
 
     parser.add_argument(
+        "-n", "--name", type=str, default=None, help="Name of the configuration to use"
+    )
+
+    parser.add_argument(
         "-o",
         "--output-folder",
         type=str,
@@ -82,6 +85,34 @@ def main():
     # TravHarvExecutor
     # TravHarvConfigBuilder
     travharv_config_builder = TravHarvConfigBuilder(args.config_folder)
+
+    if args.name is None:
+        travharv_config_builder.build_from_folder()
+    else:
+        travharv_config_builder.build_from_config(args.name)
+
+    # some logging to see if the config is built correctly
+    log.info("Config object: {}".format(travharv_config_builder.travHarvConfig))
+    # log the prefix mappings | SubjectDefinition and AssertionPathSet here
+    log.info(travharv_config_builder.travHarvConfig["base_test.yml"].keys())
+    tasks = travharv_config_builder.travHarvConfig["base_test.yml"]["tasks"]
+
+    for task in tasks:
+        todotas = task.get_task()
+        log.info("Task: {}".format(todotas))
+
+        assertpathset = todotas["assert_path_set"]
+
+        log.info("AssertionPathSet: {}".format(assertpathset.get_assert_path_set()))
+        assertionPathSetObject = assertpathset.get_assert_path_set()
+
+        for assertionPath in assertionPathSetObject:
+            log.info("AssertionPath size: {}".format(assertionPath.get_max_size()))
+            log.info(
+                "AssertionPath at depth size-1: {}".format(
+                    assertionPath.get_path_for_depth(assertionPath.get_max_size() - 0)
+                )
+            )
 
 
 if __name__ == "__main__":

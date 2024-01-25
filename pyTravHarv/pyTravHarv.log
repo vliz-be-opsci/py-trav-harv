@@ -1,5 +1,16 @@
-2024-01-24 16:12:55 @__main__             [INFO    ] Logging enabled according to config in ../debug-logconf.yml
-2024-01-24 16:12:55 @__main__             [DEBUG   ] Namespace(verbose=True, config_folder='../tests/config', output_folder='C:\\Users\\cedricd\\Documents\\GitHub\\pyTravHarv\\pyTravHarv\\output', target_store='http://test.org/lwua', logconf='../debug-logconf.yml')
-2024-01-24 16:12:55 @TravHarvConfigBuilder [ERROR   ] Required field snooze-till-graph-age-minutes not found in C:\Users\cedricd\Documents\GitHub\pyTravHarv\pyTravHarv\..\tests\config\bad_config.yml
-2024-01-24 16:12:55 @TravHarvConfigBuilder [INFO    ] SPARQL not yet implemented
-2024-01-24 16:12:55 @TravHarvConfigBuilder [INFO    ] Config object: {'C:\\Users\\cedricd\\Documents\\GitHub\\pyTravHarv\\pyTravHarv\\..\\tests\\config\\base_test.yml': {'snooze-till-graph-age-minutes': 120, 'prefix': {'ex': '<https://example.org/whatever/>', 'mr': '<http://marineregions.org/ns/ontology#>'}, 'assert': [{'subjects': {'literal': ['http://marineregions.org/mrgid/63523', 'http://marineregions.org/mrgid/2540', 'http://marineregions.org/mrgid/12548']}, 'paths': ['mr:hasGeometry', 'mr:isPartOf']}, {'subjects': {'SPARQL': 'PREFIX mr: <http://marineregions.org/ns/ontology#> SELECT ?s WHERE {\n  [] mr:isPartOf ?s .\n  ?s a mr:GeoObject .\n}\n'}, 'paths': ['mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>', 'mr:isPartOf/ <https://schema.org/geo>/<https://schema.org/longitude>']}]}}
+2024-01-25 14:38:51 @__main__             [INFO    ] Logging enabled according to config in ../debug-logconf.yml
+2024-01-25 14:38:51 @__main__             [DEBUG   ] Namespace(verbose=False, config_folder='../tests/config', name='base_test.yml', output_folder='output', target_store=None, logconf='../debug-logconf.yml')
+2024-01-25 14:38:51 @__main__             [INFO    ] Config object: {'base_test.yml': {'prefix_set': <TravHarvConfigBuilder.PrefixSet object at 0x00000155D4C66550>, 'tasks': [<TravHarvConfigBuilder.TravHarvTask object at 0x00000155D4C64190>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000155D4C663D0>]}}
+2024-01-25 14:38:51 @__main__             [INFO    ] dict_keys(['prefix_set', 'tasks'])
+2024-01-25 14:38:51 @__main__             [INFO    ] Task: {'subject_definition': <TravHarvConfigBuilder.SubjectDefinition object at 0x00000155D2C70850>, 'assert_path_set': <TravHarvConfigBuilder.AssertPathSet object at 0x00000155D4C65110>}
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPathSet: [<TravHarvConfigBuilder.AssertPath object at 0x00000155D4C64690>, <TravHarvConfigBuilder.AssertPath object at 0x00000155D4A9F710>]
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath size: 1
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath at depth size-1: mr:hasGeometry
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath size: 1
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath at depth size-1: mr:isPartOf
+2024-01-25 14:38:51 @__main__             [INFO    ] Task: {'subject_definition': <TravHarvConfigBuilder.SubjectDefinition object at 0x00000155D4C65210>, 'assert_path_set': <TravHarvConfigBuilder.AssertPathSet object at 0x00000155D4C64A50>}
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPathSet: [<TravHarvConfigBuilder.AssertPath object at 0x00000155D4C656D0>, <TravHarvConfigBuilder.AssertPath object at 0x00000155D4C64390>]
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath size: 3
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath at depth size-1: mr:isPartOf/<https://schema.org/geo>/<https://schema.org/latitude>
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath size: 3
+2024-01-25 14:38:51 @__main__             [INFO    ] AssertionPath at depth size-1: mr:isPartOf/<https://schema.org/geo>/<https://schema.org/longitude>
