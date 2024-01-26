@@ -1,11 +1,13 @@
 import rdflib
 import os
 import sys
-import logging
+
+# import logging
+from logger import log
 import validators
 from abc import ABC, abstractmethod
 
-log = logging.getLogger(__name__)
+# log = logging.getLogger(__name__)
 
 
 class TargetStoreAccess(ABC):
@@ -14,23 +16,23 @@ class TargetStoreAccess(ABC):
     """
 
     @abstractmethod
-    def select_subjects(self):
+    def select_subjects(self, sparsl=str):
         """
-        Select subjects from the target store.
-        """
-        pass
-
-    @abstractmethod
-    def verify(self):
-        """
-        Verify the target store.
+        Select subjects from the target store using a SPARQL query.
         """
         pass
 
     @abstractmethod
-    def ingest(self):
+    def verify(self, subject=str, property_path=str):
         """
-        Ingest data into the target store.
+        Verify a given subject using a property path to see if this returns triples.
+        """
+        pass
+
+    @abstractmethod
+    def ingest(self, graph=rdflib.Graph()):
+        """
+        Ingest given graph into teh self.graph
         """
         pass
 

@@ -1,24 +1,12 @@
 # main function here
 
 import os
-import logging
-import logging.config
+from logger import log
 import argparse
 from TravHarvConfigBuilder import TravHarvConfigBuilder
+from TravHarvExecuter import TravHarvExecutor
 
-log = logging.getLogger(__name__)
-
-
-def enable_logging(args: argparse.Namespace):
-    if args.logconf is None:
-        return
-    import yaml  # conditional dependency -- we only need this (for now)
-
-    # when logconf needs to be read
-
-    with open(args.logconf, "r") as yml_logconf:
-        logging.config.dictConfig(yaml.load(yml_logconf, Loader=yaml.SafeLoader))
-    log.info(f"Logging enabled according to config in {args.logconf}")
+# log = logging.getLogger(__name__)
 
 
 def get_arg_parser():
@@ -77,7 +65,6 @@ def main():
     The main entrypoint of the module
     """
     args = get_arg_parser().parse_args()
-    enable_logging(args)
     log.debug(args)
 
     # make different classes here to use
@@ -93,6 +80,14 @@ def main():
 
     # some logging to see if the config is built correctly
     log.info("Config object: {}".format(travharv_config_builder.travHarvConfig))
+
+    for config_file, config in travharv_config_builder.travHarvConfig.items():
+        log.info("Config file: {}".format(config_file))
+        log.info("Config: {}".format(config))
+        travharvexecutor = TravHarvExecutor(
+            config_file, config["prefix_set"], config["tasks"]
+        )
+
     # log the prefix mappings | SubjectDefinition and AssertionPathSet here
     log.info(travharv_config_builder.travHarvConfig["base_test.yml"].keys())
     tasks = travharv_config_builder.travHarvConfig["base_test.yml"]["tasks"]
