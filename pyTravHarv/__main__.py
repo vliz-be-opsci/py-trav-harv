@@ -49,14 +49,6 @@ def get_arg_parser():
         help="Target store to harvest, this can be a pointer to a triple store in memory or the base URI of a triple store",
     )
 
-    parser.add_argument(
-        "-l",
-        "--logconf",
-        type=str,
-        action="store",
-        help="location of the logging config (yml) to use",
-    )
-
     return parser
 
 
@@ -88,26 +80,7 @@ def main():
             config_file, config["prefix_set"], config["tasks"]
         )
 
-    # log the prefix mappings | SubjectDefinition and AssertionPathSet here
-    log.info(travharv_config_builder.travHarvConfig["base_test.yml"].keys())
-    tasks = travharv_config_builder.travHarvConfig["base_test.yml"]["tasks"]
-
-    for task in tasks:
-        todotas = task.get_task()
-        log.info("Task: {}".format(todotas))
-
-        assertpathset = todotas["assert_path_set"]
-
-        log.info("AssertionPathSet: {}".format(assertpathset.get_assert_path_set()))
-        assertionPathSetObject = assertpathset.get_assert_path_set()
-
-        for assertionPath in assertionPathSetObject:
-            log.info("AssertionPath size: {}".format(assertionPath.get_max_size()))
-            log.info(
-                "AssertionPath at depth size-1: {}".format(
-                    assertionPath.get_path_for_depth(assertionPath.get_max_size() - 0)
-                )
-            )
+    travharvexecutor.assert_all_paths()
 
 
 if __name__ == "__main__":

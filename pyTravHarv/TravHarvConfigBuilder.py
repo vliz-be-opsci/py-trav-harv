@@ -1,12 +1,12 @@
 import yaml
 import os
 import sys
-import logging
+from logger import log
 
 # from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
 import re
 
-log = logging.getLogger(__name__)
+# log = logging.getLogger(__name__)
 
 
 class PrefixSet:
@@ -140,7 +140,7 @@ class AssertPath:
         """
         Get the path parts
         """
-        return self.assert_path["paths"]
+        return self.path_parts
 
     def get_max_size(self):
         """
@@ -173,7 +173,7 @@ class TravHarvConfigBuilder:
         """
         Initialise the config builder
         """
-
+        log.debug("Config builder initialized")
         if configFolder is None:
             log.error("Config folder is None")
             sys.exit(1)

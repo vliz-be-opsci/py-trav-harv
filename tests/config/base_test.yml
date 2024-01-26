@@ -11,6 +11,7 @@ assert:
     paths:
       - "mr:hasGeometry"
       - "mr:isPartOf"
+      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
   - subjects:
       SPARQL: >
         PREFIX mr: <http://marineregions.org/ns/ontology#>
