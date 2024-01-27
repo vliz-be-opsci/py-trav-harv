@@ -5,6 +5,7 @@ from logger import log
 import argparse
 from TravHarvConfigBuilder import TravHarvConfigBuilder
 from TravHarvExecuter import TravHarvExecutor
+from TargetStore import TargetStore
 
 # log = logging.getLogger(__name__)
 
@@ -64,6 +65,7 @@ def main():
     # TravHarvExecutor
     # TravHarvConfigBuilder
     travharv_config_builder = TravHarvConfigBuilder(args.config_folder)
+    targetstore = TargetStore(args.target_store)
 
     if args.name is None:
         travharv_config_builder.build_from_folder()
