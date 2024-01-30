@@ -69,18 +69,55 @@ class MemoryTargetStore(TargetStoreAccess):
     def __init__(self, target_store):
         self.target_store = target_store
         self.graph = rdflib.Graph()
+        self._read_file_in_graph()
+        log.debug("MemoryTargetStore initialized")
+        log.debug("graph: {}".format(self.graph))
+        log.debug(
+            "Ammount of triples in graph: {}".format(self._ammount_triples_graph())
+        )
 
-    def select_subjects(self):
+    def select_subjects(self, sparql=str):
         # Implement method to select subjects from memory target store
-        pass
+        return self.graph.query(sparql)
 
-    def verify(self):
-        # Implement method to verify memory target store
-        pass
+    def verify(self, sparql=str):
+        # Implement method to verify for a given sparql query if there are any triples that return
+        # Perform query in graph
+        if len(self.graph.query(sparql)) > 0:
+            return True
+        return False
 
-    def ingest(self):
+    def ingest(self, graph=rdflib.Graph()):
         # Implement method to ingest data into memory target store
-        pass
+        # combine graphs
+        self.graph = self.graph + graph
+
+    def _ammount_triples_graph(self):
+        """
+        Get the ammount of triples in the graph
+        """
+        return len(self.graph)
+
+    def _read_file_in_graph(self):
+        """
+        Read in the target store
+        """
+        # read in the target_store into self.graph this can be a ttl of a jsonld file
+        # if file ends in .jsonld then use jsonld
+        # if file ends in .ttl then use turtle
+        # if file ends in .nt then use nt
+        if self.target_store.endswith(".jsonld"):
+            self.graph.parse(self.target_store, format="json-ld")
+            return
+        if self.target_store.endswith(".ttl"):
+            self.graph.parse(self.target_store, format="turtle")
+            return
+        if self.target_store.endswith(".nt"):
+            self.graph.parse(self.target_store, format="nt")
+            return
+        log.error(
+            "Target store is not a valid file extension. Please use .jsonld, .ttl or .nt"
+        )
 
 
 class TargetStore:
@@ -92,16 +129,22 @@ class TargetStore:
     def __init__(self, target_store=str):
         self.target_store = self._detect_type(target_store)
 
-    def _detect_type(self):
+    def __repr__(self) -> str:
+        return "TargetStore({})".format(self.target_store)
+
+    def get_target_store(self):
+        return self.target_store
+
+    def _detect_type(self, target_store):
         """
         Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore
         """
         # Implement method to detect type of target store
-        if validators.url(self.target_store):
-            return URITargetStore(self.target_store)
+        if validators.url(target_store):
+            return URITargetStore(target_store)
 
-        if os.path.isfile(self.target_store):
-            return MemoryTargetStore(self.target_store)
+        if os.path.isfile(target_store):
+            return MemoryTargetStore(target_store)
 
         log.error("Target store is not a URI or a filepath")
         sys.exit(1)

@@ -7,6 +7,7 @@ from TravHarvConfigBuilder import (
     LiteralSubjectDefinition,
 )
 from SubjPropPathAssetion import SubjPropPathAssertion
+from TargetStore import TargetStore
 
 
 class TravHarvExecutor:
@@ -15,10 +16,17 @@ class TravHarvExecutor:
     This class will assert all paths for all subjects given for each task per config.
     """
 
-    def __init__(self, config_filename: str, prefix_set: PrefixSet, tasks: list):
+    def __init__(
+        self,
+        config_filename: str,
+        prefix_set: PrefixSet,
+        tasks: list,
+        target_store: TargetStore,
+    ):
         self.config_filename = config_filename
         self.prefix_set = prefix_set
         self.tasks = tasks
+        self.target_store = target_store
         log.debug("TravHarvExecutor initialized")
         log.debug("Config filename: {}".format(self.config_filename))
         log.debug("Prefix set: {}".format(self.prefix_set))
@@ -39,7 +47,7 @@ class TravHarvExecutor:
             for subject in self._define_subjects(subject_definition):
                 log.debug("Subject: {}".format(subject))
                 for assertion_path in assertion_path_set:
-                    SubjPropPathAssertion(subject, assertion_path)
+                    SubjPropPathAssertion(subject, assertion_path, self.target_store)
 
     def _define_subjects(self, subject_definition):
         """
@@ -61,4 +69,6 @@ class TravHarvExecutor:
                     subject_definition.get_subject_definition().get_subjects()
                 )
             )
-            return []
+            return self.target_store.target_store.select_subjects(
+                subject_definition.get_subject_definition().get_subjects()
+            )

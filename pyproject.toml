@@ -5,9 +5,11 @@ description = ""
 authors = ["Decruw Cedric <cedric.decruw@vliz.be>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-rdflib = "^5.0.0"
+python = "^3.8.2"
+rdflib = "^6.1.2"
 pyyaml = "^6.0.1"
+pysubyt = "^0.0.2"
+sparqlwrapper = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

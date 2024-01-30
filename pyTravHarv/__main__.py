@@ -5,6 +5,7 @@ from logger import log
 import argparse
 from TravHarvConfigBuilder import TravHarvConfigBuilder
 from TravHarvExecuter import TravHarvExecutor
+from TargetStore import TargetStore
 
 # log = logging.getLogger(__name__)
 
@@ -70,6 +71,8 @@ def main():
     else:
         travharv_config_builder.build_from_config(args.name)
 
+    target_store = TargetStore(args.target_store)
+
     # some logging to see if the config is built correctly
     log.info("Config object: {}".format(travharv_config_builder.travHarvConfig))
 
@@ -77,7 +80,7 @@ def main():
         log.info("Config file: {}".format(config_file))
         log.info("Config: {}".format(config))
         travharvexecutor = TravHarvExecutor(
-            config_file, config["prefix_set"], config["tasks"]
+            config_file, config["prefix_set"], config["tasks"], target_store
         )
 
     travharvexecutor.assert_all_paths()
