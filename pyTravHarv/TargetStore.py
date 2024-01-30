@@ -165,11 +165,11 @@ class TargetStore:
         Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore
         """
         # Implement method to detect type of target store
-        if validators.url(self.target_store):
-            return URITargetStore(self.target_store)
+        if validators.url(target_store):
+            return URITargetStore(target_store)
 
-        if os.path.isfile(self.target_store):
-            return MemoryTargetStore(self.target_store)
+        if os.path.isfile(target_store):
+            return MemoryTargetStore(target_store)
 
         log.error("Target store is not a URI or a filepath")
         sys.exit(1)
