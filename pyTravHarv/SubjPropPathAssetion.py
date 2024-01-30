@@ -2,7 +2,7 @@ import rdflib
 from logger import log
 from pyrdfj2 import J2RDFSyntaxBuilder
 from SPARQLWrapper import SPARQLWrapper, JSON
-from TravHarvConfigBuilder import AssertPath
+from TravHarvConfigBuilder import AssertPath, PrefixSet
 from TargetStore import TargetStore
 from WebAccess import WebAccess
 import os
@@ -25,7 +25,11 @@ class SubjPropPathAssertion:
     """
 
     def __init__(
-        self, subject: str, assertion_path: AssertPath, target_store: TargetStore
+        self,
+        subject: str,
+        assertion_path: AssertPath,
+        target_store: TargetStore,
+        prefix_set: PrefixSet,
     ):
         self.subject = self._subject_str_check(subject)
         self.assertion_path = assertion_path
@@ -33,6 +37,7 @@ class SubjPropPathAssertion:
         self.target_store = target_store.get_target_store()
         self.previous_bounce_depth = 0
         self.max_depth = self.assertion_path.get_max_size()
+        self.prefix_set = prefix_set
         self.assert_path()
 
     def _subject_str_check(self, subject):
@@ -62,7 +67,7 @@ class SubjPropPathAssertion:
         # Implement method to assert a property path for a given subject
         while self.current_depth < self.max_depth:
             if self.current_depth > self.previous_bounce_depth:
-                self._bail_out()
+                return
             self._assert_at_depth()
             self._increase_depth()
 
@@ -76,7 +81,7 @@ class SubjPropPathAssertion:
         if self.target_store.verify(SPARQLQuery):
             self._harvest_and_surface()
             return
-        self.target_store.ingest(WebAccess(self.subject))
+        self.target_store.ingest(WebAccess(self.subject).harvest())
 
         # Implement method to assert a property path for a given subject at a given depth
 
@@ -102,9 +107,19 @@ class SubjPropPathAssertion:
         Bail out of the property path assertion.
         """
         log.debug("Bailing out of the property path assertion")
-        return
+        # quit the assert path loop
+        self.current_depth = self.max_depth
 
     def _sparql_trajectory_check(self, depth):
         log.debug(
             "assertion_path: {}".format(self.assertion_path.get_path_for_depth(depth))
         )
+        template = "trajectory.sparql"
+        vars = {
+            "subject": self.subject,
+            "property_trajectory": self.assertion_path.get_path_for_depth(depth),
+            "prefixes": self.prefix_set.get_prefix_set(),
+        }
+        query = J2RDF.build_syntax(template, **vars)
+        log.debug("SPARQL query: {}".format(query))
+        return query

@@ -44,10 +44,9 @@ class WebAccess:
     def __init__(self, url):
         self.url = url
         self.graph = Graph()
-        return self._harvest(url)
 
-    def _harvest(self, uri):
-        download_uri_to_store(uri, self.graph)
+    def harvest(self):
+        download_uri_to_store(self.url, self.graph)
         return self.graph
 
 

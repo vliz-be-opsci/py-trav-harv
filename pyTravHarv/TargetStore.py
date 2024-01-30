@@ -92,6 +92,8 @@ class MemoryTargetStore(TargetStoreAccess):
         # Implement method to ingest data into memory target store
         # combine graphs
         self.graph = self.graph + graph
+        # write graph to file
+        self.graph.serialize(destination=self.target_store, format="turtle")
 
     def _ammount_triples_graph(self):
         """
