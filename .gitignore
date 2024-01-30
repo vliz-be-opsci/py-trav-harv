@@ -1,3 +1,4 @@
 .env
 pyTravHarv/__pycache__
 tests/__pycache__
+pyTravHarv.log
