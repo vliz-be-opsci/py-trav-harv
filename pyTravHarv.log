@@ -1,24 +1,149 @@
-2024-01-30 15:14:08 @SubjPropPathAssetion.py  [INFO  ] template_folder == C:\Users\cedric\Documents\GitHub\pyTravHarv\pyTravHarv\pysubyt_templates
-2024-01-30 15:14:08 @__main__.py              [DEBUG ] Namespace(verbose=False, config_folder='./tests/config/', name='base_test.yml', output_folder='C:\\Users\\cedric\\Documents\\GitHub\\pyTravHarv\\output', target_store='./tests/inputs/63523.ttl')
-2024-01-30 15:14:08 @TravHarvConfigBuilder.py [DEBUG ] Config builder initialized
-2024-01-30 15:14:08 @TargetStore.py           [DEBUG ] MemoryTargetStore initialized
-2024-01-30 15:14:08 @TargetStore.py           [DEBUG ] graph: [a rdfg:Graph;rdflib:storage [a rdflib:Store;rdfs:label 'Memory']].
-2024-01-30 15:14:08 @TargetStore.py           [DEBUG ] Ammount of triples in graph: 12
-2024-01-30 15:14:08 @__main__.py              [INFO  ] Config object: {'base_test.yml': {'prefix_set': <TravHarvConfigBuilder.PrefixSet object at 0x00000217B0462050>, 'tasks': [<TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD0A5F90>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD6689D0>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000217B0503190>]}}
-2024-01-30 15:14:08 @__main__.py              [INFO  ] Config file: base_test.yml
-2024-01-30 15:14:08 @__main__.py              [INFO  ] Config: {'prefix_set': <TravHarvConfigBuilder.PrefixSet object at 0x00000217B0462050>, 'tasks': [<TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD0A5F90>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD6689D0>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000217B0503190>]}
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] TravHarvExecutor initialized
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Config filename: base_test.yml
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Prefix set: <TravHarvConfigBuilder.PrefixSet object at 0x00000217B0462050>
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Tasks: [<TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD0A5F90>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD6689D0>, <TravHarvConfigBuilder.TravHarvTask object at 0x00000217B0503190>]
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Asserting all paths for all subjects given for each task per config
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Task: <TravHarvConfigBuilder.TravHarvTask object at 0x00000217AD0A5F90>
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Info task: {'subject_definition': <TravHarvConfigBuilder.SubjectDefinition object at 0x00000217AF82CB90>, 'assert_path_set': <TravHarvConfigBuilder.AssertPathSet object at 0x00000217AF6EFE90>}
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Defining subjects to assert paths for
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] LiteralSubjectDefinition
-2024-01-30 15:14:08 @TravHarvExecuter.py      [DEBUG ] Subject: http://marineregions.org/mrgid/63523
-2024-01-30 15:14:08 @SubjPropPathAssetion.py  [DEBUG ] Asserting a property path for a given subject
-2024-01-30 15:14:08 @SubjPropPathAssetion.py  [DEBUG ] Subject: http://marineregions.org/mrgid/63523
-2024-01-30 15:14:08 @SubjPropPathAssetion.py  [DEBUG ] Asserting a property path for a given subject at a given depth
-2024-01-30 15:14:08 @SubjPropPathAssetion.py  [DEBUG ] Depth: 1
-2024-01-30 15:14:08 @SubjPropPathAssetion.py  [DEBUG ] assertion_path: mr:hasGeometry
+2024-01-27 00:33:48 @__main__.py               [DEBUG ] Namespace(verbose=False, config_folder='tests/config', name='base_test.yml', output_folder='output', target_store=None)
+2024-01-27 00:33:48 @TravHarvConfigBuilder.py  [DEBUG ] Config builder initialized
+2024-01-27 00:33:48 @__main__.py               [INFO  ] Config object: {'base_test.yml': {'prefix_set': <TravHarvConfigBuilder.PrefixSet object at 0x000001DC6180A5D0>, 'tasks': [<TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB3D0>, <TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB450>]}}
+2024-01-27 00:33:48 @__main__.py               [INFO  ] Config file: base_test.yml
+2024-01-27 00:33:48 @__main__.py               [INFO  ] Config: {'prefix_set': <TravHarvConfigBuilder.PrefixSet object at 0x000001DC6180A5D0>, 'tasks': [<TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB3D0>, <TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB450>]}
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] TravHarvExecutor initialized
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Config filename: base_test.yml
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Prefix set: <TravHarvConfigBuilder.PrefixSet object at 0x000001DC6180A5D0>
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Tasks: [<TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB3D0>, <TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB450>]
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Asserting all paths for all subjects given for each task per config
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Task: <TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB3D0>
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Info task: {'subject_definition': <TravHarvConfigBuilder.SubjectDefinition object at 0x000001DC612656D0>, 'assert_path_set': <TravHarvConfigBuilder.AssertPathSet object at 0x000001DC639BBE10>}
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Defining subjects to assert paths for
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] LiteralSubjectDefinition
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Subject: http://marineregions.org/mrgid/63523
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/63523
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:hasGeometry
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/63523
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/63523
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 2
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf/<https://schema.org/geo>
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 3
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf/<https://schema.org/geo>/<https://schema.org/latitude>
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Subject: http://marineregions.org/mrgid/2540
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/2540
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:hasGeometry
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/2540
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/2540
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 2
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf/<https://schema.org/geo>
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 3
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf/<https://schema.org/geo>/<https://schema.org/latitude>
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Subject: http://marineregions.org/mrgid/12548
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/12548
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:hasGeometry
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/12548
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Subject: http://marineregions.org/mrgid/12548
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 0
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: 
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 1
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 2
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf/<https://schema.org/geo>
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Asserting a property path for a given subject at a given depth
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Depth: 3
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] assertion_path: mr:isPartOf/<https://schema.org/geo>/<https://schema.org/latitude>
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Increasing the depth of the property path assertion
+2024-01-27 00:33:48 @SubjPropPathAssetion.py   [DEBUG ] Harvesting the property path and backtracking to the previous depth
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Task: <TravHarvConfigBuilder.TravHarvTask object at 0x000001DC639BB450>
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Info task: {'subject_definition': <TravHarvConfigBuilder.SubjectDefinition object at 0x000001DC639BBB50>, 'assert_path_set': <TravHarvConfigBuilder.AssertPathSet object at 0x000001DC639BBC10>}
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] Defining subjects to assert paths for
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] SPARQLSubjectDefinition
+2024-01-27 00:33:48 @TravHarvExecuter.py       [DEBUG ] SPARQL query: PREFIX mr: <http://marineregions.org/ns/ontology#> SELECT ?s WHERE {
+  [] mr:isPartOf ?s .
+  ?s a mr:GeoObject .
+}
+

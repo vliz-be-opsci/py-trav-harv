@@ -8,6 +8,7 @@ authors = ["Decruw Cedric <cedric.decruw@vliz.be>"]
 python = "^3.8.2"
 rdflib = "^6.1.2"
 pyyaml = "^6.0.1"
+validators = "^0.22.0"
 pysubyt = "^0.0.2"
 sparqlwrapper = "^2.0.0"
 

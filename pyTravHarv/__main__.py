@@ -65,6 +65,7 @@ def main():
     # TravHarvExecutor
     # TravHarvConfigBuilder
     travharv_config_builder = TravHarvConfigBuilder(args.config_folder)
+    targetstore = TargetStore(args.target_store)
 
     if args.name is None:
         travharv_config_builder.build_from_folder()

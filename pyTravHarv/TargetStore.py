@@ -67,6 +67,7 @@ class MemoryTargetStore(TargetStoreAccess):
     """
 
     def __init__(self, target_store):
+        log.debug("MemoryTargetStore: {}".format(target_store))
         self.target_store = target_store
         self.graph = rdflib.Graph()
         self._read_file_in_graph()
@@ -119,6 +120,30 @@ class MemoryTargetStore(TargetStoreAccess):
             "Target store is not a valid file extension. Please use .jsonld, .ttl or .nt"
         )
 
+    def _create_graph(self):
+        """
+        Create a graph from the given target store
+        """
+        # Target store is from a given os path
+        path_triple_store_file = os.path.join(os.getcwd(), self.target_store)
+        log.debug("Path to triple store file: {}".format(path_triple_store_file))
+
+        # Check if the file exists
+        if not os.path.isfile(path_triple_store_file):
+            log.error("Triple store file does not exist")
+            sys.exit(1)
+
+        # Depending on the file extension, use the correct parser
+        # supported formats for parsing are , jsonLD , ttl
+        log.debug("Parsing triple store file")
+        if self.target_store.endswith(".jsonld"):
+            self.graph.parse(path_triple_store_file, format="json-ld")
+        elif self.target_store.endswith(".ttl"):
+            self.graph.parse(path_triple_store_file, format="ttl")
+        else:
+            log.error("Triple store file format not supported")
+            sys.exit(1)
+
 
 class TargetStore:
     """
@@ -140,11 +165,11 @@ class TargetStore:
         Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore
         """
         # Implement method to detect type of target store
-        if validators.url(target_store):
-            return URITargetStore(target_store)
+        if validators.url(self.target_store):
+            return URITargetStore(self.target_store)
 
-        if os.path.isfile(target_store):
-            return MemoryTargetStore(target_store)
+        if os.path.isfile(self.target_store):
+            return MemoryTargetStore(self.target_store)
 
         log.error("Target store is not a URI or a filepath")
         sys.exit(1)
