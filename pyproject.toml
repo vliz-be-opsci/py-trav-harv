@@ -11,6 +11,7 @@ pyyaml = "^6.0.1"
 validators = "^0.22.0"
 pysubyt = "^0.0.2"
 sparqlwrapper = "^2.0.0"
+pyrdfj2 = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.4"

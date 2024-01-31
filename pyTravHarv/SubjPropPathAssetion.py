@@ -5,6 +5,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from TravHarvConfigBuilder import AssertPath, PrefixSet
 from TargetStore import TargetStore
 from WebAccess import WebAccess
+import validators
 import os
 
 
@@ -32,6 +33,9 @@ class SubjPropPathAssertion:
         prefix_set: PrefixSet,
     ):
         self.subject = self._subject_str_check(subject)
+        if not self.subject:
+            log.warning("Subject is not a valid URIRef or str: {}".format(subject))
+            return
         self.assertion_path = assertion_path
         self.current_depth = 0
         self.target_store = target_store.get_target_store()
@@ -44,7 +48,7 @@ class SubjPropPathAssertion:
         """
         Check if subject is a strict str , if subject is rdflib.term.URIRef , convert to str
         """
-        if type(subject) == str:
+        if type(subject) == str and validators.url(subject):
             return subject
         if (
             type(subject) == rdflib.query.ResultRow
@@ -54,9 +58,16 @@ class SubjPropPathAssertion:
             if type(subject) == rdflib.query.ResultRow:
                 subject_row = subject[0]
                 log.debug("Subject row: {}".format(subject_row))
-                return str(subject_row)
-            return str(subject)
+                if validators.url(str(subject_row)):
+                    return str(subject_row)
+                log.warning("Subject row is not a URIRef: {}".format(subject_row))
+            if validators.url(str(subject)):
+                return str(subject)
+            log.warning("Subject is not a URIRef: {}".format(subject))
         log.debug("Subject is of type {}".format(type(subject)))
+        if not validators.url(str(subject)):
+            log.warning("Subject is not a URIRef or a str: {}".format(subject))
+            return None
 
     def assert_path(self):
         """

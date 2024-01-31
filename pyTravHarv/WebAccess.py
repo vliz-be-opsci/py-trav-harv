@@ -2,8 +2,9 @@ from logger import log
 from rdflib import Graph
 from urllib.parse import urljoin
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from html.parser import HTMLParser
-import time
 
 
 class MyHTMLParser(HTMLParser):
@@ -53,9 +54,19 @@ class WebAccess:
 def download_uri_to_store(uri, store, format="json-ld"):
     # sleep for 1 second to avoid overloading any servers => TODO make this
     # configurable and add a warning + smart retry
-    time.sleep(1)
+    total_retry = 8
+    session = requests.Session()
+    retry = Retry(
+        total=total_retry,
+        backoff_factor=0.4,  # implemented backoff formula: {backoff factor} * (2 ** ({number of total retries} - 1)) eg. 0.4 * (2 ** (8 - 1)) = 51.2 seconds on total_retry=8
+        status_forcelist=[500, 502, 503, 504, 429],
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+
     headers = {"Accept": "application/ld+json, text/turtle"}
-    r = requests.get(uri, headers=headers)
+    r = session.get(uri, headers=headers)
 
     # check if the request was successful and it returned a json-ld or ttl file
     if r.status_code == 200 and (
@@ -77,7 +88,7 @@ def download_uri_to_store(uri, store, format="json-ld"):
         # perform a check in the html to see if there is any link to fair signposting
         # perform request to uri with accept header text/html
         headers = {"Accept": "text/html"}
-        r = requests.get(uri, headers=headers)
+        r = session.get(uri, headers=headers)
         if r.status_code == 200 and "text/html" in r.headers["Content-Type"]:
             # parse the html and check if there is any link to fair signposting
             # if there is then download it to the store
