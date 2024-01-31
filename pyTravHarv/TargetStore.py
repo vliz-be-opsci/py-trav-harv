@@ -59,17 +59,29 @@ class URITargetStore(TargetStoreAccess):
         """Select subjects from the target store using a SPARQL query."""
         # Implement method to select subjects from URI target store
         # query the remote store self.GBD
-        log.debug("GDB: {}".format(self.GDB))
+        # log.debug("GDB: {}".format(self.GDB))
+        # must return a SPARQLresult object
         self.GDB.setQuery(sparql)
-        results_dict = self.GDB.query().convert()
-        results = SPARQLResult(results_dict)
-        log.debug("results: {}".format(results))
-        return results
+        self.GDB.setReturnFormat(JSON)
+        result = self.GDB.query().convert()
+        log.debug("results_dict: {}".format(result))
+
+        # given that a SPARQLResult object is expected, convert the result to a SPARQLResult object
+        result_mapped = {
+            "type_": "SELECT",
+            "vars_": result["head"]["vars"],
+            "bindings": result["results"]["bindings"],
+            "askAnswer": None,  # Assuming the askAnswer is not available in the result
+            "graph": None,  # Assuming the graph is not available in the result
+        }
+
+        result = SPARQLResult(result_mapped)
+        return result
 
     def verify(self, query=str):
         # Implement method to verify URI target store
         # query the remote store self.GBD
-        log.debug("GDB: {}".format(self.GDB))
+        # log.debug("GDB: {}".format(self.GDB))
         self.GDB.setQuery(query)
         results = self.GDB.query().convert()
         if len(results) > 0:
