@@ -1,11 +1,17 @@
 import rdflib
 import os
 import sys
+import re
+import requests
 
 # import logging
 from logger import log
 import validators
 from abc import ABC, abstractmethod
+from SPARQLWrapper import SPARQLWrapper, JSON
+from urllib.parse import (
+    urlparse,
+)  # backup for validators since this cannot handle localhost
 
 # log = logging.getLogger(__name__)
 
@@ -46,18 +52,86 @@ class URITargetStore(TargetStoreAccess):
     def __init__(self, target_store):
         self.target_store = target_store
         self.graph = rdflib.Graph()
+        self._detect_type_remote_store()
 
     def select_subjects(self):
         # Implement method to select subjects from URI target store
         pass
 
-    def verify(self):
+    def verify(self, query=str):
         # Implement method to verify URI target store
-        pass
+        # query the remote store self.GBD
+
+        results = self.GDB.query(query)
+        if len(results) > 0:
+            return True
+        return False
 
     def ingest(self):
         # Implement method to ingest data into URI target store
         pass
+
+    def _detect_type_remote_store(self):
+        """TODO: Implement method to detect type of remote target store.
+        For now there is only an endpoint for GRAPHDB repositories.
+        """
+        GRAPHDB_RE = r"http://([\w.-]+:\d+)/repositories/(\w+)"
+        match = re.match(GRAPHDB_RE, self.target_store)
+        if match:
+            self._graphDB_config()
+            return
+
+        # TODO: add more remote target store types
+
+        # if no match is found then try and get a request to get all possible graph of a store
+        # if this fails then raise an error that the store given is not a valid remote store
+        if self._detect_repos_for_graphdb() is not None:
+            # return a table like overview of what repositories are avialable
+            log.debug("repositories: {}".format(self._detect_repos_for_graphdb()))
+            raise ValueError(
+                "Target store is not a valid remote store URI, use one of the following repositories: {}".format(
+                    self._detect_repos_for_graphdb()
+                )
+            )
+
+        raise ValueError(
+            "Target store is not a valid remote store URI: {}".format(self.target_store)
+        )
+
+    def _detect_repos_for_graphdb(self):
+        """
+        Detect the repositories for a GRAPHDB endpoint.
+        """
+        # Implement method to detect the repositories for a GRAPHDB endpoint do accept application/json
+        response = requests.get(
+            f"{self.target_store}/repositories", headers={"Accept": "application/json"}
+        )
+        if response.status_code == 200:
+            response_json = response.json()
+            # Extract 'uri' and 'id' from the response
+            uri_and_id = [
+                {"uri": repo["uri"]["value"], "id": repo["id"]["value"]}
+                for repo in response_json["results"]["bindings"]
+            ]
+            log.debug("uri and id: {}".format(uri_and_id))
+            return uri_and_id
+        return None
+
+    def _graphDB_config(self):
+        """
+        Setup graphdb config
+        """
+        # Implement method to get the graphDB config
+        self.endpoint = self.target_store
+        self.updateEndpoint = self.target_store + "/statements"
+
+        self.GDB = SPARQLWrapper(
+            endpoint=self.endpoint,
+            updateEndpoint=self.updateEndpoint,
+            returnFormat=JSON,
+            agent="lwua-python-sparql-client",
+        )
+        self.GDB.method = "POST"
 
 
 class MemoryTargetStore(TargetStoreAccess):
@@ -173,6 +247,10 @@ class TargetStore:
         if os.path.isfile(target_store):
             return MemoryTargetStore(target_store)
 
+        if is_valid_url(target_store):
+            return URITargetStore(target_store)
+
+        log.debug("TargetStore: {}".format(target_store))
         log.error("Target store is not a URI or a filepath")
         sys.exit(1)
 
@@ -182,3 +260,11 @@ class TargetStore:
         """
 
         log.debug("Executing query on target store")
+
+
+def is_valid_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False

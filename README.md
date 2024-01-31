@@ -33,3 +33,5 @@ poetry install
 ```bash
 pytest
 ```
+
+python ./pyTravHarv/**main**.py -cf ./tests/config/ -n base_test.yml -ts ./tests/inputs/63523.ttl
