@@ -23,13 +23,3 @@ assert:
     paths:
       - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
       - "mr:isPartOf/ <https://schema.org/geo>/<https://schema.org/longitude>"
-  - subjects:
-      SPARQL: >
-        PREFIX mr: <http://marineregions.org/ns/ontology#>
-        SELECT ?s
-        WHERE {
-          ?s ?p ?o .
-        }
-    paths:
-      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
-      - "mr:isPartOf/ <https://schema.org/geo>/<https://schema.org/longitude>"

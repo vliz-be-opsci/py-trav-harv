@@ -52,17 +52,24 @@ class URITargetStore(TargetStoreAccess):
     def __init__(self, target_store):
         self.target_store = target_store
         self.graph = rdflib.Graph()
-        self._detect_type_remote_store()
+        self.GDB = self._detect_type_remote_store()
 
-    def select_subjects(self):
+    def select_subjects(self, sparql=str):
+        """Select subjects from the target store using a SPARQL query."""
         # Implement method to select subjects from URI target store
-        pass
+        # query the remote store self.GBD
+        log.debug("GDB: {}".format(self.GDB))
+        self.GDB.setQuery(sparql)
+        results = self.GDB.query().convert()
+        log.debug("results: {}".format(results))
+        return results
 
     def verify(self, query=str):
         # Implement method to verify URI target store
         # query the remote store self.GBD
-
-        results = self.GDB.query(query)
+        log.debug("GDB: {}".format(self.GDB))
+        self.GDB.setQuery(query)
+        results = self.GDB.query().convert()
         if len(results) > 0:
             return True
         return False
@@ -78,8 +85,7 @@ class URITargetStore(TargetStoreAccess):
         GRAPHDB_RE = r"http://([\w.-]+:\d+)/repositories/(\w+)"
         match = re.match(GRAPHDB_RE, self.target_store)
         if match:
-            self._graphDB_config()
-            return
+            return self._graphDB_config()
 
         # TODO: add more remote target store types
 
@@ -125,13 +131,14 @@ class URITargetStore(TargetStoreAccess):
         self.endpoint = self.target_store
         self.updateEndpoint = self.target_store + "/statements"
 
-        self.GDB = SPARQLWrapper(
+        GDB = SPARQLWrapper(
             endpoint=self.endpoint,
             updateEndpoint=self.updateEndpoint,
             returnFormat=JSON,
             agent="lwua-python-sparql-client",
         )
-        self.GDB.method = "POST"
+        GDB.method = "POST"
+        return GDB
 
 
 class MemoryTargetStore(TargetStoreAccess):
