@@ -3,6 +3,7 @@ import os
 import sys
 import re
 import requests
+from rdflib.plugins.sparql.processor import SPARQLResult
 
 # import logging
 from logger import log
@@ -60,7 +61,8 @@ class URITargetStore(TargetStoreAccess):
         # query the remote store self.GBD
         log.debug("GDB: {}".format(self.GDB))
         self.GDB.setQuery(sparql)
-        results = self.GDB.query().convert()
+        results_dict = self.GDB.query().convert()
+        results = SPARQLResult(results_dict)
         log.debug("results: {}".format(results))
         return results
 
@@ -160,7 +162,9 @@ class MemoryTargetStore(TargetStoreAccess):
 
     def select_subjects(self, sparql=str):
         # Implement method to select subjects from memory target store
-        return self.graph.query(sparql)
+        results = self.graph.query(sparql)
+        log.debug("results: {}".format(results))
+        return results
 
     def verify(self, sparql=str):
         # Implement method to verify for a given sparql query if there are any triples that return
