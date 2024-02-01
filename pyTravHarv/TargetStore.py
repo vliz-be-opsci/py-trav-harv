@@ -4,6 +4,8 @@ import sys
 import re
 import requests
 from rdflib.plugins.sparql.processor import SPARQLResult
+from pyrdfj2 import J2RDFSyntaxBuilder
+import time
 
 # import logging
 from logger import log
@@ -15,6 +17,17 @@ from urllib.parse import (
 )  # backup for validators since this cannot handle localhost
 
 # log = logging.getLogger(__name__)
+
+
+def get_j2rdf_builder():
+    template_folder = os.path.join(os.path.dirname(__file__), "pysubyt_templates")
+    log.info(f"template_folder == {template_folder}")
+    # init J2RDFSyntaxBuilder
+    j2rdf = J2RDFSyntaxBuilder(templates_folder=template_folder)
+    return j2rdf
+
+
+J2RDF = get_j2rdf_builder()
 
 
 class TargetStoreAccess(ABC):
@@ -84,13 +97,72 @@ class URITargetStore(TargetStoreAccess):
         # log.debug("GDB: {}".format(self.GDB))
         self.GDB.setQuery(query)
         results = self.GDB.query().convert()
-        if len(results) > 0:
+        # TODO: excercise when the results come from a non GRAPHDB endpoint
+        # TODO: check whether the results have the same return format as the select_subjects method
+        log.debug("results GDB verify: {}".format(results))
+        if len(results["results"]["bindings"]) > 0:
             return True
         return False
 
-    def ingest(self):
+    def ingest(self, graph=rdflib.Graph(), context: str = None):
         # Implement method to ingest data into URI target store
-        pass
+        # ingest the graph into the remote store self.GBD
+        log.debug("ingest graph: {}".format(graph))
+
+        # for now only GRAPHDB is supported
+        # context is reduced to none
+        context = None
+
+        self._batch_insert_graph(graph, context)
+
+    def _batch_insert_graph(
+        self, graph: rdflib.Graph(), context: str = None, batch_size: int = 100
+    ):
+        """
+        Insert data into a context in batches.
+
+        :param graph: The graph to insert data from.
+        :type graph: Graph
+        :param context: The context to insert data into.
+        :type context: str
+        :param batch_size: The batch size to use.
+        :type batch_size: int
+        """
+
+        # Variables for the template
+        template = "insert_graph.sparql"
+        ntstr = graph.serialize(format="nt")
+
+        # log the size fo the ntstr
+        log.info(f"ntstr size: {len(ntstr)}")
+
+        # Split ntstr by newline to get a list of triples
+        triples = ntstr.split("\n")
+
+        # Initialize an empty list to hold the batches
+        ntstr_batches = []
+
+        # Loop over the list of triples with a step size of batch_size
+        for i in range(0, len(triples), batch_size):
+            # Slice the list of triples from the current index to the current index plus batch_size
+            # Join them with newline to get a batch
+            batch = "\n".join(triples[i : i + batch_size])
+
+            # Append the batch to ntstr_batches
+            ntstr_batches.append(batch)
+
+        log.info(f"insert_graph into {context} in {len(ntstr_batches)} batches")
+
+        for batch in ntstr_batches:
+            # Variables for the template
+            vars = {"context": context, "raw_triples": batch}
+            query = J2RDF.build_syntax(template, **vars)
+
+            self.GDB.setQuery(query)
+            self.GDB.query()
+            # give the server a breather, else it will crash depending on the
+            # potato running it
+            time.sleep(0.2)
 
     def _detect_type_remote_store(self):
         """TODO: Implement method to detect type of remote target store.
@@ -185,7 +257,7 @@ class MemoryTargetStore(TargetStoreAccess):
             return True
         return False
 
-    def ingest(self, graph=rdflib.Graph()):
+    def ingest(self, graph=rdflib.Graph(), context: str = None):
         # Implement method to ingest data into memory target store
         # combine graphs
         self.graph = self.graph + graph
@@ -266,7 +338,6 @@ class TargetStore:
         # Implement method to detect type of target store
         if validators.url(target_store):
             return URITargetStore(target_store)
-
         if os.path.isfile(target_store):
             return MemoryTargetStore(target_store)
 

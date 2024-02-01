@@ -31,6 +31,7 @@ class SubjPropPathAssertion:
         assertion_path: AssertPath,
         target_store: TargetStore,
         prefix_set: PrefixSet,
+        config_filename: str,
     ):
         self.subject = self._subject_str_check(subject)
         if not self.subject:
@@ -42,9 +43,12 @@ class SubjPropPathAssertion:
         self.previous_bounce_depth = 0
         self.max_depth = self.assertion_path.get_max_size()
         self.prefix_set = prefix_set
+        self.config_filename = config_filename
         self.assert_path()
 
-    def _subject_str_check(self, subject):
+    def _subject_str_check(
+        self, subject
+    ):  # This whole function is jank, work out a way to offload this in a decent way
         """
         Check if subject is a strict str , if subject is rdflib.term.URIRef , convert to str
         """
@@ -57,6 +61,10 @@ class SubjPropPathAssertion:
             # extract URIRef from ResultRow
             if type(subject) == rdflib.query.ResultRow:
                 subject_row = subject[0]
+                if type(subject_row) == dict:
+                    subject_row = subject_row[
+                        "value"
+                    ]  # janky way of getting the URIRef from the ResultRow
                 log.debug("Subject row: {}".format(subject_row))
                 if validators.url(str(subject_row)):
                     return str(subject_row)
@@ -92,7 +100,9 @@ class SubjPropPathAssertion:
         if self.target_store.verify(SPARQLQuery):
             self._harvest_and_surface()
             return
-        self.target_store.ingest(WebAccess(self.subject).harvest())
+        self.target_store.ingest(
+            WebAccess(self.subject).harvest(), self.config_filename
+        )
 
         # Implement method to assert a property path for a given subject at a given depth
 

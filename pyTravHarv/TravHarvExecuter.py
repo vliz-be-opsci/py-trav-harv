@@ -48,7 +48,11 @@ class TravHarvExecutor:
                 log.debug("Subject: {}".format(subject))
                 for assertion_path in assertion_path_set:
                     SubjPropPathAssertion(
-                        subject, assertion_path, self.target_store, self.prefix_set
+                        subject,
+                        assertion_path,
+                        self.target_store,
+                        self.prefix_set,
+                        self.config_filename,
                     )
 
     def _define_subjects(self, subject_definition):
