@@ -14,6 +14,7 @@ from abc import ABC, abstractmethod
 from SPARQLWrapper import SPARQLWrapper, JSON
 from urllib.parse import (
     urlparse,
+    quote,
 )  # backup for validators since this cannot handle localhost
 
 # log = logging.getLogger(__name__)
@@ -108,12 +109,20 @@ class URITargetStore(TargetStoreAccess):
         # Implement method to ingest data into URI target store
         # ingest the graph into the remote store self.GBD
         log.debug("ingest graph: {}".format(graph))
-
+        log.debug("context: {}".format(context))
         # for now only GRAPHDB is supported
         # context is reduced to none
-        context = None
-
+        context = self._context_2_urn(context)
         self._batch_insert_graph(graph, context)
+
+    def _context_2_urn(self, context: str):
+        """
+        Convert a context to a URN.
+        """
+        # Implement method to convert a context to a URN
+        # convert the context into a str that is uri compliant
+        safe_context = quote(context)
+        return f"urn:PYTRAVHARV:{safe_context}"
 
     def _batch_insert_graph(
         self, graph: rdflib.Graph(), context: str = None, batch_size: int = 100
