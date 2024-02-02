@@ -169,18 +169,51 @@ class TravHarvConfigBuilder:
     Builds a configuration object from a given config folder
     """
 
-    def __init__(self, configFolder):
+    def __init__(self, configFolder: str = None):
         """
         Initialise the config builder
         """
         log.debug("Config builder initialized")
         if configFolder is None:
-            log.error("Config folder is None")
-            sys.exit(1)
+            log.warning("Config folder is None")
+            log.warning("Using current working directory as config folder")
 
         self.config_folder = os.path.join(os.getcwd(), *configFolder.split("/"))
 
         self.travHarvConfig = {}
+
+    def build_from_dict(self, config_dict):
+        """
+        Build a config object from a given config_dict.
+        The config_dict should be a dictionary with the following keys:
+        - config_file_name: a dictionary with the following keys:
+            - prefix: a dictionary with prefixes
+            - assert: a list of asserts
+                - subjects: a list of subjects or a SPARQL query
+                - paths: a list of paths
+        example:
+        {
+            "config_file_name": {
+                "prefix": {
+                    "ex": "http://example.org/",
+                    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+                },
+                "assert": [
+                    {
+                        "subjects": {
+                            "literal": ["http://example.org/subject1", "http://example.org/subject2"]
+                        },
+                        "paths": ["/rdf:type", "/ex:property"]
+                    }
+                ]
+            }
+        }
+        """
+        for config_file_name, json_object in config_dict.items():
+            if self._check_yml_requirements(json_object, config_file_name):
+                self.travHarvConfig[config_file_name] = (
+                    self._makeTravHarvConfigPartFromJson(json_object)
+                )
 
     def build_from_config(self, config_file_name):
         """
@@ -197,9 +230,9 @@ class TravHarvConfigBuilder:
             os.path.join(self.config_folder, config_file_name)
         )
         if self._check_yml_requirements(json_object, config_file_name):
-            self.travHarvConfig[
-                config_file_name
-            ] = self._makeTravHarvConfigPartFromJson(json_object)
+            self.travHarvConfig[config_file_name] = (
+                self._makeTravHarvConfigPartFromJson(json_object)
+            )
 
     def build_from_folder(self):
         """

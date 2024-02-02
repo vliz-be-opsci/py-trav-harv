@@ -1,5 +1,14 @@
 import pytest
-from pyTravHarv.TravHarvConfigBuilder import TravHarvConfigBuilder
+from pyTravHarv.TravHarvConfigBuilder import (
+    TravHarvConfigBuilder,
+    PrefixSet,
+    LiteralSubjectDefinition,
+    SPARQLSubjectDefinition,
+    SubjectDefinition,
+    AssertPath,
+    AssertPathSet,
+    TravHarvTask,
+)
 import os
 
 CFD = os.path.dirname(os.path.realpath(__file__))
@@ -29,3 +38,68 @@ def test_build_from_folder():
 
     # Assure thatbad_config.yml is not in the builder.travHarvConfig
     assert "bad_config.yml" not in builder.travHarvConfig.keys()
+
+
+def test_makeTravHarvConfigPartFromJson():
+    builder = TravHarvConfigBuilder()
+    json_object = {
+        "prefix": {
+            "prefix1": "http://example.com/",
+            "prefix2": "http://example.org/",
+        },
+        "assert": [
+            {
+                "subjects": {
+                    "literal": "subject1",
+                },
+                "paths": [
+                    {
+                        "Path_parts": ["path1", "path2"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                    {
+                        "Path_parts": ["path3", "path4"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                ],
+            },
+            {
+                "subjects": {
+                    "SPARQL": "SELECT ?s WHERE { ?s ?p ?o }",
+                },
+                "paths": [
+                    {
+                        "Path_parts": ["path5", "path6"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                ],
+            },
+        ],
+    }
+
+    result = builder._makeTravHarvConfigPartFromJson(json_object)
+
+    assert isinstance(result["prefix_set"], PrefixSet)
+    assert len(result["prefix_set"].prefixes) == 2
+
+    assert isinstance(result["tasks"], list)
+    assert len(result["tasks"]) == 2
+
+    assert isinstance(result["tasks"][0], TravHarvTask)
+    assert isinstance(result["tasks"][0].subject_definition, SubjectDefinition)
+    assert isinstance(
+        result["tasks"][0].subject_definition.definition, LiteralSubjectDefinition
+    )
+    assert isinstance(result["tasks"][0].assert_path_set, AssertPathSet)
+    assert len(result["tasks"][0].assert_path_set.assert_paths) == 2
+
+    assert isinstance(result["tasks"][1], TravHarvTask)
+    assert isinstance(result["tasks"][1].subject_definition, SubjectDefinition)
+    assert isinstance(
+        result["tasks"][1].subject_definition.definition, SPARQLSubjectDefinition
+    )
+    assert isinstance(result["tasks"][1].assert_path_set, AssertPathSet)
+    assert len(result["tasks"][1].assert_path_set.assert_paths) == 1
