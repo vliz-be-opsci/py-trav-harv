@@ -40,7 +40,7 @@ python-dotenv = "*"
 pytest-cov = "*"
 
 [tool.poetry.scripts]
-pysubyt = "pysubyt.__main__:main"
+pyTravHarv = "pyTravHarv.__main__:main"
 
 [build-system]
 requires = ["setuptools","poetry"]
