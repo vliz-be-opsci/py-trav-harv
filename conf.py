@@ -14,7 +14,13 @@ author = "Cedric_Decruw"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+    "sphinx.ext.todo",
+    "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.githubpages",
 ]
 
 templates_path = ["_templates"]
