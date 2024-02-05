@@ -1,14 +1,14 @@
 import os
-
 import rdflib
 import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from SPARQLWrapper import JSON, SPARQLWrapper
-from TargetStore import TargetStore
-from TravHarvConfigBuilder import AssertPath, PrefixSet
-from WebAccess import WebAccess
+from pyTravHarv.TargetStore import TargetStore
+from pyTravHarv.TravHarvConfigBuilder import AssertPath, PrefixSet
+from pyTravHarv.WebAccess import WebAccess
+import logging
 
-from pyTravHarv.logger import log
+log = logging.getLogger("pyTravHarv")
 
 
 def get_j2rdf_builder():

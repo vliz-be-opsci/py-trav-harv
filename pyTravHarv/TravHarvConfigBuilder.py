@@ -1,13 +1,11 @@
-import os
 # from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
 import re
+import os
 import sys
-
 import yaml
+import logging
 
-from pyTravHarv.logger import log
-
-# log = logging.getLogger(__name__)
+log = logging.getLogger("pyTravHarv")
 
 
 class PrefixSet:

@@ -21,18 +21,14 @@ loggers:
   __main__:
     level: DEBUG
     propagate: yes
-  TravHarvConfigBuilder:
-    level: DEBUG
-    propagate: yes
   pyTravHarv:
-    level: DEBUG
-    propagate: yes
-  TravHarvExecutor:
     level: DEBUG
     propagate: yes
   tests:
     level: DEBUG
     propagate: yes
+  
+  
 root:
   level: DEBUG
   handlers: [stderr, file]

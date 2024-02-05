@@ -1,12 +1,12 @@
 from html.parser import HTMLParser
 from urllib.parse import urljoin
-
 import requests
 from rdflib import Graph
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+import logging
 
-from pyTravHarv.logger import log
+log = logging.getLogger("pyTravHarv")
 
 
 class MyHTMLParser(HTMLParser):

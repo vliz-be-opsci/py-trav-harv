@@ -7,18 +7,15 @@ from urllib.parse import (  # backup for validators since this cannot handle loc
     quote,
     urlparse,
 )
-
 import rdflib
 import requests
 import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib.plugins.sparql.processor import SPARQLResult
 from SPARQLWrapper import JSON, SPARQLWrapper
+import logging
 
-# import logging
-from pyTravHarv.logger import log
-
-# log = logging.getLogger(__name__)
+log = logging.getLogger("pyTravHarv")
 
 
 def get_j2rdf_builder():
@@ -358,12 +355,14 @@ class TargetStore:
         """
         Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore
         """
-        # Implement method to detect type of target store
+
         if validators.url(target_store):
             return URITargetStore(target_store)
+
         if os.path.isfile(target_store):
             return MemoryTargetStore(target_store)
 
+        # Implement method to detect type of target store
         if is_valid_url(target_store):
             return URITargetStore(target_store)
 

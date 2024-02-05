@@ -3,13 +3,17 @@
 import argparse
 import os
 
-from TargetStore import TargetStore
-from TravHarvConfigBuilder import TravHarvConfigBuilder
-from TravHarvExecuter import TravHarvExecutor
+from pyTravHarv.TargetStore import TargetStore
+from pyTravHarv.TravHarvConfigBuilder import TravHarvConfigBuilder
+from pyTravHarv.TravHarvExecuter import TravHarvExecutor
 
-from pyTravHarv.logger import log
+import logging
+import logging.config
+import yaml
+import os
 
-# log = logging.getLogger(__name__)
+
+log = logging.getLogger("pyTravHarv")
 
 
 def get_arg_parser():
@@ -65,6 +69,16 @@ def main():
     The main entrypoint of the module
     """
     args = get_arg_parser().parse_args()
+    # check if verbose is set , if yes then enable logger
+    if args.verbose:
+        file_location = os.path.dirname(os.path.realpath(__file__))
+        parent_location = os.path.dirname(file_location)
+        with open(
+            os.path.join(parent_location, "debug-logconf.yml"), "r"
+        ) as f:
+            config = yaml.safe_load(f.read())
+            logging.config.dictConfig(config)
+
     log.debug(args)
 
     # make different classes here to use

@@ -10,19 +10,26 @@ from pyTravHarv.TargetStore import (
 
 
 def test_get_target_store():
-    target_store = TargetStore()
+    store_path = "https://example.com/repositories/test"
+    target_store = TargetStore(
+        store_path
+    )  # This test gets halted by validators for some reason
     assert target_store.get_target_store() == target_store.target_store
 
 
 def test_detect_type_uri_target_store():
     target_store = TargetStore()
-    uri_target_store = target_store._detect_type("https://example.com")
+    uri_target_store = target_store._detect_type(
+        "https://example.com"
+    )  # same here
     assert isinstance(uri_target_store, URITargetStore)
 
 
 def test_detect_type_memory_target_store():
     target_store = TargetStore()
-    memory_target_store = target_store._detect_type("/path/to/file")
+    memory_target_store = target_store._detect_type(
+        os.path.join(os.getcwd(), "example.jsonld")
+    )
     assert isinstance(memory_target_store, MemoryTargetStore)
 
 

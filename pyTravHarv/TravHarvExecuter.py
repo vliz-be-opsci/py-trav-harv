@@ -1,13 +1,13 @@
-from SubjPropPathAssetion import SubjPropPathAssertion
-from TargetStore import TargetStore
-# log = logging.getLogger(__name__)
-from TravHarvConfigBuilder import (
+from pyTravHarv.SubjPropPathAssetion import SubjPropPathAssertion
+from pyTravHarv.TargetStore import TargetStore
+from pyTravHarv.TravHarvConfigBuilder import (
     LiteralSubjectDefinition,
     PrefixSet,
     SPARQLSubjectDefinition,
 )
+import logging
 
-from pyTravHarv.logger import log
+log = logging.getLogger("pyTravHarv")
 
 
 class TravHarvExecutor:
