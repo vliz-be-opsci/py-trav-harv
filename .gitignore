@@ -4,3 +4,4 @@ poetry.lock
 pyTravHarv/__pycache__
 tests/__pycache__
 .coverage
+docs/
