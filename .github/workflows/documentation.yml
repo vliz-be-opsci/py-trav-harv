@@ -17,15 +17,10 @@ jobs:
 
       - name: Install Poetry
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-
-      - name: Install dependencies
-        run: |
-            poetry install
+          curl -sSL https://install.python-poetry.org | python3
 
       - name: Run make init-dev
         run: |
-            make init
             make init-dev
       - name: Make docs
         run: |
