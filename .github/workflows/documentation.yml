@@ -19,6 +19,10 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3
 
+      - name: list all files and directories in tree format
+        run: |
+          tree -a -L 2
+
       - name: Run make init-dev
         run: |
             make init-dev
