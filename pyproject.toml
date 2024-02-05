@@ -13,9 +13,45 @@ pysubyt = "^0.0.2"
 sparqlwrapper = "^2.0.0"
 pyrdfj2 = "^0.0.5"
 
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "*"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+poetry = "*"
+isort = "*"
+black = "*"
+flake8 = "*"
+
+[tool.poetry.group.tests]
+optional = true
+
+[tool.poetry.group.tests.dependencies]
+pyyaml = "*"
+pytest = "*"
+coverage = "*"
+python-dotenv = "*"
+pytest-cov = "*"
+
+[tool.poetry.scripts]
+pysubyt = "pysubyt.__main__:main"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["setuptools","poetry"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests",]
+pythonpath = ["."]

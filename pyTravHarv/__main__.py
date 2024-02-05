@@ -1,11 +1,13 @@
 # main function here
 
-import os
-from logger import log
 import argparse
+import os
+
+from TargetStore import TargetStore
 from TravHarvConfigBuilder import TravHarvConfigBuilder
 from TravHarvExecuter import TravHarvExecutor
-from TargetStore import TargetStore
+
+from pyTravHarv.logger import log
 
 # log = logging.getLogger(__name__)
 
@@ -15,7 +17,8 @@ def get_arg_parser():
     Get the argument parser for the module
     """
     parser = argparse.ArgumentParser(
-        description="pyTravHarv", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+        description="pyTravHarv",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
     parser.add_argument(
@@ -31,7 +34,11 @@ def get_arg_parser():
     )
 
     parser.add_argument(
-        "-n", "--name", type=str, default=None, help="Name of the configuration to use"
+        "-n",
+        "--name",
+        type=str,
+        default=None,
+        help="Name of the configuration to use",
     )
 
     parser.add_argument(
@@ -74,7 +81,9 @@ def main():
     target_store = TargetStore(args.target_store)
 
     # some logging to see if the config is built correctly
-    log.info("Config object: {}".format(travharv_config_builder.travHarvConfig))
+    log.info(
+        "Config object: {}".format(travharv_config_builder.travHarvConfig)
+    )
 
     for config_file, config in travharv_config_builder.travHarvConfig.items():
         log.info("Config file: {}".format(config_file))

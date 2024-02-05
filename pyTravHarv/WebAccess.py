@@ -1,10 +1,12 @@
-from logger import log
-from rdflib import Graph
+from html.parser import HTMLParser
 from urllib.parse import urljoin
+
 import requests
+from rdflib import Graph
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from html.parser import HTMLParser
+
+from pyTravHarv.logger import log
 
 
 class MyHTMLParser(HTMLParser):
@@ -24,7 +26,8 @@ class MyHTMLParser(HTMLParser):
             tag == "script"
             and "type" in attrs
             and (
-                attrs["type"] == "application/ld+json" or attrs["type"] == "text/turtle"
+                attrs["type"] == "application/ld+json"
+                or attrs["type"] == "text/turtle"
             )
         ):
             self.in_script = True
@@ -124,7 +127,9 @@ def download_uri_to_store(uri, store, format="json-ld"):
                 elif "text/turtle" in script:
                     log.info(f"found script with type text/turtle")
                     store.parse(
-                        data=script["text/turtle"], format="turtle", publicID=uri
+                        data=script["text/turtle"],
+                        format="turtle",
+                        publicID=uri,
                     )
             parser.close()
             return

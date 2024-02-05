@@ -1,16 +1,20 @@
-import rdflib
-from logger import log
-from pyrdfj2 import J2RDFSyntaxBuilder
-from SPARQLWrapper import SPARQLWrapper, JSON
-from TravHarvConfigBuilder import AssertPath, PrefixSet
-from TargetStore import TargetStore
-from WebAccess import WebAccess
-import validators
 import os
+
+import rdflib
+import validators
+from pyrdfj2 import J2RDFSyntaxBuilder
+from SPARQLWrapper import JSON, SPARQLWrapper
+from TargetStore import TargetStore
+from TravHarvConfigBuilder import AssertPath, PrefixSet
+from WebAccess import WebAccess
+
+from pyTravHarv.logger import log
 
 
 def get_j2rdf_builder():
-    template_folder = os.path.join(os.path.dirname(__file__), "pysubyt_templates")
+    template_folder = os.path.join(
+        os.path.dirname(__file__), "pysubyt_templates"
+    )
     log.info(f"template_folder == {template_folder}")
     # init J2RDFSyntaxBuilder
     j2rdf = J2RDFSyntaxBuilder(templates_folder=template_folder)
@@ -35,7 +39,9 @@ class SubjPropPathAssertion:
     ):
         self.subject = self._subject_str_check(subject)
         if not self.subject:
-            log.warning("Subject is not a valid URIRef or str: {}".format(subject))
+            log.warning(
+                "Subject is not a valid URIRef or str: {}".format(subject)
+            )
             return
         self.assertion_path = assertion_path
         self.current_depth = 0
@@ -68,7 +74,9 @@ class SubjPropPathAssertion:
                 log.debug("Subject row: {}".format(subject_row))
                 if validators.url(str(subject_row)):
                     return str(subject_row)
-                log.warning("Subject row is not a URIRef: {}".format(subject_row))
+                log.warning(
+                    "Subject row is not a URIRef: {}".format(subject_row)
+                )
             if validators.url(str(subject)):
                 return str(subject)
             log.warning("Subject is not a URIRef: {}".format(subject))
@@ -94,9 +102,13 @@ class SubjPropPathAssertion:
         """
         Assert a property path for a given subject at a given depth.
         """
-        log.debug("Asserting a property path for a given subject at a given depth")
+        log.debug(
+            "Asserting a property path for a given subject at a given depth"
+        )
         log.debug("Depth: {}".format(self.max_depth - self.current_depth))
-        SPARQLQuery = self._sparql_trajectory_check(self.max_depth - self.current_depth)
+        SPARQLQuery = self._sparql_trajectory_check(
+            self.max_depth - self.current_depth
+        )
         if self.target_store.verify(SPARQLQuery):
             self._harvest_and_surface()
             return
@@ -118,7 +130,9 @@ class SubjPropPathAssertion:
         """
         Harvest the property path and surface back to depth 0.
         """
-        log.debug("Harvesting the property path and backtracking to the previous depth")
+        log.debug(
+            "Harvesting the property path and backtracking to the previous depth"
+        )
         # Implement method to harvest the property path and backtrack to the previous depth
         self.previous_bounce_depth = self.current_depth
         self.current_depth = 0
@@ -133,12 +147,16 @@ class SubjPropPathAssertion:
 
     def _sparql_trajectory_check(self, depth):
         log.debug(
-            "assertion_path: {}".format(self.assertion_path.get_path_for_depth(depth))
+            "assertion_path: {}".format(
+                self.assertion_path.get_path_for_depth(depth)
+            )
         )
         template = "trajectory.sparql"
         vars = {
             "subject": self.subject,
-            "property_trajectory": self.assertion_path.get_path_for_depth(depth),
+            "property_trajectory": self.assertion_path.get_path_for_depth(
+                depth
+            ),
             "prefixes": self.prefix_set.get_prefix_set(),
         }
         query = J2RDF.build_syntax(template, **vars)

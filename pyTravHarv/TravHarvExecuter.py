@@ -1,13 +1,13 @@
-from logger import log
-
-# log = logging.getLogger(__name__)
-from TravHarvConfigBuilder import (
-    PrefixSet,
-    SPARQLSubjectDefinition,
-    LiteralSubjectDefinition,
-)
 from SubjPropPathAssetion import SubjPropPathAssertion
 from TargetStore import TargetStore
+# log = logging.getLogger(__name__)
+from TravHarvConfigBuilder import (
+    LiteralSubjectDefinition,
+    PrefixSet,
+    SPARQLSubjectDefinition,
+)
+
+from pyTravHarv.logger import log
 
 
 class TravHarvExecutor:
@@ -36,14 +36,18 @@ class TravHarvExecutor:
         """
         Assert all paths for all subjects given for each task per config.
         """
-        log.debug("Asserting all paths for all subjects given for each task per config")
+        log.debug(
+            "Asserting all paths for all subjects given for each task per config"
+        )
         for task in self.tasks:
             log.debug("Task: {}".format(task))
             # check if subject is a URI or a SPARQL query
             info_task = task.get_task()
             log.debug("Info task: {}".format(info_task))
             subject_definition = info_task["subject_definition"]
-            assertion_path_set = info_task["assert_path_set"].get_assert_path_set()
+            assertion_path_set = info_task[
+                "assert_path_set"
+            ].get_assert_path_set()
             for subject in self._define_subjects(subject_definition):
                 log.debug("Subject: {}".format(subject))
                 for assertion_path in assertion_path_set:
@@ -68,7 +72,10 @@ class TravHarvExecutor:
             log.debug("LiteralSubjectDefinition")
             # assert all paths
             return subject_definition.get_subject_definition().get_subjects()
-        if type(subject_definition.get_subject_definition()) == SPARQLSubjectDefinition:
+        if (
+            type(subject_definition.get_subject_definition())
+            == SPARQLSubjectDefinition
+        ):
             log.debug("SPARQLSubjectDefinition")
             log.debug(
                 "SPARQL query: {}".format(

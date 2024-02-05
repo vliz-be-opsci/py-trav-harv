@@ -1,10 +1,11 @@
-import yaml
 import os
-import sys
-from logger import log
-
 # from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
 import re
+import sys
+
+import yaml
+
+from pyTravHarv.logger import log
 
 # log = logging.getLogger(__name__)
 
@@ -166,7 +167,8 @@ class AssertPath:
 
 class TravHarvConfigBuilder:
     """
-    Builds a configuration object from a given config folder
+    Builds a configuration object from a given config folder.
+    If no folder is given, the current working directory is used as the config folder.
     """
 
     def __init__(self, configFolder: str = None):
@@ -178,7 +180,9 @@ class TravHarvConfigBuilder:
             log.warning("Config folder is None")
             log.warning("Using current working directory as config folder")
 
-        self.config_folder = os.path.join(os.getcwd(), *configFolder.split("/"))
+        self.config_folder = os.path.join(
+            os.getcwd(), *configFolder.split("/")
+        )
 
         self.travHarvConfig = {}
 
@@ -221,8 +225,12 @@ class TravHarvConfigBuilder:
         """
 
         # check if path to config_file_name exists
-        if not os.path.exists(os.path.join(self.config_folder, config_file_name)):
-            log.error("Config config_file_name {} not found".format(config_file_name))
+        if not os.path.exists(
+            os.path.join(self.config_folder, config_file_name)
+        ):
+            log.error(
+                "Config config_file_name {} not found".format(config_file_name)
+            )
             sys.exit(1)
 
         # load in the config file and check if it is valid
@@ -236,13 +244,13 @@ class TravHarvConfigBuilder:
 
     def build_from_folder(self):
         """
-        Build a config object from the folder given, all files in the folder will be used
+        Build a config object from the folder given, all yml files in the folder will be used
         """
         for file in self._files_folder():
             json_object = self._load_yml_to_json(file)
             if self._check_yml_requirements(json_object, file):
-                self.travHarvConfig[file] = self._makeTravHarvConfigPartFromJson(
-                    json_object
+                self.travHarvConfig[file] = (
+                    self._makeTravHarvConfigPartFromJson(json_object)
                 )
         log.info("Config object: {}".format(self.travHarvConfig))
 
@@ -280,7 +288,9 @@ class TravHarvConfigBuilder:
                                 task["subjects"]["SPARQL"]
                             )
 
-                        subject_definition = SubjectDefinition(subject_definition)
+                        subject_definition = SubjectDefinition(
+                            subject_definition
+                        )
                     if "paths" in task:
                         assert_path_set = []
                         # go over each path and make an AssertPath
@@ -327,7 +337,9 @@ class TravHarvConfigBuilder:
         returnBool = True
         for field in required_fields:
             if field not in jsonobject:
-                log.error("Required field {} not found in {}".format(field, file))
+                log.error(
+                    "Required field {} not found in {}".format(field, file)
+                )
                 return False
             if field == "assert" and field in jsonobject:
                 returnBool = self._check_asserts(jsonobject[field])
@@ -340,7 +352,9 @@ class TravHarvConfigBuilder:
             for field in required_fields:
                 if field not in assertpart:
                     log.error(
-                        "Required field {} not found in {}".format(field, assertpart)
+                        "Required field {} not found in {}".format(
+                            field, assertpart
+                        )
                     )
                     return False
 
@@ -374,12 +388,16 @@ class TravHarvConfigBuilder:
         if chosen_type == "literal":
             # check if the type of subjects is list of strings
             if not isinstance(subjects[chosen_type], list):
-                log.error("Subjects of type literal should be a list of strings")
+                log.error(
+                    "Subjects of type literal should be a list of strings"
+                )
                 return False
 
             for subject in subjects[chosen_type]:
                 if not isinstance(subject, str):
-                    log.error("Subjects of type literal should be a list of strings")
+                    log.error(
+                        "Subjects of type literal should be a list of strings"
+                    )
                     return False
 
             return True
@@ -390,7 +408,9 @@ class TravHarvConfigBuilder:
                 return False
 
             if not self._is_valid_sparql_syntax(str(subjects[chosen_type])):
-                log.error("Subjects of type SPARQL should be a valid SPARQL query")
+                log.error(
+                    "Subjects of type SPARQL should be a valid SPARQL query"
+                )
                 return False
 
             return True

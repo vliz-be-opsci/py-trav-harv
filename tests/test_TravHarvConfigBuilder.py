@@ -1,15 +1,17 @@
+import os
+
 import pytest
+
 from pyTravHarv.TravHarvConfigBuilder import (
-    TravHarvConfigBuilder,
-    PrefixSet,
-    LiteralSubjectDefinition,
-    SPARQLSubjectDefinition,
-    SubjectDefinition,
     AssertPath,
     AssertPathSet,
+    LiteralSubjectDefinition,
+    PrefixSet,
+    SPARQLSubjectDefinition,
+    SubjectDefinition,
+    TravHarvConfigBuilder,
     TravHarvTask,
 )
-import os
 
 CFD = os.path.dirname(os.path.realpath(__file__))
 CONFIG_FILES_FOLDER = "/tests/config"
@@ -103,3 +105,182 @@ def test_makeTravHarvConfigPartFromJson():
     )
     assert isinstance(result["tasks"][1].assert_path_set, AssertPathSet)
     assert len(result["tasks"][1].assert_path_set.assert_paths) == 1
+
+
+def test_check_subjects_literal_valid():
+    builder = TravHarvConfigBuilder()
+    subjects = {"literal": ["subject1", "subject2"]}
+    assert builder._check_subjects(subjects) == True
+
+
+def test_check_subjects_literal_invalid_type():
+    builder = TravHarvConfigBuilder()
+    subjects = {"literal": "subject1"}
+    assert builder._check_subjects(subjects) == False
+
+
+def test_check_subjects_literal_invalid_subjects():
+    builder = TravHarvConfigBuilder()
+    subjects = {"literal": ["subject1", 123]}
+    assert builder._check_subjects(subjects) == False
+
+
+def test_check_subjects_SPARQL_valid():
+    builder = TravHarvConfigBuilder()
+    subjects = {"SPARQL": "SELECT ?s WHERE { ?s ?p ?o }"}
+    assert builder._check_subjects(subjects) == True
+
+
+def test_check_subjects_SPARQL_invalid_type():
+    builder = TravHarvConfigBuilder()
+    subjects = {"SPARQL": ["SELECT ?s WHERE { ?s ?p ?o }"]}
+    assert builder._check_subjects(subjects) == False
+
+
+def test_check_subjects_SPARQL_invalid_query():
+    builder = TravHarvConfigBuilder()
+    subjects = {"SPARQL": "SELECT ?s WHERE { ?s ?p }"}
+    assert builder._check_subjects(subjects) == False
+
+
+def test_is_valid_sparql_syntax_valid():
+    builder = TravHarvConfigBuilder()
+    sparql_query = "SELECT ?s WHERE { ?s ?p ?o }"
+    assert builder._is_valid_sparql_syntax(sparql_query) == True
+
+
+def test_is_valid_sparql_syntax_invalid():
+    builder = TravHarvConfigBuilder()
+    sparql_query = "SELECT ?s WHERE { ?s ?p }"
+    assert builder._is_valid_sparql_syntax(sparql_query) == False
+
+
+def test_files_folder():
+    builder = TravHarvConfigBuilder(CONFIG_FILES_FOLDER)
+    result = builder._files_folder()
+    assert isinstance(result, list)
+    assert len(result) > 0
+    for file in result:
+        assert file.endswith(".yaml") or file.endswith(".yml")
+        assert os.path.exists(file)
+
+
+def test_load_yml_to_json_valid_file():
+    builder = TravHarvConfigBuilder()
+    file = "test_file.yml"
+    json_object = builder._load_yml_to_json(file)
+    assert isinstance(json_object, dict)
+
+
+def test_load_yml_to_json_invalid_file():
+    builder = TravHarvConfigBuilder()
+    file = "nonexistent_file.yml"
+    with pytest.raises(FileNotFoundError):
+        builder._load_yml_to_json(file)
+
+
+def test_load_yml_to_json_invalid_yaml():
+    builder = TravHarvConfigBuilder()
+    file = "invalid_yaml.yml"
+    with pytest.raises(yaml.YAMLError):
+        builder._load_yml_to_json(file)
+
+
+def test_check_yml_requirements_missing_fields():
+    builder = TravHarvConfigBuilder()
+    json_object = {
+        "prefix": {
+            "prefix1": "http://example.com/",
+            "prefix2": "http://example.org/",
+        },
+        "assert": [
+            {
+                "subjects": {
+                    "literal": "subject1",
+                },
+                "paths": [
+                    {
+                        "Path_parts": ["path1", "path2"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                    {
+                        "Path_parts": ["path3", "path4"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                ],
+            },
+            {
+                "subjects": {
+                    "SPARQL": "SELECT ?s WHERE { ?s ?p ?o }",
+                },
+                "paths": [
+                    {
+                        "Path_parts": ["path5", "path6"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                ],
+            },
+        ],
+    }
+    file = "test_file.yml"
+    assert builder._check_yml_requirements(json_object, file) == False
+
+
+def test_check_yml_requirements_missing_assert_fields():
+    builder = TravHarvConfigBuilder()
+    json_object = {
+        "snooze-till-graph-age-minutes": 60,
+        "prefix": {
+            "prefix1": "http://example.com/",
+            "prefix2": "http://example.org/",
+        },
+    }
+    file = "test_file.yml"
+    assert builder._check_yml_requirements(json_object, file) == False
+
+
+def test_check_yml_requirements_valid():
+    builder = TravHarvConfigBuilder()
+    json_object = {
+        "snooze-till-graph-age-minutes": 60,
+        "prefix": {
+            "prefix1": "http://example.com/",
+            "prefix2": "http://example.org/",
+        },
+        "assert": [
+            {
+                "subjects": {
+                    "literal": "subject1",
+                },
+                "paths": [
+                    {
+                        "Path_parts": ["path1", "path2"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                    {
+                        "Path_parts": ["path3", "path4"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                ],
+            },
+            {
+                "subjects": {
+                    "SPARQL": "SELECT ?s WHERE { ?s ?p ?o }",
+                },
+                "paths": [
+                    {
+                        "Path_parts": ["path5", "path6"],
+                        "max_size": lambda: 2,
+                        "get_path_at_depth": lambda depth: f"path{depth}",
+                    },
+                ],
+            },
+        ],
+    }
+    file = "test_file.yml"
+    assert builder._check_yml_requirements(json_object, file) == True

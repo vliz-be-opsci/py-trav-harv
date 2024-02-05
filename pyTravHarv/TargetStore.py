@@ -1,27 +1,30 @@
-import rdflib
 import os
-import sys
 import re
-import requests
-from rdflib.plugins.sparql.processor import SPARQLResult
-from pyrdfj2 import J2RDFSyntaxBuilder
+import sys
 import time
+from abc import ABC, abstractmethod
+from urllib.parse import (  # backup for validators since this cannot handle localhost
+    quote,
+    urlparse,
+)
+
+import rdflib
+import requests
+import validators
+from pyrdfj2 import J2RDFSyntaxBuilder
+from rdflib.plugins.sparql.processor import SPARQLResult
+from SPARQLWrapper import JSON, SPARQLWrapper
 
 # import logging
-from logger import log
-import validators
-from abc import ABC, abstractmethod
-from SPARQLWrapper import SPARQLWrapper, JSON
-from urllib.parse import (
-    urlparse,
-    quote,
-)  # backup for validators since this cannot handle localhost
+from pyTravHarv.logger import log
 
 # log = logging.getLogger(__name__)
 
 
 def get_j2rdf_builder():
-    template_folder = os.path.join(os.path.dirname(__file__), "pysubyt_templates")
+    template_folder = os.path.join(
+        os.path.dirname(__file__), "pysubyt_templates"
+    )
     log.info(f"template_folder == {template_folder}")
     # init J2RDFSyntaxBuilder
     j2rdf = J2RDFSyntaxBuilder(templates_folder=template_folder)
@@ -160,7 +163,9 @@ class URITargetStore(TargetStoreAccess):
             # Append the batch to ntstr_batches
             ntstr_batches.append(batch)
 
-        log.info(f"insert_graph into {context} in {len(ntstr_batches)} batches")
+        log.info(
+            f"insert_graph into {context} in {len(ntstr_batches)} batches"
+        )
 
         for batch in ntstr_batches:
             # Variables for the template
@@ -188,7 +193,9 @@ class URITargetStore(TargetStoreAccess):
         # if this fails then raise an error that the store given is not a valid remote store
         if self._detect_repos_for_graphdb() is not None:
             # return a table like overview of what repositories are avialable
-            log.debug("repositories: {}".format(self._detect_repos_for_graphdb()))
+            log.debug(
+                "repositories: {}".format(self._detect_repos_for_graphdb())
+            )
             raise ValueError(
                 "Target store is not a valid remote store URI, use one of the following repositories: {}".format(
                     self._detect_repos_for_graphdb()
@@ -196,7 +203,9 @@ class URITargetStore(TargetStoreAccess):
             )
 
         raise ValueError(
-            "Target store is not a valid remote store URI: {}".format(self.target_store)
+            "Target store is not a valid remote store URI: {}".format(
+                self.target_store
+            )
         )
 
     def _detect_repos_for_graphdb(self):
@@ -205,7 +214,8 @@ class URITargetStore(TargetStoreAccess):
         """
         # Implement method to detect the repositories for a GRAPHDB endpoint do accept application/json
         response = requests.get(
-            f"{self.target_store}/repositories", headers={"Accept": "application/json"}
+            f"{self.target_store}/repositories",
+            headers={"Accept": "application/json"},
         )
         if response.status_code == 200:
             response_json = response.json()
@@ -250,7 +260,9 @@ class MemoryTargetStore(TargetStoreAccess):
         log.debug("MemoryTargetStore initialized")
         log.debug("graph: {}".format(self.graph))
         log.debug(
-            "Ammount of triples in graph: {}".format(self._ammount_triples_graph())
+            "Ammount of triples in graph: {}".format(
+                self._ammount_triples_graph()
+            )
         )
 
     def select_subjects(self, sparql=str):
@@ -306,7 +318,9 @@ class MemoryTargetStore(TargetStoreAccess):
         """
         # Target store is from a given os path
         path_triple_store_file = os.path.join(os.getcwd(), self.target_store)
-        log.debug("Path to triple store file: {}".format(path_triple_store_file))
+        log.debug(
+            "Path to triple store file: {}".format(path_triple_store_file)
+        )
 
         # Check if the file exists
         if not os.path.isfile(path_triple_store_file):

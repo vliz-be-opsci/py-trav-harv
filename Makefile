@@ -24,8 +24,6 @@ init: startup install
 
 init-dev: startup
 	poetry install --with 'tests' --with 'dev' --with 'docs'
-	poetry run pre-commit install
-	poetry run pre-commit install --hook-type commit-msg
 
 init-docs: startup
 	poetry install --with 'docs'
@@ -56,7 +54,6 @@ docker-build:
 
 update:
 	poetry update
-	poetry run pre-commit autoupdate
 
 
 build: update check test docs
