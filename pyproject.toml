@@ -12,6 +12,7 @@ validators = "^0.22.0"
 pysubyt = "^0.0.2"
 sparqlwrapper = "^2.0.0"
 pyrdfj2 = "^0.0.5"
+sphinx-rtd-theme = "*"
 
 [tool.poetry.group.docs]
 optional = true

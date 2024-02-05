@@ -29,7 +29,9 @@ init-docs: startup
 	poetry install --with 'docs'
 
 docs:
-	if ! [ -d "./docs" ]; then poetry run sphinx-quickstart -q --ext-autodoc --sep --project $(PROJECT) --author $(AUTHOR) docs; fi
+	if ! [ -d "./docs" ]; then poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author $(AUTHOR) docs; fi
+	cp conf.py ./docs/source/conf.py
+	sleep 1
 	poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT)
 	poetry run sphinx-build -b html ./docs/source ./docs/build/html
 

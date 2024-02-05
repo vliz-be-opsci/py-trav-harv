@@ -44,14 +44,6 @@ pyTravHarv.WebAccess module
    :undoc-members:
    :show-inheritance:
 
-pyTravHarv.logger module
-------------------------
-
-.. automodule:: pyTravHarv.logger
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 Module contents
 ---------------
 
