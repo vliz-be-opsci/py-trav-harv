@@ -10,18 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+
       - name: Install dependencies
         run: |
-          pip install sphinx sphinx_rtd_theme myst_parser
-      - name: Sphinx build
+            poetry install
+
+      - name: Run make init-dev
         run: |
-          sphinx-build doc _build
+            make init-dev
+      - name: Make docs
+        run: |
+          poetry run sphinx-apidoc -o ./docs/source ./pyTravHarv
+          poetry run sphinx-build -b html ./docs/source ./docs/build/html
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _build/
+          publish_dir: docs/build/html
           force_orphan: true
+
