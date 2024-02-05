@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pyTravHarv package &#8212; pyTravHarv  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=4f649999" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=039e1c02" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pytravharv-package">
+<h1>pyTravHarv package<a class="headerlink" href="#pytravharv-package" title="Permalink to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="pytravharv-subjproppathassetion-module">
+<h2>pyTravHarv.SubjPropPathAssetion module<a class="headerlink" href="#pytravharv-subjproppathassetion-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-pyTravHarv.TargetStore">
+<span id="pytravharv-targetstore-module"></span><h2>pyTravHarv.TargetStore module<a class="headerlink" href="#module-pyTravHarv.TargetStore" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.MemoryTargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">MemoryTargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.MemoryTargetStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyTravHarv.TargetStore.TargetStoreAccess" title="pyTravHarv.TargetStore.TargetStoreAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">TargetStoreAccess</span></code></a></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is a pointer to a triple store in memory.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.MemoryTargetStore.ingest">
+<span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph=&lt;Graph</span> <span class="pre">identifier=Nbce204f141f64ff49c73df4ff402938e</span> <span class="pre">(&lt;class</span> <span class="pre">'rdflib.graph.Graph'&gt;)&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.MemoryTargetStore.ingest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ingest given graph into teh self.graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.MemoryTargetStore.select_subjects">
+<span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.MemoryTargetStore.select_subjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select subjects from the target store using a SPARQL query.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.MemoryTargetStore.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.MemoryTargetStore.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify a given subject using a property path to see if this returns triples.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">TargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is either a URI or a pointer to a triple store in memory.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStore.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStore.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute a SPARQL query on the target store</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStore.get_target_store">
+<span class="sig-name descname"><span class="pre">get_target_store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStore.get_target_store" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStoreAccess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">TargetStoreAccess</span></span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStoreAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for accessing a target store.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStoreAccess.ingest">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph=&lt;Graph</span> <span class="pre">identifier=Na40c520bbc7b48bca9d4413c2469dbac</span> <span class="pre">(&lt;class</span> <span class="pre">'rdflib.graph.Graph'&gt;)&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStoreAccess.ingest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ingest given graph into teh self.graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStoreAccess.select_subjects">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparsl=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStoreAccess.select_subjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select subjects from the target store using a SPARQL query.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.TargetStoreAccess.verify">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_path=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.TargetStoreAccess.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify a given subject using a property path to see if this returns triples.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.URITargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">URITargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.URITargetStore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pyTravHarv.TargetStore.TargetStoreAccess" title="pyTravHarv.TargetStore.TargetStoreAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">TargetStoreAccess</span></code></a></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is a URI.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.URITargetStore.ingest">
+<span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph=&lt;Graph</span> <span class="pre">identifier=Ne472e44799ce40e388775cb988d4c492</span> <span class="pre">(&lt;class</span> <span class="pre">'rdflib.graph.Graph'&gt;)&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.URITargetStore.ingest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ingest given graph into teh self.graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.URITargetStore.select_subjects">
+<span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.URITargetStore.select_subjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Select subjects from the target store using a SPARQL query.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.URITargetStore.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.URITargetStore.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify a given subject using a property path to see if this returns triples.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.get_j2rdf_builder">
+<span class="sig-prename descclassname"><span class="pre">pyTravHarv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">get_j2rdf_builder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.get_j2rdf_builder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyTravHarv.TargetStore.is_valid_url">
+<span class="sig-prename descclassname"><span class="pre">pyTravHarv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">is_valid_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TargetStore.is_valid_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pyTravHarv.TravHarvConfigBuilder">
+<span id="pytravharv-travharvconfigbuilder-module"></span><h2>pyTravHarv.TravHarvConfigBuilder module<a class="headerlink" href="#module-pyTravHarv.TravHarvConfigBuilder" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.AssertPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">AssertPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assert_path=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.AssertPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A path to assert.
+This class contains the following:
+- Path_parts: a list of strings
+- max_size: a function to return the len of the list of path_parts
+- get_path_for_depth(): a function that returns a path at a given depth</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.AssertPath.get_max_size">
+<span class="sig-name descname"><span class="pre">get_max_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.AssertPath.get_max_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the max size</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.AssertPath.get_path_for_depth">
+<span class="sig-name descname"><span class="pre">get_path_for_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.AssertPath.get_path_for_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a concatination of the path parts up to a given depth</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.AssertPath.get_path_parts">
+<span class="sig-name descname"><span class="pre">get_path_parts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.AssertPath.get_path_parts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the path parts</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.AssertPathSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">AssertPathSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assert_path_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.AssertPathSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A set/list of assert paths</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.AssertPathSet.get_assert_path_set">
+<span class="sig-name descname"><span class="pre">get_assert_path_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.AssertPathSet.get_assert_path_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the assert path set</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.LiteralSubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">LiteralSubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.LiteralSubjectDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A subject definition that is a list of strings</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.LiteralSubjectDefinition.get_subjects">
+<span class="sig-name descname"><span class="pre">get_subjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.LiteralSubjectDefinition.get_subjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the subjects</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.PrefixSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">PrefixSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix_set</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.PrefixSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A set of prefixes</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.PrefixSet.get_prefix_set">
+<span class="sig-name descname"><span class="pre">get_prefix_set</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.PrefixSet.get_prefix_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the prefix set</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.SPARQLSubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">SPARQLSubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.SPARQLSubjectDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A subject definition that is a SPARQL query</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.SPARQLSubjectDefinition.get_subjects">
+<span class="sig-name descname"><span class="pre">get_subjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.SPARQLSubjectDefinition.get_subjects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the subjects</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.SubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">SubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_definition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.SubjectDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A subject definition. This can be either a LiteralSubjectDefinition or a SPARQLSubjectDefinition
+depending on the type of subjects</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.SubjectDefinition.get_subject_definition">
+<span class="sig-name descname"><span class="pre">get_subject_definition</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.SubjectDefinition.get_subject_definition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the subject definition</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfigBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">configFolder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Builds a configuration object from a given config folder.
+If no folder is given, the current working directory is used as the config folder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_config">
+<span class="sig-name descname"><span class="pre">build_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a config object from a given config_file_name</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_dict">
+<span class="sig-name descname"><span class="pre">build_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a config object from a given config_dict.
+The config_dict should be a dictionary with the following keys:
+- config_file_name: a dictionary with the following keys:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>prefix: a dictionary with prefixes</p></li>
+<li><dl class="simple">
+<dt>assert: a list of asserts</dt><dd><ul>
+<li><p>subjects: a list of subjects or a SPARQL query</p></li>
+<li><p>paths: a list of paths</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>example:
+{</p>
+<blockquote>
+<div><dl>
+<dt>“config_file_name”: {</dt><dd><dl class="simple">
+<dt>“prefix”: {</dt><dd><p>“ex”: “<a class="reference external" href="http://example.org/">http://example.org/</a>”,
+“rdf”: “<a class="reference external" href="http://www.w3.org/1999/02/22-rdf-syntax">http://www.w3.org/1999/02/22-rdf-syntax</a>-ns#”,</p>
+</dd>
+</dl>
+<p>},
+“assert”: [</p>
+<blockquote>
+<div><dl>
+<dt>{</dt><dd><dl class="simple">
+<dt>“subjects”: {</dt><dd><p>“literal”: [”<a class="reference external" href="http://example.org/subject1">http://example.org/subject1</a>”, “<a class="reference external" href="http://example.org/subject2">http://example.org/subject2</a>”]</p>
+</dd>
+</dl>
+<p>},
+“paths”: [“/rdf:type”, “/ex:property”]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>]</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_folder">
+<span class="sig-name descname"><span class="pre">build_from_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a config object from the folder given, all yml files in the folder will be used</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.TravHarvTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">TravHarvTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.TravHarvTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A task for the travharv
+This task contains the following:
+- SubjectDefinition class: a class that defines the subjects to be harvested
+- AssertPathSet class: a class that defines the paths to be asserted</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.TravHarvConfigBuilder.TravHarvTask.get_task">
+<span class="sig-name descname"><span class="pre">get_task</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.TravHarvConfigBuilder.TravHarvTask.get_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the task</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="pytravharv-travharvexecuter-module">
+<h2>pyTravHarv.TravHarvExecuter module<a class="headerlink" href="#pytravharv-travharvexecuter-module" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-pyTravHarv.WebAccess">
+<span id="pytravharv-webaccess-module"></span><h2>pyTravHarv.WebAccess module<a class="headerlink" href="#module-pyTravHarv.WebAccess" title="Permalink to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.MyHTMLParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.WebAccess.</span></span><span class="sig-name descname"><span class="pre">MyHTMLParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.MyHTMLParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HTMLParser</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.MyHTMLParser.handle_data">
+<span class="sig-name descname"><span class="pre">handle_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.MyHTMLParser.handle_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.MyHTMLParser.handle_endtag">
+<span class="sig-name descname"><span class="pre">handle_endtag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.MyHTMLParser.handle_endtag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.MyHTMLParser.handle_starttag">
+<span class="sig-name descname"><span class="pre">handle_starttag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.MyHTMLParser.handle_starttag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.WebAccess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyTravHarv.WebAccess.</span></span><span class="sig-name descname"><span class="pre">WebAccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.WebAccess" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class represents a web access object.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.WebAccess.harvest">
+<span class="sig-name descname"><span class="pre">harvest</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.WebAccess.harvest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyTravHarv.WebAccess.download_uri_to_store">
+<span class="sig-prename descclassname"><span class="pre">pyTravHarv.WebAccess.</span></span><span class="sig-name descname"><span class="pre">download_uri_to_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json-ld'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyTravHarv.WebAccess.download_uri_to_store" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pyTravHarv.logger">
+<span id="pytravharv-logger-module"></span><h2>pyTravHarv.logger module<a class="headerlink" href="#module-pyTravHarv.logger" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="module-pyTravHarv">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyTravHarv" title="Permalink to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyTravHarv</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Cedric_Decruw.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 7.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/pyTravHarv.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

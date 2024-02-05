@@ -1,7 +1,7 @@
 TEST_PATH = ./tests/
 FLAKE8_EXCLUDE = venv,.venv,.eggs,.tox,.git,__pycache__,*.pyc
 PROJECT = pyTravHarv
-AUTHOR = Cedric Decruw
+AUTHOR = Cedric_Decruw
 
 clean:
 	@find . -name '*.pyc' -exec rm --force {} +
