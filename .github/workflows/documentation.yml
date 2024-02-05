@@ -27,9 +27,9 @@ jobs:
         run: |
             make init-dev
       
-      - name: Secnd try install
+      - name: list all files and directories in tree format
         run: |
-          poetry install
+          tree -a -L 2
       
       - name: Make docs
         run: |
