@@ -1,6 +1,6 @@
 TEST_PATH = ./tests/
 FLAKE8_EXCLUDE = venv,.venv,.eggs,.tox,.git,__pycache__,*.pyc
-PROJECT = pytravharv
+PROJECT = pyTravHarv
 AUTHOR = Cedric_Decruw
 
 clean:
