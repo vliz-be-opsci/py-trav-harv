@@ -3,9 +3,9 @@
 import argparse
 import os
 
-from pyTravHarv.TargetStore import TargetStore
-from pyTravHarv.TravHarvConfigBuilder import TravHarvConfigBuilder
-from pyTravHarv.TravHarvExecuter import TravHarvExecutor
+from pytravharv.TargetStore import TargetStore
+from pytravharv.TravHarvConfigBuilder import TravHarvConfigBuilder
+from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 import logging
 import logging.config

@@ -3,9 +3,9 @@ import rdflib
 import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from SPARQLWrapper import JSON, SPARQLWrapper
-from pyTravHarv.TargetStore import TargetStore
-from pyTravHarv.TravHarvConfigBuilder import AssertPath, PrefixSet
-from pyTravHarv.WebAccess import WebAccess
+from pytravharv.TargetStore import TargetStore
+from pytravharv.TravHarvConfigBuilder import AssertPath, PrefixSet
+from pytravharv.WebAccess import WebAccess
 import logging
 
 log = logging.getLogger("pyTravHarv")

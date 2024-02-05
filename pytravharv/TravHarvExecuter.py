@@ -1,6 +1,6 @@
-from pyTravHarv.SubjPropPathAssetion import SubjPropPathAssertion
-from pyTravHarv.TargetStore import TargetStore
-from pyTravHarv.TravHarvConfigBuilder import (
+from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
+from pytravharv.TargetStore import TargetStore
+from pytravharv.TravHarvConfigBuilder import (
     LiteralSubjectDefinition,
     PrefixSet,
     SPARQLSubjectDefinition,
