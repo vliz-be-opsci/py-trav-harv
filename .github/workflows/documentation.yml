@@ -26,6 +26,11 @@ jobs:
       - name: Run make init-dev
         run: |
             make init-dev
+      
+      - name: Secnd try install
+        run: |
+          poetry install
+      
       - name: Make docs
         run: |
           cp ./conf.py ./docs/source/conf.py
