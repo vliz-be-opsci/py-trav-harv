@@ -44,7 +44,7 @@ class SubjPropPathAssertion:
             return
         self.assertion_path = assertion_path
         self.current_depth = 0
-        self.target_store = target_store.get_target_store()
+        self.target_store = target_store()
         self.previous_bounce_depth = 0
         self.max_depth = self.assertion_path.get_max_size()
         self.prefix_set = prefix_set

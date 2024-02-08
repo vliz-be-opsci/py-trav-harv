@@ -14,7 +14,7 @@ def test_get_target_store():
     target_store = TargetStore(
         store_path
     )  # This test gets halted by validators for some reason
-    assert target_store.get_target_store() == target_store.target_store
+    assert target_store() == target_store.target_store
 
 
 def test_detect_type_uri_target_store():
@@ -46,7 +46,7 @@ def test_ammount_triples_graph():
 
 def test_get_target_store():
     target_store = TargetStore()
-    assert target_store.get_target_store() == target_store.target_store
+    assert target_store() == target_store.target_store
 
 
 def test_detect_type_uri_target_store():

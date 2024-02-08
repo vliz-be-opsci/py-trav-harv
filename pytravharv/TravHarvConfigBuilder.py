@@ -94,7 +94,7 @@ class SPARQLSubjectDefinition(SubjectDefinition):
 
     def _get_subjects(self, SPARQL=str, targetstore=TargetStore):
         log.debug("getting subjects")
-        return targetstore.get_target_store().select_subjects(SPARQL)
+        return targetstore().select_subjects(SPARQL)
 
 
 class AssertPathSet:

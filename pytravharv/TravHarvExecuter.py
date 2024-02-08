@@ -57,30 +57,3 @@ class TravHarvExecutor:
                         self.prefix_set,
                         self.config_filename,
                     )
-
-    def _define_subjects(self, subject_definition):
-        """
-        Define subjects to assert paths for.
-        """
-        log.debug("Defining subjects to assert paths for")
-        # Implement method to define subjects to assert paths for
-        if (
-            type(subject_definition.get_subject_definition())
-            == LiteralSubjectDefinition
-        ):
-            log.debug("LiteralSubjectDefinition")
-            # assert all paths
-            return subject_definition.get_subject_definition().get_subjects()
-        if (
-            type(subject_definition.get_subject_definition())
-            == SPARQLSubjectDefinition
-        ):
-            log.debug("SPARQLSubjectDefinition")
-            log.debug(
-                "SPARQL query: {}".format(
-                    subject_definition.get_subject_definition().get_subjects()
-                )
-            )
-            return self.target_store.target_store.select_subjects(
-                subject_definition.get_subject_definition().get_subjects()
-            )

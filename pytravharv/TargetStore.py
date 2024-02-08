@@ -3,6 +3,7 @@ import re
 import sys
 import time
 from abc import ABC, abstractmethod
+from typing import Any
 from urllib.parse import (  # backup for validators since this cannot handle localhost
     quote,
     urlparse,
@@ -353,6 +354,9 @@ class TargetStore:
     def __repr__(self) -> str:
         return "TargetStore({})".format(self.target_store)
 
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        return self.target_store
+
     def get_target_store(self):
         return self.target_store
 
@@ -374,13 +378,6 @@ class TargetStore:
         log.debug("TargetStore: {}".format(target_store))
         log.error("Target store is not a URI or a filepath")
         sys.exit(1)
-
-    def execute(self):
-        """
-        Execute a SPARQL query on the target store
-        """
-
-        log.debug("Executing query on target store")
 
 
 def is_valid_url(url):
