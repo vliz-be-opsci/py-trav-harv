@@ -30,10 +30,11 @@ init-docs: startup
 
 docs:
 	if ! [ -d "./docs" ]; then poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author $(AUTHOR) docs; fi
-	cp conf.py ./docs/source/conf.py
+	cp ./pre_docs/* ./docs/source/
 	sleep 1
 	poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT)
 	poetry run sphinx-build -b html ./docs/source ./docs/build/html
+	cp ./docs/source/custom.css ./docs/build/html/_static/custom.css
 
 test:
 	poetry run pytest ${TEST_PATH}
