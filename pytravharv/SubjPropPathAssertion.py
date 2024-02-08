@@ -157,7 +157,7 @@ class SubjPropPathAssertion:
             "property_trajectory": self.assertion_path.get_path_for_depth(
                 depth
             ),
-            "prefixes": self.prefix_set.get_prefix_set(),
+            "prefixes": self.prefix_set,
         }
         query = J2RDF.build_syntax(template, **vars)
         log.debug("SPARQL query: {}".format(query))

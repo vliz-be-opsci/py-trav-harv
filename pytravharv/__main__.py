@@ -4,7 +4,10 @@ import argparse
 import os
 
 from pytravharv.TargetStore import TargetStore
-from pytravharv.TravHarvConfigBuilder import TravHarvConfigBuilder
+from pytravharv.TravHarvConfigBuilder import (
+    TravHarvConfigBuilder,
+    TravHarvConfig,
+)
 from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 import logging
@@ -87,32 +90,40 @@ class MainClass:
         log.debug(self.args)
 
         if self.args.name is None:
-            self.travharv_config_builder.build_from_folder()
+            self.travHarvConfigList = (
+                self.travharv_config_builder.build_from_folder()
+            )
+
+            for travHarvConfig in self.travHarvConfigList:
+                log.info("Config object: {}".format(travHarvConfig()))
+                # from travHarvConfig we need , prefix_set, tasks, config_file
+                prefix_set = self.travHarvConfig.PrefixSet
+                config_name = self.travHarvConfig.ConfigName
+                tasks = self.travHarvConfig.tasks
+
+                self.travharvexecutor = TravHarvExecutor(
+                    config_name, prefix_set, tasks, self.target_store
+                )
+
+                self.travharvexecutor.assert_all_paths()
+
         else:
-            self.travharv_config_builder.build_from_config(self.args.name)
-
-        self.target_store = TargetStore(self.args.target_store)
-
-        log.info(
-            "Config object: {}".format(
-                self.travharv_config_builder.travHarvConfig
+            self.travHarvConfig = (
+                self.travharv_config_builder.build_from_config(self.args.name)
             )
-        )
 
-        for (
-            config_file,
-            config,
-        ) in self.travharv_config_builder.travHarvConfig.items():
-            log.info("Config file: {}".format(config_file))
-            log.info("Config: {}".format(config))
+            log.info("Config object: {}".format(self.travHarvConfig()))
+
+            # from travHarvConfig we need , prefix_set, tasks, config_file
+            prefix_set = self.travHarvConfig.PrefixSet
+            config_name = self.travHarvConfig.ConfigName
+            tasks = self.travHarvConfig.tasks
+
             self.travharvexecutor = TravHarvExecutor(
-                config_file,
-                config["prefix_set"],
-                config["tasks"],
-                self.target_store,
+                config_name, prefix_set, tasks, self.target_store
             )
 
-        self.travharvexecutor.assert_all_paths()
+            self.travharvexecutor.assert_all_paths()
 
 
 def main():
