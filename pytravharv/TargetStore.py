@@ -266,6 +266,11 @@ class MemoryTargetStore(TargetStoreAccess):
         # Implement method to select subjects from memory target store
         results = self.graph.query(sparql)
         log.debug("results: {}".format(results))
+        # explode the results to get the indiv subjects
+        results_dict = []
+        for result in results:
+            results_dict.append(result)
+        log.debug("results_dict: {}".format(results_dict))
         return results
 
     def verify(self, sparql=str):

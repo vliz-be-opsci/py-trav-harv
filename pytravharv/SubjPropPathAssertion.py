@@ -4,7 +4,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from SPARQLWrapper import JSON, SPARQLWrapper
 from pytravharv.TargetStore import TargetStore
-from pytravharv.TravHarvConfigBuilder import AssertPath, PrefixSet
+from pytravharv.TravHarvConfigBuilder import AssertPath
 from pytravharv.WebAccess import WebAccess
 import logging
 
@@ -34,7 +34,7 @@ class SubjPropPathAssertion:
         subject: str,
         assertion_path: AssertPath,
         target_store: TargetStore,
-        prefix_set: PrefixSet,
+        prefix_set,
         config_filename: str,
     ):
         self.subject = self._subject_str_check(subject)

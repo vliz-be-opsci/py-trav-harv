@@ -11,24 +11,6 @@ from abc import ABC, abstractmethod
 log = logging.getLogger("pyTravHarv")
 
 
-class PrefixSet:
-    """
-    A set of prefixes
-    """
-
-    def __init__(self, prefix_set):
-        """
-        Initialise the prefix set
-        """
-        self.prefix_set = prefix_set
-
-    def get_prefix_set(self):
-        """
-        Get the prefix set
-        """
-        return self.prefix_set
-
-
 class TravHarvTask:
     """
     A task for the travharv
@@ -56,7 +38,7 @@ class SubjectDefinition(ABC):
         pass
 
 
-class LiteralSubjectDefinition:
+class LiteralSubjectDefinition(SubjectDefinition):
     """
     A subject definition that is a list of strings
     """
@@ -74,22 +56,28 @@ class LiteralSubjectDefinition:
         return self.subjects
 
 
-class SPARQLSubjectDefinition:
+class SPARQLSubjectDefinition(SubjectDefinition):
     """
     A subject definition that is a SPARQL query
     """
 
-    def __init__(self, subjects):
+    def __init__(self, SPARQL=str, targetstore=TargetStore):
         """
         Initialise the SPARQL subject definition
         """
-        self.subjects = subjects
+        log.debug("init SPARQL subjects")
+        self.subjects = self._get_subjects(SPARQL, targetstore)
+        log.debug(self.subjects)
 
-    def get_subjects(self):
+    def listSubjects(self) -> list[str]:
         """
         Get the subjects
         """
         return self.subjects
+
+    def _get_subjects(self, SPARQL=str, targetstore=TargetStore):
+        log.debug("getting subjects")
+        return targetstore.get_target_store().select_subjects(SPARQL)
 
 
 class AssertPathSet:
@@ -189,6 +177,7 @@ class TravHarvConfigBuilder:
                 "Config folder is None, using current working directory as config folder"
             )
         self.config_files_folder = configFolder
+        self.target_store = target_store
 
     def build_from_config(self, config_name):
         config_file = os.path.join(self.config_files_folder, config_name)
@@ -256,7 +245,7 @@ class TravHarvConfigBuilder:
         # Add more assertions as needed...
 
         travharvconfig = {
-            "prefix_set": PrefixSet(dict_object["prefix"]),
+            "PrefixSet": dict_object["prefix"],
             "tasks": [
                 TravHarvTask(
                     {
@@ -266,7 +255,8 @@ class TravHarvConfigBuilder:
                             )
                             if "literal" in assert_task["subjects"]
                             else SPARQLSubjectDefinition(
-                                assert_task["subjects"]["SPARQL"]
+                                assert_task["subjects"]["SPARQL"],
+                                self.target_store,
                             )
                         ),
                         "assert_path_set": AssertPathSet(

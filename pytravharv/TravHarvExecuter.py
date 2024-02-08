@@ -2,7 +2,6 @@ from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
 from pytravharv.TargetStore import TargetStore
 from pytravharv.TravHarvConfigBuilder import (
     LiteralSubjectDefinition,
-    PrefixSet,
     SPARQLSubjectDefinition,
 )
 import logging
@@ -19,7 +18,7 @@ class TravHarvExecutor:
     def __init__(
         self,
         config_filename: str,
-        prefix_set: PrefixSet,
+        prefix_set,
         tasks: list,
         target_store: TargetStore,
     ):
