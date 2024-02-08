@@ -67,7 +67,13 @@ def get_arg_parser():
     return parser
 
 
-class MainClass:
+class pyTravHarv:
+    """
+    A class to represent the main class.
+
+    :param args: argparse.Namespace
+    """
+
     def __init__(self, args):
         self.args = args
 
@@ -128,7 +134,7 @@ class MainClass:
 
 def main():
     args = get_arg_parser().parse_args()
-    main_class = MainClass(args)
+    main_class = pyTravHarv(args)
     main_class.run()
 
 

@@ -36,6 +36,19 @@ class SubjPropPathAssertion:
         prefix_set,
         config_filename: str,
     ):
+        """
+        Construct a SubjPropPathAssertion object.
+        Automatically asserts a property path for a given subject.
+        Puts the results in a TargetStore.
+
+        :param subject: str
+        :param assertion_path: AssertPath
+        :param target_store: TargetStore
+        :param prefix_set: dict
+        :param config_filename: str
+
+        """
+
         self.subject = self._subject_str_check(subject)
         if not self.subject:
             log.warning(
@@ -87,6 +100,7 @@ class SubjPropPathAssertion:
     def assert_path(self):
         """
         Assert a property path for a given subject.
+        Put the results in a TargetStore.
         """
         log.debug("Asserting a property path for a given subject")
         log.debug("Subject: {}".format(self.subject))

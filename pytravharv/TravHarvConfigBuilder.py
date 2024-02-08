@@ -23,6 +23,9 @@ class TravHarvTask:
     def __init__(self, task):
         """
         Initialise the task
+
+        :param task: The task.
+        :type task: dict
         """
         self.task = task
 
@@ -56,6 +59,9 @@ class LiteralSubjectDefinition(SubjectDefinition):
     def __init__(self, subjects):
         """
         Initialise the literal subject definition
+
+        :param subjects: The subjects.
+        :type subjects: list[str]
         """
         self.subjects = subjects
 
@@ -66,6 +72,9 @@ class LiteralSubjectDefinition(SubjectDefinition):
     def listSubjects(self) -> list[str]:
         """
         Get the subjects
+
+        :return: list[str]
+        :rtype: list[str]
         """
         return self.subjects
 
@@ -78,6 +87,11 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     def __init__(self, SPARQL=str, targetstore=TargetStore):
         """
         Initialise the SPARQL subject definition
+
+        :param SPARQL: The SPARQL query.
+        :type SPARQL: str
+        :param targetstore: The target store.
+        :type targetstore: TargetStore
         """
         log.debug("init SPARQL subjects")
         self.subjects = self._get_subjects(SPARQL, targetstore)
@@ -89,6 +103,9 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     def listSubjects(self) -> list[str]:
         """
         Get the subjects
+
+        :return: list[str]
+        :rtype: list[str]
         """
         return self.subjects
 
@@ -105,6 +122,9 @@ class AssertPathSet:
     def __init__(self, assert_path_set):
         """
         Initialise the assert path set
+
+        :param assert_path_set: The set of assert paths.
+        :type assert_path_set: list[AssertPath]
         """
         self.assert_path_set = assert_path_set
 
@@ -127,6 +147,9 @@ class AssertPath:
     def __init__(self, assert_path=str):
         """
         Initialise the assert path
+
+        :param assert_path: The path to assert.
+        :type assert_path: str
         """
         self.path_parts = self._make_path_parts(assert_path)
 
@@ -136,18 +159,27 @@ class AssertPath:
     def get_path_parts(self):
         """
         Get the path parts
+
+        return: list[str]
+        rtype: list[str]
         """
         return self.path_parts
 
     def get_max_size(self):
         """
         Get the max size
+
+        return: int
+        rtype: int
         """
         return len(self.path_parts)
 
     def get_path_for_depth(self, depth):
         """
         Get a concatination of the path parts up to a given depth
+
+        return: str
+        rtype: str
         """
         return "/".join(self.path_parts[:depth])
 
@@ -163,20 +195,21 @@ class AssertPath:
 
 class TravHarvConfig:
     """
-    A configuration for the travharv
+    Configuration for the travharv
     This class contains the following:
-    - PrefixSet : a dictionary with prefixes
-    - Subjectdefinition: either a LiteralSubjectDefinition or a SPARQLSubjectDefinition
-    - AssertPathSet: a list of AssertPath objects
-        - AssertPath: a dictionary with the following keys:
-            - Path_parts: a list of strings
-            - max_size: a function to return the len of the list of path_parts
-            - get_path_at_depth(): a function that returns a path at a given depth
+        - PrefixSet: a dictionary of prefixes
+        - tasks: a list of tasks
+        - ConfigName: a string
     """
 
     def __init__(self, travharv_config):
         """
-        Initialise the travharv config
+        Initialise the travharv config.
+
+        :param travharv_config: The configuration for the travharv config.
+        :type travharv_config: dict
+        :return: A TravHarvConfig object.
+        :rtype: TravHarvConfig
         """
         self.travharv_config = travharv_config
 
@@ -201,6 +234,16 @@ class TravHarvConfig:
 
 class TravHarvConfigBuilder:
     def __init__(self, target_store: TargetStore, configFolder: str = None):
+        """
+        Initialize the TravHarvConfigBuilder.
+
+        :param target_store: The target store for the TravHarvConfigBuilder.
+        :type target_store: TargetStore
+        :param configFolder: The folder containing the config files.
+        :type configFolder: str
+        :return: A TravHarvConfigBuilder object.
+        :rtype: TravHarvConfigBuilder
+        """
         if configFolder is None:
             configFolder = os.path.join(os.getcwd(), "config")
             log.warning(
@@ -210,11 +253,25 @@ class TravHarvConfigBuilder:
         self.target_store = target_store
 
     def build_from_config(self, config_name):
+        """
+        Build a TravHarvConfig from a given config file.
+
+        :param config_name: The name of the config file.
+        :type config_name: str
+        :return: A TravHarvConfig object.
+        :rtype: TravHarvConfig
+        """
         config_file = os.path.join(self.config_files_folder, config_name)
         dict_object = self._load_yml_to_dict(config_file)
         return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
 
     def build_from_folder(self):
+        """
+        Build a list of TravHarvConfig objects from a given folder.
+
+        :return: A list of TravHarvConfig objects.
+        :rtype: list[TravHarvConfig]
+        """
         config_files = self._files_folder()
         configs = []
         for config_file in config_files:

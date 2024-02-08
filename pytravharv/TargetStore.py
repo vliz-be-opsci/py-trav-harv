@@ -63,6 +63,9 @@ class URITargetStore(TargetStoreAccess):
     """
     A class to represent a target store to harvest from.
     The given target_store string is a URI.
+
+    :param target_store: The target store to harvest from.
+    :type target_store: str
     """
 
     def __init__(self, target_store):
@@ -71,7 +74,14 @@ class URITargetStore(TargetStoreAccess):
         self.GDB = self._detect_type_remote_store()
 
     def select_subjects(self, sparql=str):
-        """Select subjects from the target store using a SPARQL query."""
+        """Select subjects from the target store using a SPARQL query.
+
+        :param sparql: The SPARQL query to use.
+        :type sparql: str
+
+        :return: The result of the SPARQL query.
+        :rtype: SPARQLResult
+        """
         # Implement method to select subjects from URI target store
         # query the remote store self.GBD
         # log.debug("GDB: {}".format(self.GDB))
@@ -94,6 +104,16 @@ class URITargetStore(TargetStoreAccess):
         return result
 
     def verify(self, query=str):
+        """
+        Verify a given subject using a property path to see if this returns triples.
+
+        :param query: The query to use.
+        :type query: str
+
+        :return: True if the query returns triples, False otherwise.
+        :rtype: bool
+        """
+
         # Implement method to verify URI target store
         # query the remote store self.GBD
         # log.debug("GDB: {}".format(self.GDB))
@@ -107,6 +127,15 @@ class URITargetStore(TargetStoreAccess):
         return False
 
     def ingest(self, graph=rdflib.Graph(), context: str = None):
+        """
+        Ingest given graph into the remote store.
+
+        :param graph: The graph to ingest.
+        :type graph: Graph
+        :param context: The context to ingest the graph into.
+        :type context: str
+        """
+
         # Implement method to ingest data into URI target store
         # ingest the graph into the remote store self.GBD
         log.debug("ingest graph: {}".format(graph))
@@ -248,6 +277,9 @@ class MemoryTargetStore(TargetStoreAccess):
     """
     A class to represent a target store to harvest from.
     The given target_store string is a pointer to a triple store in memory.
+
+    :param target_store: The target store to harvest from.
+    :type target_store: str
     """
 
     def __init__(self, target_store):
@@ -264,6 +296,14 @@ class MemoryTargetStore(TargetStoreAccess):
         )
 
     def select_subjects(self, sparql=str):
+        """Select subjects from the target store using a SPARQL query.
+
+        :param sparql: The SPARQL query to use.
+        :type sparql: str
+
+        :return: The result of the SPARQL query.
+        :rtype: SPARQLResult
+        """
         # Implement method to select subjects from memory target store
         results = self.graph.query(sparql)
         log.debug("results: {}".format(results))
@@ -275,6 +315,15 @@ class MemoryTargetStore(TargetStoreAccess):
         return results
 
     def verify(self, sparql=str):
+        """
+        Verify a given subject using a property path to see if this returns triples.
+
+        :param query: The query to use.
+        :type query: str
+
+        :return: True if the query returns triples, False otherwise.
+        :rtype: bool
+        """
         # Implement method to verify for a given sparql query if there are any triples that return
         # Perform query in graph
         if len(self.graph.query(sparql)) > 0:
@@ -282,6 +331,14 @@ class MemoryTargetStore(TargetStoreAccess):
         return False
 
     def ingest(self, graph=rdflib.Graph(), context: str = None):
+        """
+        Ingest given graph into the remote store.
+
+        :param graph: The graph to ingest.
+        :type graph: Graph
+        :param context: The context to ingest the graph into.
+        :type context: str
+        """
         # Implement method to ingest data into memory target store
         # combine graphs
         self.graph = self.graph + graph
@@ -346,6 +403,13 @@ class TargetStore:
     """
     A class to represent a target store to harvest from.
     The given target_store string is either a URI or a pointer to a triple store in memory.
+
+    :param target_store: The target store to harvest from.
+    :type target_store: str
+    :raises ValueError: If the target store is not a URI or a filepath.
+    :raises SystemExit: If the target store is not a URI or a filepath.
+    :return: The target store to harvest from.
+    :rtype: TargetStore
     """
 
     def __init__(self, target_store=str):
@@ -365,14 +429,11 @@ class TargetStore:
         Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore
         """
 
-        if validators.url(target_store):
-            return URITargetStore(target_store)
-
         if os.path.isfile(target_store):
             return MemoryTargetStore(target_store)
 
         # Implement method to detect type of target store
-        if is_valid_url(target_store):
+        if _is_valid_url(target_store):
             return URITargetStore(target_store)
 
         log.debug("TargetStore: {}".format(target_store))
@@ -380,9 +441,11 @@ class TargetStore:
         sys.exit(1)
 
 
-def is_valid_url(url):
+def _is_valid_url(url):
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc])
     except ValueError:
+        if validators.url(url):
+            return True
         return False

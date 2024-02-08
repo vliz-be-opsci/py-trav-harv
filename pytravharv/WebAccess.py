@@ -43,12 +43,20 @@ class MyHTMLParser(HTMLParser):
 
 
 def WebAccess(url):
-    graph = Graph()
-    download_uri_to_store(url, graph)
-    return graph
+    triplestore = Graph()
+    download_uri_to_store(url, triplestore)
+    return triplestore
 
 
-def download_uri_to_store(uri, store, format="json-ld"):
+def download_uri_to_store(uri, triplestore, format="json-ld"):
+    """
+    Download the uri to the triplestore
+
+    :param uri: str
+    :param triplestore: rdflib.Graph
+    :param format: str
+    """
+
     # sleep for 1 second to avoid overloading any servers => TODO make this
     # configurable and add a warning + smart retry
     total_retry = 8
@@ -71,7 +79,7 @@ def download_uri_to_store(uri, store, format="json-ld"):
         or "text/turtle" in r.headers["Content-Type"]
         or "application/json" in r.headers["Content-Type"]
     ):
-        # parse the content directly into the store
+        # parse the content directly into the triplestore
         if (
             "application/ld+json" in r.headers["Content-Type"]
             or "application/json" in r.headers["Content-Type"]
@@ -79,8 +87,8 @@ def download_uri_to_store(uri, store, format="json-ld"):
             format = "json-ld"
         elif "text/turtle" in r.headers["Content-Type"]:
             format = "turtle"
-        store.parse(data=r.text, format=format, publicID=uri)
-        log.info(f"content of {uri} added to the store")
+        triplestore.parse(data=r.text, format=format, publicID=uri)
+        log.info(f"content of {uri} added to the triplestore")
     else:
         # perform a check in the html to see if there is any link to fair signposting
         # perform request to uri with accept header text/html
@@ -88,11 +96,11 @@ def download_uri_to_store(uri, store, format="json-ld"):
         r = session.get(uri, headers=headers)
         if r.status_code == 200 and "text/html" in r.headers["Content-Type"]:
             # parse the html and check if there is any link to fair signposting
-            # if there is then download it to the store
+            # if there is then download it to the triplestore
             log.info(f"content of {uri} is html")
             # go over the html file and find all the links in the head section
             # and check if there is any links with rel="describedby" anf if so
-            # then follow it and download it to the store
+            # then follow it and download it to the triplestore
 
             parser = MyHTMLParser()
             parser.feed(r.text)
@@ -104,23 +112,23 @@ def download_uri_to_store(uri, store, format="json-ld"):
                 else:
                     # Resolve the relative URL to an absolute URL
                     absolute_url = urljoin(uri, link)
-                # download the uri to the store
-                download_uri_to_store(absolute_url, store)
+                # download the uri to the triplestore
+                download_uri_to_store(absolute_url, triplestore)
             for script in parser.scripts:
                 # parse the script and check if it is json-ld or turtle
-                # if so then add it to the store
+                # if so then add it to the triplestore
                 log.info(f"script: {script}")
                 # { 'application/ld+json': '...'} | {'text/turtle': '...'}
                 if "application/ld+json" in script:
                     log.info(f"found script with type application/ld+json")
-                    store.parse(
+                    triplestore.parse(
                         data=script["application/ld+json"],
                         format="json-ld",
                         publicID=uri,
                     )
                 elif "text/turtle" in script:
                     log.info(f"found script with type text/turtle")
-                    store.parse(
+                    triplestore.parse(
                         data=script["text/turtle"],
                         format="turtle",
                         publicID=uri,

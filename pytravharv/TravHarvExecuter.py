@@ -13,6 +13,12 @@ class TravHarvExecutor:
     """
     A class to represent a TravHarvExecutor.
     This class will assert all paths for all subjects given for each task per config.
+
+    :param config_filename: str
+    :param prefix_set: dict
+    :param tasks: list
+    :param target_store: TargetStore
+
     """
 
     def __init__(
