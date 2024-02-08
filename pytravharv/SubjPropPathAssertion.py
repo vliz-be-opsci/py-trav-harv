@@ -2,7 +2,6 @@ import os
 import rdflib
 import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
-from SPARQLWrapper import JSON, SPARQLWrapper
 from pytravharv.TargetStore import TargetStore
 from pytravharv.TravHarvConfigBuilder import AssertPath
 from pytravharv.WebAccess import WebAccess
@@ -112,9 +111,7 @@ class SubjPropPathAssertion:
         if self.target_store.verify(SPARQLQuery):
             self._harvest_and_surface()
             return
-        self.target_store.ingest(
-            WebAccess(self.subject).harvest(), self.config_filename
-        )
+        self.target_store.ingest(WebAccess(self.subject), self.config_filename)
 
         # Implement method to assert a property path for a given subject at a given depth
 

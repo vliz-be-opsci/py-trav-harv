@@ -42,16 +42,10 @@ class MyHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-class WebAccess:
-    """This class represents a web access object."""
-
-    def __init__(self, url):
-        self.url = url
-        self.graph = Graph()
-
-    def harvest(self):
-        download_uri_to_store(self.url, self.graph)
-        return self.graph
+def WebAccess(url):
+    graph = Graph()
+    download_uri_to_store(url, graph)
+    return graph
 
 
 def download_uri_to_store(uri, store, format="json-ld"):
