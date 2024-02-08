@@ -4,6 +4,9 @@ import os
 import sys
 import yaml
 import logging
+from pytravharv.TargetStore import TargetStore
+from rdflib.plugins.sparql.parser import parseQuery
+from abc import ABC, abstractmethod
 
 log = logging.getLogger("pyTravHarv")
 
@@ -47,23 +50,10 @@ class TravHarvTask:
         return self.task
 
 
-class SubjectDefinition:
-    """
-    A subject definition. This can be either a LiteralSubjectDefinition or a SPARQLSubjectDefinition
-    depending on the type of subjects
-    """
-
-    def __init__(self, subject_definition):
-        """
-        Initialise the subject definition
-        """
-        self.subject_definition = subject_definition
-
-    def get_subject_definition(self):
-        """
-        Get the subject definition
-        """
-        return self.subject_definition
+class SubjectDefinition(ABC):
+    @abstractmethod
+    def listSubjects(self) -> list[str]:
+        pass
 
 
 class LiteralSubjectDefinition:
@@ -77,7 +67,7 @@ class LiteralSubjectDefinition:
         """
         self.subjects = subjects
 
-    def get_subjects(self):
+    def listSubjects(self) -> list[str]:
         """
         Get the subjects
         """
@@ -163,13 +153,141 @@ class AssertPath:
         return re.findall(REGEXP, assert_path)
 
 
+class TravHarvConfig:
+    """
+    A configuration for the travharv
+    This class contains the following:
+    - PrefixSet : a dictionary with prefixes
+    - Subjectdefinition: either a LiteralSubjectDefinition or a SPARQLSubjectDefinition
+    - AssertPathSet: a list of AssertPath objects
+        - AssertPath: a dictionary with the following keys:
+            - Path_parts: a list of strings
+            - max_size: a function to return the len of the list of path_parts
+            - get_path_at_depth(): a function that returns a path at a given depth
+    """
+
+    def __init__(self, travharv_config):
+        """
+        Initialise the travharv config
+        """
+        self.travharv_config = travharv_config
+
+    def get_travharv_config(self):
+        """
+        Get the travharv config
+        """
+        return self.travharv_config
+
+    # other methods here
+
+
 class TravHarvConfigBuilder:
+    def __init__(self, target_store: TargetStore, configFolder: str = None):
+        if configFolder is None:
+            configFolder = os.path.join(os.getcwd(), "config")
+            log.warning(
+                "Config folder is None, using current working directory as config folder"
+            )
+        self.config_files_folder = configFolder
+
+    def build_from_config(self, config_name):
+        config_file = os.path.join(self.config_files_folder, config_name)
+        dict_object = self._load_yml_to_dict(config_file)
+        return self._makeTravHarvConfigPartFromDict(dict_object)
+
+    def build_from_folder(self):
+        config_files = self._files_folder()
+        configs = []
+        for config_file in config_files:
+            dict_object = self._load_yml_to_dict(config_file)
+            configs.append(self._makeTravHarvConfigPartFromDict(dict_object))
+        return configs
+
+    def _assert_subjects(self, subjects):
+        assert isinstance(subjects, dict), "Subjects must be a dictionary"
+        assert (
+            "literal" in subjects or "SPARQL" in subjects
+        ), "Subjects must contain 'literal' or 'SPARQL'"
+        for key, value in subjects.items():
+            if key == "literal":
+                assert isinstance(
+                    value, list
+                ), "Subjects of type literal must be a list of strings"
+                for subject in value:
+                    assert isinstance(
+                        subject, str
+                    ), "Subjects of type literal must be a list of strings"
+            if key == "SPARQL":
+                assert isinstance(
+                    value, str
+                ), "Subjects of type SPARQL must be a string"
+                self._assert_valid_sparql_syntax(value)
+        # Add more assertions as needed...
+
+    def _assert_valid_sparql_syntax(self, sparql_query):
+        parseQuery(sparql_query)
+        assert isinstance(sparql_query, str), "SPARQL query must be a string"
+        # Add more assertions as needed...
+
+    def _files_folder(self):
+        return [
+            f
+            for f in os.listdir(self.config_files_folder)
+            if f.endswith((".yml", ".yaml"))
+        ]
+
+    def _load_yml_to_dict(self, file):
+        with open(file, "r") as stream:
+            try:
+                return yaml.safe_load(stream)
+            except yaml.YAMLError as exc:
+                print(exc)
+
+    def _makeTravHarvConfigPartFromDict(self, dict_object):
+
+        # make it so that the assertions are always checked for lowercase
+        dict_object = {k.lower(): v for k, v in dict_object.items()}
+        assert (
+            "snooze-till-graph-age-minutes" in dict_object
+        ), "snooze-till-graph-age-minutes must be defined"
+        assert "assert" in dict_object, "assert must be defined"
+        for assert_task in dict_object["assert"]:
+            self._assert_subjects(assert_task["subjects"])
+        # Add more assertions as needed...
+
+        travharvconfig = {
+            "prefix_set": PrefixSet(dict_object["prefix"]),
+            "tasks": [
+                TravHarvTask(
+                    {
+                        "subject_definition": (
+                            LiteralSubjectDefinition(
+                                assert_task["subjects"]["literal"]
+                            )
+                            if "literal" in assert_task["subjects"]
+                            else SPARQLSubjectDefinition(
+                                assert_task["subjects"]["SPARQL"]
+                            )
+                        ),
+                        "assert_path_set": AssertPathSet(
+                            [AssertPath(path) for path in assert_task["paths"]]
+                        ),
+                    }
+                )
+                for assert_task in dict_object["assert"]
+            ],
+        }
+
+        return TravHarvConfig(dict_object)
+
+
+class TravHarvConfigBuilderOld:
     """
     Builds a configuration object from a given config folder.
     If no folder is given, the current working directory is used as the config folder.
     """
 
-    def __init__(self, configFolder: str = None):
+    def __init__(self, target_store: TargetStore, configFolder: str = None):
         """
         Initialise the config builder
         """
@@ -211,10 +329,10 @@ class TravHarvConfigBuilder:
             }
         }
         """
-        for config_file_name, json_object in config_dict.items():
-            if self._check_yml_requirements(json_object, config_file_name):
+        for config_file_name, dict_object in config_dict.items():
+            if self._assert_dict_req(dict_object, config_file_name):
                 self.travHarvConfig[config_file_name] = (
-                    self._makeTravHarvConfigPartFromJson(json_object)
+                    self._makeTravHarvConfigPartFromDict(dict_object)
                 )
 
     def build_from_config(self, config_file_name):
@@ -232,12 +350,12 @@ class TravHarvConfigBuilder:
             sys.exit(1)
 
         # load in the config file and check if it is valid
-        json_object = self._load_yml_to_json(
+        dict_object = self._load_yml_to_dict(
             os.path.join(self.config_folder, config_file_name)
         )
-        if self._check_yml_requirements(json_object, config_file_name):
+        if self._assert_dict_req(dict_object, config_file_name):
             self.travHarvConfig[config_file_name] = (
-                self._makeTravHarvConfigPartFromJson(json_object)
+                self._makeTravHarvConfigPartFromDict(dict_object)
             )
 
     def build_from_folder(self):
@@ -245,14 +363,14 @@ class TravHarvConfigBuilder:
         Build a config object from the folder given, all yml files in the folder will be used
         """
         for file in self._files_folder():
-            json_object = self._load_yml_to_json(file)
-            if self._check_yml_requirements(json_object, file):
+            dict_object = self._load_yml_to_dict(file)
+            if self._assert_dict_req(dict_object, file):
                 self.travHarvConfig[file] = (
-                    self._makeTravHarvConfigPartFromJson(json_object)
+                    self._makeTravHarvConfigPartFromDict(dict_object)
                 )
         log.info("Config object: {}".format(self.travHarvConfig))
 
-    def _makeTravHarvConfigPartFromJson(self, json_object):
+    def _makeTravHarvConfigPartFromDict(self, dict_object):
         """
         Make a travharv config part from a json object
         The part should be a dictionary with the following keys:
@@ -265,13 +383,13 @@ class TravHarvConfigBuilder:
                 - get_path_at_depth(): a function that returns a path at a given depth
         """
 
-        for key in json_object:
+        for key in dict_object:
             if key == "prefix":
-                prefix_set = PrefixSet(json_object[key])
+                prefix_set = PrefixSet(dict_object[key])
             if key == "assert":
                 tasks = []
                 # go over each assert and make an AssertPathSet:
-                for task in json_object[key]:
+                for task in dict_object[key]:
                     # task contains the following:
                     # - subjects: a list of subjects or a SPARQL query
                     # - paths: a list of paths
@@ -316,7 +434,7 @@ class TravHarvConfigBuilder:
         print(yaml_files)
         return yaml_files
 
-    def _load_yml_to_json(self, file):
+    def _load_yml_to_dict(self, file):
         """
         Load a yaml file into a json object
         """
@@ -327,20 +445,20 @@ class TravHarvConfigBuilder:
                 log.error(exc)
                 sys.exit(1)  # check if system error is really needed
 
-    def _check_yml_requirements(self, jsonobject, file):
+    def _assert_dict_req(self, toassertdict, file):
         """
         Check that the yaml file has the required fields
         """
         required_fields = ["snooze-till-graph-age-minutes", "prefix", "assert"]
         returnBool = True
         for field in required_fields:
-            if field not in jsonobject:
+            if field not in toassertdict:
                 log.error(
                     "Required field {} not found in {}".format(field, file)
                 )
                 return False
-            if field == "assert" and field in jsonobject:
-                returnBool = self._check_asserts(jsonobject[field])
+            if field == "assert" and field in toassertdict:
+                returnBool = self._check_asserts(toassertdict[field])
         return returnBool
 
     def _check_asserts(self, assertObject):

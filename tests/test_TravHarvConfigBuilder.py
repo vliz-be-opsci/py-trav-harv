@@ -186,7 +186,7 @@ def test_load_yml_to_json_invalid_yaml():
         builder._load_yml_to_json(file)
 
 
-def test_check_yml_requirements_missing_fields():
+def test_assert_dict_req_missing_fields():
     builder = TravHarvConfigBuilder()
     json_object = {
         "prefix": {
@@ -226,10 +226,10 @@ def test_check_yml_requirements_missing_fields():
         ],
     }
     file = "test_file.yml"
-    assert builder._check_yml_requirements(json_object, file) == False
+    assert builder._assert_dict_req(json_object, file) == False
 
 
-def test_check_yml_requirements_missing_assert_fields():
+def test_assert_dict_req_missing_assert_fields():
     builder = TravHarvConfigBuilder()
     json_object = {
         "snooze-till-graph-age-minutes": 60,
@@ -239,10 +239,10 @@ def test_check_yml_requirements_missing_assert_fields():
         },
     }
     file = "test_file.yml"
-    assert builder._check_yml_requirements(json_object, file) == False
+    assert builder._assert_dict_req(json_object, file) == False
 
 
-def test_check_yml_requirements_valid():
+def test_assert_dict_req_valid():
     builder = TravHarvConfigBuilder()
     json_object = {
         "snooze-till-graph-age-minutes": 60,
@@ -283,4 +283,4 @@ def test_check_yml_requirements_valid():
         ],
     }
     file = "test_file.yml"
-    assert builder._check_yml_requirements(json_object, file) == True
+    assert builder._assert_dict_req(json_object, file) == True

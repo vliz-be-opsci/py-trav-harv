@@ -64,49 +64,61 @@ def get_arg_parser():
     return parser
 
 
-def main():
-    """
-    The main entrypoint of the module
-    """
-    args = get_arg_parser().parse_args()
-    # check if verbose is set , if yes then enable logger
-    if args.verbose:
-        file_location = os.path.dirname(os.path.realpath(__file__))
-        parent_location = os.path.dirname(file_location)
-        with open(
-            os.path.join(parent_location, "debug-logconf.yml"), "r"
-        ) as f:
-            config = yaml.safe_load(f.read())
-            logging.config.dictConfig(config)
+class MainClass:
+    def __init__(self, args):
+        self.args = args
 
-    log.debug(args)
+        if self.args.verbose:
+            file_location = os.path.dirname(os.path.realpath(__file__))
+            parent_location = os.path.dirname(file_location)
+            with open(
+                os.path.join(parent_location, "debug-logconf.yml"), "r"
+            ) as f:
+                config = yaml.safe_load(f.read())
+                logging.config.dictConfig(config)
 
-    # make different classes here to use
-    # TargetStore
-    # TravHarvExecutor
-    # TravHarvConfigBuilder
-    travharv_config_builder = TravHarvConfigBuilder(args.config_folder)
+        self.target_store = TargetStore(args.target_store)
+        self.travharv_config_builder = TravHarvConfigBuilder(
+            self.target_store, args.config_folder
+        )
+        self.travharvexecutor = None
 
-    if args.name is None:
-        travharv_config_builder.build_from_folder()
-    else:
-        travharv_config_builder.build_from_config(args.name)
+    def run(self):
+        log.debug(self.args)
 
-    target_store = TargetStore(args.target_store)
+        if self.args.name is None:
+            self.travharv_config_builder.build_from_folder()
+        else:
+            self.travharv_config_builder.build_from_config(self.args.name)
 
-    # some logging to see if the config is built correctly
-    log.info(
-        "Config object: {}".format(travharv_config_builder.travHarvConfig)
-    )
+        self.target_store = TargetStore(self.args.target_store)
 
-    for config_file, config in travharv_config_builder.travHarvConfig.items():
-        log.info("Config file: {}".format(config_file))
-        log.info("Config: {}".format(config))
-        travharvexecutor = TravHarvExecutor(
-            config_file, config["prefix_set"], config["tasks"], target_store
+        log.info(
+            "Config object: {}".format(
+                self.travharv_config_builder.travHarvConfig
+            )
         )
 
-    travharvexecutor.assert_all_paths()
+        for (
+            config_file,
+            config,
+        ) in self.travharv_config_builder.travHarvConfig.items():
+            log.info("Config file: {}".format(config_file))
+            log.info("Config: {}".format(config))
+            self.travharvexecutor = TravHarvExecutor(
+                config_file,
+                config["prefix_set"],
+                config["tasks"],
+                self.target_store,
+            )
+
+        self.travharvexecutor.assert_all_paths()
+
+
+def main():
+    args = get_arg_parser().parse_args()
+    main_class = MainClass(args)
+    main_class.run()
 
 
 if __name__ == "__main__":
