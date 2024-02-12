@@ -13,10 +13,17 @@ Welcome to pytravharv's documentation!
    introduction
    install
    examples
-   :glob:
-   *
-   
 
+.. toctree::
+   :maxdepth: 4
+   :hidden:
+
+   API <pytravharv>
+
+.. toctree::
+   :maxdepth: 4
+
+   Module Index <py-modindex>
 
 
 

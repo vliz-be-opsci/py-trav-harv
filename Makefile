@@ -35,6 +35,7 @@ docs:
 	poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT)
 	poetry run sphinx-build -b html ./docs/source ./docs/build/html
 	cp ./docs/source/custom.css ./docs/build/html/_static/custom.css
+	cp ./docs/source/UML_Diagram.png ./docs/build/html/_static/UML_Diagram.png
 
 test:
 	poetry run pytest ${TEST_PATH}

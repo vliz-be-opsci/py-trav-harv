@@ -18,3 +18,8 @@ pyTravHarv provides powerful dereferencing capabilities, allowing you to easily 
 In the following sections of this documentation, we will explore the various features and functionalities of pyTravHarv, including dereferencing, RDF manipulation, querying, and more.
 
 Let's dive in and start exploring the world of RDF with pyTravHarv!
+
+## Architecture
+
+![overview UML Diagram](UML_Diagram.svg)
+

@@ -1,6 +1,7 @@
 # Installation
 
 To install this project, you can use either `pip` or `poetry`.
+Since this project is not yet available on PyPI, you will need to install it directly from the GitHub repository.
 
 ## Using pip
 
@@ -9,7 +10,8 @@ To install this project, you can use either `pip` or `poetry`.
 3. Run the following command to install the project dependencies:
 
    ```shell
-   pip install -r requirements.txt
+   pip install git+https://github.com/vliz-be-opsci/pyTravHarv.git
+   ```
 
 ## Using poetry
 
@@ -18,6 +20,6 @@ To install this project, you can use either `pip` or `poetry`.
 3. Run the following command to install the project dependencies:
 
    ```shell
-   poetry install
-```
+   poetry add git+git+https://github.com/vliz-be-opsci/pyTravHarv.git
+   ```
 
