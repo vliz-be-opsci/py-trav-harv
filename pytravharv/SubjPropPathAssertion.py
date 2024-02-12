@@ -7,7 +7,8 @@ from pytravharv.TravHarvConfigBuilder import AssertPath
 from pytravharv.WebAccess import WebAccess
 import logging
 
-log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("pyTravHarv")
+log = logging.getLogger(__name__)
 
 
 def get_j2rdf_builder():

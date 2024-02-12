@@ -9,7 +9,8 @@ from pytravharv.TargetStore import TargetStore
 from rdflib.plugins.sparql.parser import parseQuery
 from abc import ABC, abstractmethod
 
-log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("pyTravHarv")
+log = logging.getLogger(__name__)
 
 
 class TravHarvTask:

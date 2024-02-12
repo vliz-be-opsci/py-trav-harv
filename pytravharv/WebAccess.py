@@ -6,7 +6,8 @@ from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 import logging
 
-log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("pyTravHarv")
+log = logging.getLogger(__name__)
 
 
 class MyHTMLParser(HTMLParser):

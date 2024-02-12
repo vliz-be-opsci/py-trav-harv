@@ -6,7 +6,8 @@ from pytravharv.TravHarvConfigBuilder import (
 )
 import logging
 
-log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("pyTravHarv")
+log = logging.getLogger(__name__)
 
 
 class TravHarvExecutor:

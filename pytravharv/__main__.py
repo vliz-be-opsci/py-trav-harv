@@ -16,7 +16,8 @@ import yaml
 import os
 
 
-log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("pyTravHarv")
+log = logging.getLogger(__name__)
 
 
 def get_arg_parser():
