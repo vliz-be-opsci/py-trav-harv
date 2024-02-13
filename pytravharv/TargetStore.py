@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 from urllib.parse import (  # backup for validators since this cannot handle localhost
     quote,
+    unquote,
     urlparse,
 )
 import rdflib
@@ -14,9 +15,10 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib.plugins.sparql.processor import SPARQLResult
 from SPARQLWrapper import JSON, SPARQLWrapper
+from datetime import datetime
 import logging
 
-#log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
 
 
@@ -56,6 +58,13 @@ class TargetStoreAccess(ABC):
     def ingest(self, graph=rdflib.Graph()):
         """
         Ingest given graph into teh self.graph
+        """
+        pass
+
+    @abstractmethod
+    def lastmod(self):
+        """
+        Get the lastmod from the registry.
         """
         pass
 
@@ -146,6 +155,13 @@ class URITargetStore(TargetStoreAccess):
         context = self._context_2_urn(context)
         self._batch_insert_graph(graph, context)
 
+    def lastmod(self):
+        """
+        Get the lastmod from the registry.
+        """
+        # Implement method to get the lastmod from the registry
+        return self._get_registry_lastmod()
+
     def _context_2_urn(self, context: str):
         """
         Convert a context to a URN.
@@ -154,6 +170,17 @@ class URITargetStore(TargetStoreAccess):
         # convert the context into a str that is uri compliant
         safe_context = quote(context)
         return f"urn:PYTRAVHARV:{safe_context}"
+
+    def _urn_2_context(self, urn: str):
+        """
+        Convert a context to a filename path.
+
+        :param context: The context to convert.
+        :type context: str
+        :return: The filename corresponding to the context.
+        :rtype: str
+        """
+        return unquote(urn[len("urn:PYTRAVHARV:") :])
 
     def _batch_insert_graph(
         self, graph: rdflib.Graph(), context: str = None, batch_size: int = 100
@@ -202,9 +229,11 @@ class URITargetStore(TargetStoreAccess):
 
             self.GDB.setQuery(query)
             self.GDB.query()
-            # give the server a breather, else it will crash depending on the
-            # potato running it
-            time.sleep(0.2)
+
+            # update the admin graph
+            # get current time in utc
+            lastmod = datetime.utcnow().isoformat()
+            self._update_registry_lastmod(lastmod, context)
 
     def _detect_type_remote_store(self):
         """TODO: Implement method to detect type of remote target store.
@@ -272,6 +301,62 @@ class URITargetStore(TargetStoreAccess):
         )
         GDB.method = "POST"
         return GDB
+
+    def _update_registry_lastmod(self, lastmod: str, context: str = None):
+        """
+        Update the registry lastmod.
+        """
+        # Implement method to update the registry lastmod
+        # update the lastmod in the registry
+        # the lastmod is a string that is a datetime
+        # use the lastmod to update the registry
+        # the registry is a graph in the target store
+        # the lastmod is a property of the graph
+        # the lastmod is a datetime string
+        # the lastmod is updated with the current datetime
+        template = "update_registry_lastmod.sparql"
+        admin_context = "ADMIN"
+        vars = {
+            "context": context if context is not None else None,
+            "lastmod": lastmod if lastmod is not None else None,
+            "registry_of_lastmod_context": self._context_2_urn(admin_context),
+        }
+        query = J2RDF.build_syntax(template, **vars)
+        log.debug("query: {}".format(query))
+        self.GDB.setQuery(query)
+        self.GDB.query()
+
+    def _get_registry_lastmod(self, context: str = None):
+        """
+        Get the lastmod from the registry.
+        """
+        # Implement method to get the lastmod from the registry
+        # get the lastmod from the registry
+        # the lastmod is a property of the graph
+        # the lastmod is a datetime string
+        # the lastmod is updated with the current datetime
+        template = "lastmod_info.sparql"
+        admin_context = "ADMIN"
+        vars = {
+            "registry_of_lastmod_context": self._context_2_urn(admin_context),
+        }
+        query = J2RDF.build_syntax(template, **vars)
+        log.debug("query: {}".format(query))
+        self.GDB.setQuery(query)
+        self.GDB.setReturnFormat(JSON)
+        result = self.GDB.query().convert()
+        log.debug("result: {}".format(result))
+        return self._convert_results_registry_of_lastmod(result)
+
+    def _convert_results_registry_of_lastmod(self, results):
+        converted = {}
+        for g in results["results"]["bindings"]:
+            path = self._urn_2_context(g["graph"]["value"])
+            time = datetime.strptime(
+                g["lastmod"]["value"], "%Y-%m-%dT%H:%M:%S.%f"
+            )
+            converted[path] = time
+        return converted
 
 
 class MemoryTargetStore(TargetStoreAccess):
@@ -345,6 +430,9 @@ class MemoryTargetStore(TargetStoreAccess):
         self.graph = self.graph + graph
         # write graph to file
         self.graph.serialize(destination=self.target_store, format="turtle")
+
+    def lastmod(self):
+        return None
 
     def _ammount_triples_graph(self):
         """

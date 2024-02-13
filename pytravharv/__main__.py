@@ -102,6 +102,8 @@ class pyTravHarv:
             )
 
             for travHarvConfig in self.travHarvConfigList:
+                if travHarvConfig is None:
+                    continue
                 log.info("Config object: {}".format(travHarvConfig()))
                 # from travHarvConfig we need , prefix_set, tasks, config_file
                 prefix_set = self.travHarvConfig.PrefixSet
@@ -118,7 +120,8 @@ class pyTravHarv:
             self.travHarvConfig = (
                 self.travharv_config_builder.build_from_config(self.args.name)
             )
-
+            if self.travHarvConfig is None:
+                return
             log.info("Config object: {}".format(self.travHarvConfig()))
 
             # from travHarvConfig we need , prefix_set, tasks, config_file

@@ -5,6 +5,7 @@ import sys
 from typing import Any
 import yaml
 import logging
+from datetime import datetime, timedelta
 from pytravharv.TargetStore import TargetStore
 from rdflib.plugins.sparql.parser import parseQuery
 from abc import ABC, abstractmethod
@@ -252,6 +253,9 @@ class TravHarvConfigBuilder:
             )
         self.config_files_folder = configFolder
         self.target_store = target_store
+        self.lastmodified_admin = target_store().lastmod()
+        log.debug(self.lastmodified_admin)
+        log.debug("TravHarvConfigBuilder initialized")
 
     def build_from_config(self, config_name):
         """
@@ -339,6 +343,21 @@ class TravHarvConfigBuilder:
             self._assert_subjects(assert_task["subjects"])
         # Add more assertions as needed...
 
+        # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
+        # if it is older then the last modified date of the admin graph then we can continue
+        # if it is not older then the last modified date of the admin graph then we can snooze the config
+        if not self._check_snooze(
+            dict_object["snooze-till-graph-age-minutes"],
+            self.lastmodified_admin,
+            name_config,
+        ):
+            log.info(
+                "Snoozing config {} for {} minutes".format(
+                    name_config, dict_object["snooze-till-graph-age-minutes"]
+                )
+            )
+            return
+
         travharvconfig = {
             "ConfigName": name_config,
             "PrefixSet": dict_object["prefix"],
@@ -365,3 +384,12 @@ class TravHarvConfigBuilder:
         }
 
         return TravHarvConfig(travharvconfig)
+
+    def _check_snooze(self, snooze_time, lastmodified_admin, name_config):
+        if name_config in lastmodified_admin:
+            lastmodified_admin_time = lastmodified_admin[name_config]
+            snooze_time = datetime.now() - timedelta(minutes=snooze_time)
+            if snooze_time > lastmodified_admin_time:
+                return True
+            else:
+                return False
