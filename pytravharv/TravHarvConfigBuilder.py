@@ -346,7 +346,7 @@ class TravHarvConfigBuilder:
         # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
         # if it is older then the last modified date of the admin graph then we can continue
         # if it is not older then the last modified date of the admin graph then we can snooze the config
-        if not self._check_snooze(
+        if self._check_snooze(
             dict_object["snooze-till-graph-age-minutes"],
             self.lastmodified_admin,
             name_config,
@@ -388,8 +388,10 @@ class TravHarvConfigBuilder:
     def _check_snooze(self, snooze_time, lastmodified_admin, name_config):
         if name_config in lastmodified_admin:
             lastmodified_admin_time = lastmodified_admin[name_config]
-            snooze_time = datetime.now() - timedelta(minutes=snooze_time)
-            if snooze_time > lastmodified_admin_time:
+            tosnooze_time = lastmodified_admin_time + timedelta(
+                minutes=snooze_time
+            )
+            if tosnooze_time < datetime.now():
                 return True
             else:
                 return False
