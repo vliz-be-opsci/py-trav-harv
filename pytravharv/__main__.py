@@ -79,6 +79,14 @@ class TravHarv:
         target_store: str = None,
         verbose: bool = False,
     ):
+        """Assert all paths for given subjects.
+        Given a configuration file, assert all paths for all subjects in the configuration file.
+        :param config_folder: str
+        :param name: str
+        :param output_folder: str
+        :param target_store: str
+        :param verbose: bool
+        """
         self.config_folder = config_folder
         self.name = name
         self.output_folder = output_folder
