@@ -199,9 +199,9 @@ class TravHarvConfig:
     """
     Configuration for the travharv
     This class contains the following:
-        - PrefixSet: a dictionary of prefixes
+        - prefixset: a dictionary of prefixes
         - tasks: a list of tasks
-        - ConfigName: a string
+        - configname: a string
     """
 
     def __init__(self, travharv_config):
@@ -235,7 +235,7 @@ class TravHarvConfig:
 
 
 class TravHarvConfigBuilder:
-    def __init__(self, target_store: TargetStore, configFolder: str = None):
+    def __init__(self, target_store: TargetStore, configFolder: str = ""):
         """
         Initialize the TravHarvConfigBuilder.
 
@@ -252,7 +252,7 @@ class TravHarvConfigBuilder:
                 "Config folder is None, using current working directory as config folder"
             )
         self.config_files_folder = configFolder
-        self.target_store = target_store
+        self._target_store = target_store
         self.lastmodified_admin = target_store().lastmod()
         log.debug(self.lastmodified_admin)
         log.debug("TravHarvConfigBuilder initialized")
@@ -374,7 +374,7 @@ class TravHarvConfigBuilder:
                             if "literal" in assert_task["subjects"]
                             else SPARQLSubjectDefinition(
                                 assert_task["subjects"]["SPARQL"],
-                                self.target_store,
+                                self._target_store,
                             )
                         ),
                         "assert_path_set": AssertPathSet(

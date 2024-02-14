@@ -1,20 +1,16 @@
-# main function here
-
 import argparse
 import os
-
 from pytravharv.TargetStore import TargetStore
 from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfigBuilder,
     TravHarvConfig,
 )
 from pytravharv.TravHarvExecuter import TravHarvExecutor
-
 import logging
 import logging.config
 import yaml
 import os
-
+from typing import Optional
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
@@ -101,10 +97,10 @@ class TravHarv:
 
     def __init__(
         self,
-        config_folder: str = None,
-        name: str = None,
-        output_folder: str = None,
-        target_store: str = None,
+        config_folder: str = "",
+        name: str = "",
+        output_folder: str = "",
+        target_store: str = "",
         verbose: bool = False,
     ):
         """Assert all paths for given subjects.
@@ -130,6 +126,7 @@ class TravHarv:
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
         log.debug("started logging")
+
         self.target_store = TargetStore(self.target_store)
         self.travharv_config_builder = TravHarvConfigBuilder(
             self.target_store, self.config_folder
@@ -168,8 +165,8 @@ class TravHarv:
         log.info("Config object: {}".format(self.travHarvConfig()))
 
         # from travHarvConfig we need , prefix_set, tasks, config_file
-        prefix_set = self.travHarvConfig.PrefixSet
-        config_name = self.travHarvConfig.ConfigName
+        prefix_set = self.travHarvConfig.prefixset
+        config_name = self.travHarvConfig.configname
         tasks = self.travHarvConfig.tasks
         self.travharvexecutor = TravHarvExecutor(
             config_name, prefix_set, tasks, self.target_store
@@ -205,20 +202,20 @@ class mainRunner:
 
     def run(self):
         log.debug(self.args)
-
+        trav_harv_config: Optional[TravHarvConfig] = None
         if self.args.name is None:
             self.travHarvConfigList = (
                 self.travharv_config_builder.build_from_folder()
             )
 
-            for travHarvConfig in self.travHarvConfigList:
-                if travHarvConfig is None:
+            for trav_harv_config in self.travHarvConfigList:
+                if trav_harv_config is None:
                     continue
-                log.info("Config object: {}".format(travHarvConfig()))
+                log.info("Config object: {}".format(trav_harv_config()))
                 # from travHarvConfig we need , prefix_set, tasks, config_file
-                prefix_set = self.travHarvConfig.PrefixSet
-                config_name = self.travHarvConfig.ConfigName
-                tasks = self.travHarvConfig.tasks
+                prefix_set = trav_harv_config.prefixset
+                config_name = trav_harv_config.configname
+                tasks = trav_harv_config.tasks
 
                 self.travharvexecutor = TravHarvExecutor(
                     config_name, prefix_set, tasks, self.target_store
@@ -227,17 +224,17 @@ class mainRunner:
                 self.travharvexecutor.assert_all_paths()
 
         else:
-            self.travHarvConfig = (
-                self.travharv_config_builder.build_from_config(self.args.name)
+            trav_harv_config = self.travharv_config_builder.build_from_config(
+                self.args.name
             )
-            if self.travHarvConfig is None:
+            if trav_harv_config is None:
                 return
-            log.info("Config object: {}".format(self.travHarvConfig()))
+            log.info("Config object: {}".format(trav_harv_config()))
 
             # from travHarvConfig we need , prefix_set, tasks, config_file
-            prefix_set = self.travHarvConfig.PrefixSet
-            config_name = self.travHarvConfig.ConfigName
-            tasks = self.travHarvConfig.tasks
+            prefix_set = trav_harv_config.prefixset
+            config_name = trav_harv_config.configname
+            tasks = trav_harv_config.tasks
 
             self.travharvexecutor = TravHarvExecutor(
                 config_name, prefix_set, tasks, self.target_store

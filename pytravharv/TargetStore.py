@@ -136,7 +136,7 @@ class URITargetStore(TargetStoreAccess):
             return True
         return False
 
-    def ingest(self, graph=rdflib.Graph(), context: str = None):
+    def ingest(self, graph=rdflib.Graph(), context: str = ""):
         """
         Ingest given graph into the remote store.
 
@@ -328,7 +328,7 @@ class URITargetStore(TargetStoreAccess):
         self.GDB.setQuery(query)
         self.GDB.query()
 
-    def _get_registry_lastmod(self, context: str = None):
+    def _get_registry_lastmod(self, context: str = ""):
         """
         Get the lastmod from the registry.
         """
@@ -418,7 +418,7 @@ class MemoryTargetStore(TargetStoreAccess):
             return True
         return False
 
-    def ingest(self, graph=rdflib.Graph(), context: str = None):
+    def ingest(self, graph=rdflib.Graph(), context: str = ""):
         """
         Ingest given graph into the remote store.
 
