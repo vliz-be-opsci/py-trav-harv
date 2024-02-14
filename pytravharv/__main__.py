@@ -116,7 +116,7 @@ class TravHarv:
         )
         self.travharvexecutor = None
 
-        log.debug(self.args)
+        log.debug("started run")
 
         if self.name is None:
             self.travHarvConfigList = (
