@@ -68,7 +68,82 @@ def get_arg_parser():
     return parser
 
 
-class pyTravHarv:
+class TravHarv:
+    """Main entry point for the module"""
+
+    def __init__(
+        self,
+        config_folder: str = None,
+        name: str = None,
+        output_folder: str = None,
+        target_store: str = None,
+        verbose: bool = False,
+    ):
+        self.config_folder = config_folder
+        self.name = name
+        self.output_folder = output_folder
+        self.target_store = target_store
+        self.verbose = verbose
+
+    def run(self):
+        if self.verbose:
+            file_location = os.path.dirname(os.path.realpath(__file__))
+            parent_location = os.path.dirname(file_location)
+            with open(
+                os.path.join(parent_location, "debug-logconf.yml"), "r"
+            ) as f:
+                config = yaml.safe_load(f.read())
+                logging.config.dictConfig(config)
+
+        self.target_store = TargetStore(self.target_store)
+        self.travharv_config_builder = TravHarvConfigBuilder(
+            self.target_store, self.config_folder
+        )
+        self.travharvexecutor = None
+
+        log.debug(self.args)
+
+        if self.name is None:
+            self.travHarvConfigList = (
+                self.travharv_config_builder.build_from_folder()
+            )
+
+            for travHarvConfig in self.travHarvConfigList:
+                if travHarvConfig is None:
+                    continue
+                log.info("Config object: {}".format(travHarvConfig()))
+                # from travHarvConfig we need , prefix_set, tasks, config_file
+                prefix_set = self.travHarvConfig.PrefixSet
+                config_name = self.travHarvConfig.ConfigName
+                tasks = self.travHarvConfig.tasks
+
+                self.travharvexecutor = TravHarvExecutor(
+                    config_name, prefix_set, tasks, self.target_store
+                )
+
+                self.travharvexecutor.assert_all_paths()
+            return
+
+        self.travHarvConfig = self.travharv_config_builder.build_from_config(
+            self.name
+        )
+        if self.travHarvConfig is None:
+            return
+
+        log.info("Config object: {}".format(self.travHarvConfig()))
+
+        # from travHarvConfig we need , prefix_set, tasks, config_file
+        prefix_set = self.travHarvConfig.PrefixSet
+        config_name = self.travHarvConfig.ConfigName
+        tasks = self.travHarvConfig.tasks
+        self.travharvexecutor = TravHarvExecutor(
+            config_name, prefix_set, tasks, self.target_store
+        )
+
+        self.travharvexecutor.assert_all_paths()
+
+
+class mainRunner:
     """
     A class to represent the main class.
 
@@ -138,7 +213,7 @@ class pyTravHarv:
 
 def main():
     args = get_arg_parser().parse_args()
-    main_class = pyTravHarv(args)
+    main_class = mainRunner(args)
     main_class.run()
 
 

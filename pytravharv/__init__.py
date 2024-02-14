@@ -14,6 +14,7 @@ from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfig,
 )
 from pytravharv.TravHarvExecuter import TravHarvExecutor
+from pytravharv.__main__ import pyTravHarv
 
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "TravHarvConfigBuilder",
     "TravHarvConfig",
     "TravHarvExecutor",
+    "TravHarv",
 ]
