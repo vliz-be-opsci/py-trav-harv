@@ -204,7 +204,9 @@ class URITargetStore(TargetStoreAccess):
         log.info(f"ntstr size: {len(ntstr)}")
 
         # Split ntstr by newline to get a list of triples
-        triples = ntstr.split("\n")
+        non_unique_triples = ntstr.split("\n")
+
+        triples = list(set(non_unique_triples))
 
         # Initialize an empty list to hold the batches
         ntstr_batches = []
@@ -425,7 +427,13 @@ class MemoryTargetStore(TargetStoreAccess):
         :param context: The context to ingest the graph into.
         :type context: str
         """
-        # Implement method to ingest data into memory target store
+        # get all unique triples before adding them to the graph
+        u_list_triples = list(graph)
+
+        new_graph = rdflib.Graph()
+        for triples in u_list_triples:
+            new_graph.add(triples)
+        graph = new_graph
         # combine graphs
         self.graph = self.graph + graph
         # write graph to file

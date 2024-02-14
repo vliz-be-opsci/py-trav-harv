@@ -388,10 +388,16 @@ class TravHarvConfigBuilder:
     def _check_snooze(self, snooze_time, lastmodified_admin, name_config):
         if name_config in lastmodified_admin:
             lastmodified_admin_time = lastmodified_admin[name_config]
+            log.debug(
+                "lastmodified_admin_time: {}".format(lastmodified_admin_time)
+            )
             tosnooze_time = lastmodified_admin_time + timedelta(
                 minutes=snooze_time
             )
-            if tosnooze_time < datetime.now():
+
+            log.debug("tosnooze_time: {}".format(tosnooze_time))
+
+            if tosnooze_time > datetime.now():
                 return True
             else:
                 return False

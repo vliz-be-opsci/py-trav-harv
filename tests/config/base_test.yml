@@ -2,6 +2,7 @@ snooze-till-graph-age-minutes: 120 # why-what-concequence-unit # configs is subf
 prefix:
   ex: <https://example.org/whatever/>
   mr: <http://marineregions.org/ns/ontology#>
+  gsp: <http://www.opengis.net/ont/geosparql#>
 assert:
   - subjects:
       literal:
@@ -10,7 +11,6 @@ assert:
         - http://marineregions.org/mrgid/12548
     paths:
       - "mr:hasGeometry"
-      - "mr:isPartOf"
       - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
   - subjects:
       SPARQL: >
@@ -22,7 +22,6 @@ assert:
         }
     paths:
       - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
-      - "mr:isPartOf/ <https://schema.org/geo>/<https://schema.org/longitude>"
   - subjects:
       SPARQL: >
         PREFIX mr: <http://marineregions.org/ns/ontology#>
@@ -31,5 +30,4 @@ assert:
             ?s a mr:MRGeoObject .
         }
     paths:
-      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
-      - "mr:isPartOf/ <https://schema.org/geo>/<https://schema.org/longitude>"
+      - "mr:hasGeometry / gsp:asWKT"
