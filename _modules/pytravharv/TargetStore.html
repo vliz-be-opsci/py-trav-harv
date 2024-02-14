@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pytravharv.TargetStore &mdash; pyTravHarv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyTravHarv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pytravharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyTravHarv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pytravharv.TargetStore</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pytravharv.TargetStore</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># backup for validators since this cannot handle localhost</span>
+    <span class="n">quote</span><span class="p">,</span>
+    <span class="n">unquote</span><span class="p">,</span>
+    <span class="n">urlparse</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span> <span class="nn">rdflib</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">validators</span>
+<span class="kn">from</span> <span class="nn">pyrdfj2</span> <span class="kn">import</span> <span class="n">J2RDFSyntaxBuilder</span>
+<span class="kn">from</span> <span class="nn">rdflib.plugins.sparql.processor</span> <span class="kn">import</span> <span class="n">SPARQLResult</span>
+<span class="kn">from</span> <span class="nn">SPARQLWrapper</span> <span class="kn">import</span> <span class="n">JSON</span><span class="p">,</span> <span class="n">SPARQLWrapper</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># log = logging.getLogger(&quot;pyTravHarv&quot;)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_j2rdf_builder">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.get_j2rdf_builder">[docs]</a>
+<span class="k">def</span> <span class="nf">get_j2rdf_builder</span><span class="p">():</span>
+    <span class="n">template_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;pysubyt_templates&quot;</span>
+    <span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;template_folder == </span><span class="si">{</span><span class="n">template_folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># init J2RDFSyntaxBuilder</span>
+    <span class="n">j2rdf</span> <span class="o">=</span> <span class="n">J2RDFSyntaxBuilder</span><span class="p">(</span><span class="n">templates_folder</span><span class="o">=</span><span class="n">template_folder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">j2rdf</span></div>
+
+
+
+<span class="n">J2RDF</span> <span class="o">=</span> <span class="n">get_j2rdf_builder</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="TargetStoreAccess">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStoreAccess">[docs]</a>
+<span class="k">class</span> <span class="nc">TargetStoreAccess</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for accessing a target store.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TargetStoreAccess.select_subjects">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStoreAccess.select_subjects">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">select_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparsl</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select subjects from the target store using a SPARQL query.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TargetStoreAccess.verify">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStoreAccess.verify">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">property_path</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify a given subject using a property path to see if this returns triples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TargetStoreAccess.ingest">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStoreAccess.ingest">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">ingest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ingest given graph into teh self.graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="TargetStoreAccess.lastmod">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStoreAccess.lastmod">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">lastmod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the lastmod from the registry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="URITargetStore">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.URITargetStore">[docs]</a>
+<span class="k">class</span> <span class="nc">URITargetStore</span><span class="p">(</span><span class="n">TargetStoreAccess</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a target store to harvest from.</span>
+<span class="sd">    The given target_store string is a URI.</span>
+
+<span class="sd">    :param target_store: The target store to harvest from.</span>
+<span class="sd">    :type target_store: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_store</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span> <span class="o">=</span> <span class="n">target_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_type_remote_store</span><span class="p">()</span>
+
+<div class="viewcode-block" id="URITargetStore.select_subjects">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.URITargetStore.select_subjects">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparql</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select subjects from the target store using a SPARQL query.</span>
+
+<span class="sd">        :param sparql: The SPARQL query to use.</span>
+<span class="sd">        :type sparql: str</span>
+
+<span class="sd">        :return: The result of the SPARQL query.</span>
+<span class="sd">        :rtype: SPARQLResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to select subjects from URI target store</span>
+        <span class="c1"># query the remote store self.GBD</span>
+        <span class="c1"># log.debug(&quot;GDB: {}&quot;.format(self.GDB))</span>
+        <span class="c1"># must return a SPARQLresult object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setQuery</span><span class="p">(</span><span class="n">sparql</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setReturnFormat</span><span class="p">(</span><span class="n">JSON</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;results_dict: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+        <span class="c1"># given that a SPARQLResult object is expected, convert the result to a SPARQLResult object</span>
+        <span class="n">result_mapped</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;type_&quot;</span><span class="p">:</span> <span class="s2">&quot;SELECT&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;vars_&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;head&quot;</span><span class="p">][</span><span class="s2">&quot;vars&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;bindings&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;bindings&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;askAnswer&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Assuming the askAnswer is not available in the result</span>
+            <span class="s2">&quot;graph&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Assuming the graph is not available in the result</span>
+        <span class="p">}</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">SPARQLResult</span><span class="p">(</span><span class="n">result_mapped</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="URITargetStore.verify">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.URITargetStore.verify">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify a given subject using a property path to see if this returns triples.</span>
+
+<span class="sd">        :param query: The query to use.</span>
+<span class="sd">        :type query: str</span>
+
+<span class="sd">        :return: True if the query returns triples, False otherwise.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Implement method to verify URI target store</span>
+        <span class="c1"># query the remote store self.GBD</span>
+        <span class="c1"># log.debug(&quot;GDB: {}&quot;.format(self.GDB))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+        <span class="c1"># TODO: excercise when the results come from a non GRAPHDB endpoint</span>
+        <span class="c1"># TODO: check whether the results have the same return format as the select_subjects method</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;results GDB verify: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;bindings&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="URITargetStore.ingest">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.URITargetStore.ingest">[docs]</a>
+    <span class="k">def</span> <span class="nf">ingest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">(),</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ingest given graph into the remote store.</span>
+
+<span class="sd">        :param graph: The graph to ingest.</span>
+<span class="sd">        :type graph: Graph</span>
+<span class="sd">        :param context: The context to ingest the graph into.</span>
+<span class="sd">        :type context: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Implement method to ingest data into URI target store</span>
+        <span class="c1"># ingest the graph into the remote store self.GBD</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ingest graph: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;context: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">context</span><span class="p">))</span>
+        <span class="c1"># for now only GRAPHDB is supported</span>
+        <span class="c1"># context is reduced to none</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_2_urn</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_insert_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="URITargetStore.lastmod">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.URITargetStore.lastmod">[docs]</a>
+    <span class="k">def</span> <span class="nf">lastmod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the lastmod from the registry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to get the lastmod from the registry</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_registry_lastmod</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_context_2_urn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a context to a URN.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to convert a context to a URN</span>
+        <span class="c1"># convert the context into a str that is uri compliant</span>
+        <span class="n">safe_context</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="n">context</span><span class="p">)</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;urn:PYTRAVHARV:</span><span class="si">{</span><span class="n">safe_context</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_urn_2_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">urn</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert a context to a filename path.</span>
+
+<span class="sd">        :param context: The context to convert.</span>
+<span class="sd">        :type context: str</span>
+<span class="sd">        :return: The filename corresponding to the context.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">unquote</span><span class="p">(</span><span class="n">urn</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">&quot;urn:PYTRAVHARV:&quot;</span><span class="p">)</span> <span class="p">:])</span>
+
+    <span class="k">def</span> <span class="nf">_batch_insert_graph</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">(),</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Insert data into a context in batches.</span>
+
+<span class="sd">        :param graph: The graph to insert data from.</span>
+<span class="sd">        :type graph: Graph</span>
+<span class="sd">        :param context: The context to insert data into.</span>
+<span class="sd">        :type context: str</span>
+<span class="sd">        :param batch_size: The batch size to use.</span>
+<span class="sd">        :type batch_size: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Variables for the template</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;insert_graph.sparql&quot;</span>
+        <span class="n">ntstr</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="nb">format</span><span class="o">=</span><span class="s2">&quot;nt&quot;</span><span class="p">)</span>
+
+        <span class="c1"># log the size fo the ntstr</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ntstr size: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ntstr</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Split ntstr by newline to get a list of triples</span>
+        <span class="n">non_unique_triples</span> <span class="o">=</span> <span class="n">ntstr</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">triples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">non_unique_triples</span><span class="p">))</span>
+
+        <span class="c1"># Initialize an empty list to hold the batches</span>
+        <span class="n">ntstr_batches</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Loop over the list of triples with a step size of batch_size</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">triples</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+            <span class="c1"># Slice the list of triples from the current index to the current index plus batch_size</span>
+            <span class="c1"># Join them with newline to get a batch</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">triples</span><span class="p">[</span><span class="n">i</span> <span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">])</span>
+
+            <span class="c1"># Append the batch to ntstr_batches</span>
+            <span class="n">ntstr_batches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;insert_graph into </span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ntstr_batches</span><span class="p">)</span><span class="si">}</span><span class="s2"> batches&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">ntstr_batches</span><span class="p">:</span>
+            <span class="c1"># Variables for the template</span>
+            <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">context</span><span class="p">,</span> <span class="s2">&quot;raw_triples&quot;</span><span class="p">:</span> <span class="n">batch</span><span class="p">}</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">J2RDF</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+
+            <span class="c1"># update the admin graph</span>
+            <span class="c1"># get current time in utc</span>
+            <span class="n">lastmod</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_registry_lastmod</span><span class="p">(</span><span class="n">lastmod</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_detect_type_remote_store</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;TODO: Implement method to detect type of remote target store.</span>
+<span class="sd">        For now there is only an endpoint for GRAPHDB repositories.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">GRAPHDB_RE</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;http://([\w.-]+:\d+)/repositories/(\w+)&quot;</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">GRAPHDB_RE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graphDB_config</span><span class="p">()</span>
+
+        <span class="c1"># TODO: add more remote target store types</span>
+
+        <span class="c1"># if no match is found then try and get a request to get all possible graph of a store</span>
+        <span class="c1"># if this fails then raise an error that the store given is not a valid remote store</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_repos_for_graphdb</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># return a table like overview of what repositories are avialable</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;repositories: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detect_repos_for_graphdb</span><span class="p">())</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Target store is not a valid remote store URI, use one of the following repositories: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_detect_repos_for_graphdb</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Target store is not a valid remote store URI: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_detect_repos_for_graphdb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detect the repositories for a GRAPHDB endpoint.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to detect the repositories for a GRAPHDB endpoint do accept application/json</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="si">}</span><span class="s2">/repositories&quot;</span><span class="p">,</span>
+            <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">response_json</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+            <span class="c1"># Extract &#39;uri&#39; and &#39;id&#39; from the response</span>
+            <span class="n">uri_and_id</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">{</span><span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">repo</span><span class="p">[</span><span class="s2">&quot;uri&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">repo</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]}</span>
+                <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">response_json</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;bindings&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;uri and id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">uri_and_id</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">uri_and_id</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_graphDB_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setup graphdb config</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to get the graphDB config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updateEndpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span> <span class="o">+</span> <span class="s2">&quot;/statements&quot;</span>
+
+        <span class="n">GDB</span> <span class="o">=</span> <span class="n">SPARQLWrapper</span><span class="p">(</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">endpoint</span><span class="p">,</span>
+            <span class="n">updateEndpoint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">updateEndpoint</span><span class="p">,</span>
+            <span class="n">returnFormat</span><span class="o">=</span><span class="n">JSON</span><span class="p">,</span>
+            <span class="n">agent</span><span class="o">=</span><span class="s2">&quot;lwua-python-sparql-client&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">GDB</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;POST&quot;</span>
+        <span class="k">return</span> <span class="n">GDB</span>
+
+    <span class="k">def</span> <span class="nf">_update_registry_lastmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lastmod</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the registry lastmod.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to update the registry lastmod</span>
+        <span class="c1"># update the lastmod in the registry</span>
+        <span class="c1"># the lastmod is a string that is a datetime</span>
+        <span class="c1"># use the lastmod to update the registry</span>
+        <span class="c1"># the registry is a graph in the target store</span>
+        <span class="c1"># the lastmod is a property of the graph</span>
+        <span class="c1"># the lastmod is a datetime string</span>
+        <span class="c1"># the lastmod is updated with the current datetime</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;update_registry_lastmod.sparql&quot;</span>
+        <span class="n">admin_context</span> <span class="o">=</span> <span class="s2">&quot;ADMIN&quot;</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">context</span> <span class="k">if</span> <span class="n">context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;lastmod&quot;</span><span class="p">:</span> <span class="n">lastmod</span> <span class="k">if</span> <span class="n">lastmod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;registry_of_lastmod_context&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_2_urn</span><span class="p">(</span><span class="n">admin_context</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">J2RDF</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;query: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_registry_lastmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the lastmod from the registry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to get the lastmod from the registry</span>
+        <span class="c1"># get the lastmod from the registry</span>
+        <span class="c1"># the lastmod is a property of the graph</span>
+        <span class="c1"># the lastmod is a datetime string</span>
+        <span class="c1"># the lastmod is updated with the current datetime</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;lastmod_info.sparql&quot;</span>
+        <span class="n">admin_context</span> <span class="o">=</span> <span class="s2">&quot;ADMIN&quot;</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;registry_of_lastmod_context&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_2_urn</span><span class="p">(</span><span class="n">admin_context</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">J2RDF</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;query: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setQuery</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">setReturnFormat</span><span class="p">(</span><span class="n">JSON</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GDB</span><span class="o">.</span><span class="n">query</span><span class="p">()</span><span class="o">.</span><span class="n">convert</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;result: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_results_registry_of_lastmod</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert_results_registry_of_lastmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">results</span><span class="p">):</span>
+        <span class="n">converted</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;results&quot;</span><span class="p">][</span><span class="s2">&quot;bindings&quot;</span><span class="p">]:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_urn_2_context</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;graph&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                <span class="n">g</span><span class="p">[</span><span class="s2">&quot;lastmod&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">],</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S.</span><span class="si">%f</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">converted</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span>
+        <span class="k">return</span> <span class="n">converted</span></div>
+
+
+
+<div class="viewcode-block" id="MemoryTargetStore">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.MemoryTargetStore">[docs]</a>
+<span class="k">class</span> <span class="nc">MemoryTargetStore</span><span class="p">(</span><span class="n">TargetStoreAccess</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a target store to harvest from.</span>
+<span class="sd">    The given target_store string is a pointer to a triple store in memory.</span>
+
+<span class="sd">    :param target_store: The target store to harvest from.</span>
+<span class="sd">    :type target_store: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_store</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;MemoryTargetStore: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_store</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span> <span class="o">=</span> <span class="n">target_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_read_file_in_graph</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;MemoryTargetStore initialized&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;graph: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Ammount of triples in graph: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ammount_triples_graph</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="MemoryTargetStore.select_subjects">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.MemoryTargetStore.select_subjects">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparql</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Select subjects from the target store using a SPARQL query.</span>
+
+<span class="sd">        :param sparql: The SPARQL query to use.</span>
+<span class="sd">        :type sparql: str</span>
+
+<span class="sd">        :return: The result of the SPARQL query.</span>
+<span class="sd">        :rtype: SPARQLResult</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to select subjects from memory target store</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">sparql</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;results: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
+        <span class="c1"># explode the results to get the indiv subjects</span>
+        <span class="n">results_dict</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">results_dict</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;results_dict: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">results_dict</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="MemoryTargetStore.verify">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.MemoryTargetStore.verify">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparql</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify a given subject using a property path to see if this returns triples.</span>
+
+<span class="sd">        :param query: The query to use.</span>
+<span class="sd">        :type query: str</span>
+
+<span class="sd">        :return: True if the query returns triples, False otherwise.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Implement method to verify for a given sparql query if there are any triples that return</span>
+        <span class="c1"># Perform query in graph</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">sparql</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="MemoryTargetStore.ingest">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.MemoryTargetStore.ingest">[docs]</a>
+    <span class="k">def</span> <span class="nf">ingest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">(),</span> <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ingest given graph into the remote store.</span>
+
+<span class="sd">        :param graph: The graph to ingest.</span>
+<span class="sd">        :type graph: Graph</span>
+<span class="sd">        :param context: The context to ingest the graph into.</span>
+<span class="sd">        :type context: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># get all unique triples before adding them to the graph</span>
+        <span class="n">u_list_triples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+        <span class="n">new_graph</span> <span class="o">=</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">triples</span> <span class="ow">in</span> <span class="n">u_list_triples</span><span class="p">:</span>
+            <span class="n">new_graph</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">triples</span><span class="p">)</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">new_graph</span>
+        <span class="c1"># combine graphs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span> <span class="o">+</span> <span class="n">graph</span>
+        <span class="c1"># write graph to file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">destination</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;turtle&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MemoryTargetStore.lastmod">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.MemoryTargetStore.lastmod">[docs]</a>
+    <span class="k">def</span> <span class="nf">lastmod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_ammount_triples_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the ammount of triples in the graph</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_read_file_in_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read in the target store</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># read in the target_store into self.graph this can be a ttl of a jsonld file</span>
+        <span class="c1"># if file ends in .jsonld then use jsonld</span>
+        <span class="c1"># if file ends in .ttl then use turtle</span>
+        <span class="c1"># if file ends in .nt then use nt</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.jsonld&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json-ld&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ttl&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;turtle&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.nt&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;nt&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Target store is not a valid file extension. Please use .jsonld, .ttl or .nt&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a graph from the given target store</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Target store is from a given os path</span>
+        <span class="n">path_triple_store_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Path to triple store file: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path_triple_store_file</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check if the file exists</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_triple_store_file</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Triple store file does not exist&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Depending on the file extension, use the correct parser</span>
+        <span class="c1"># supported formats for parsing are , jsonLD , ttl</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsing triple store file&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.jsonld&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path_triple_store_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;json-ld&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.ttl&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">path_triple_store_file</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ttl&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Triple store file format not supported&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TargetStore">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStore">[docs]</a>
+<span class="k">class</span> <span class="nc">TargetStore</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a target store to harvest from.</span>
+<span class="sd">    The given target_store string is either a URI or a pointer to a triple store in memory.</span>
+
+<span class="sd">    :param target_store: The target store to harvest from.</span>
+<span class="sd">    :type target_store: str</span>
+<span class="sd">    :raises ValueError: If the target store is not a URI or a filepath.</span>
+<span class="sd">    :raises SystemExit: If the target store is not a URI or a filepath.</span>
+<span class="sd">    :return: The target store to harvest from.</span>
+<span class="sd">    :rtype: TargetStore</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_store</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_type</span><span class="p">(</span><span class="n">target_store</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;TargetStore(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span>
+
+<div class="viewcode-block" id="TargetStore.get_target_store">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.TargetStore.TargetStore.get_target_store">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_target_store</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_detect_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_store</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">target_store</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">MemoryTargetStore</span><span class="p">(</span><span class="n">target_store</span><span class="p">)</span>
+
+        <span class="c1"># Implement method to detect type of target store</span>
+        <span class="k">if</span> <span class="n">_is_valid_url</span><span class="p">(</span><span class="n">target_store</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">URITargetStore</span><span class="p">(</span><span class="n">target_store</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;TargetStore: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">target_store</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Target store is not a URI or a filepath&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_is_valid_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="n">result</span><span class="o">.</span><span class="n">scheme</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">netloc</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cedric_Decruw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

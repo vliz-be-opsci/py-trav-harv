@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pytravharv package &mdash; pyTravHarv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyTravHarv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytravharv.SubjPropPathAssertion">pytravharv.SubjPropPathAssertion module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.SubjPropPathAssertion.SubjPropPathAssertion"><code class="docutils literal notranslate"><span class="pre">SubjPropPathAssertion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.SubjPropPathAssertion.SubjPropPathAssertion.assert_path"><code class="docutils literal notranslate"><span class="pre">SubjPropPathAssertion.assert_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.SubjPropPathAssertion.get_j2rdf_builder"><code class="docutils literal notranslate"><span class="pre">get_j2rdf_builder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytravharv.TargetStore">pytravharv.TargetStore module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TargetStore.MemoryTargetStore"><code class="docutils literal notranslate"><span class="pre">MemoryTargetStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.MemoryTargetStore.ingest"><code class="docutils literal notranslate"><span class="pre">MemoryTargetStore.ingest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.MemoryTargetStore.lastmod"><code class="docutils literal notranslate"><span class="pre">MemoryTargetStore.lastmod()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.MemoryTargetStore.select_subjects"><code class="docutils literal notranslate"><span class="pre">MemoryTargetStore.select_subjects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.MemoryTargetStore.verify"><code class="docutils literal notranslate"><span class="pre">MemoryTargetStore.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore"><code class="docutils literal notranslate"><span class="pre">TargetStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore.get_target_store"><code class="docutils literal notranslate"><span class="pre">TargetStore.get_target_store()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess"><code class="docutils literal notranslate"><span class="pre">TargetStoreAccess</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess.ingest"><code class="docutils literal notranslate"><span class="pre">TargetStoreAccess.ingest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess.lastmod"><code class="docutils literal notranslate"><span class="pre">TargetStoreAccess.lastmod()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess.select_subjects"><code class="docutils literal notranslate"><span class="pre">TargetStoreAccess.select_subjects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess.verify"><code class="docutils literal notranslate"><span class="pre">TargetStoreAccess.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TargetStore.URITargetStore"><code class="docutils literal notranslate"><span class="pre">URITargetStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.URITargetStore.ingest"><code class="docutils literal notranslate"><span class="pre">URITargetStore.ingest()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.URITargetStore.lastmod"><code class="docutils literal notranslate"><span class="pre">URITargetStore.lastmod()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.URITargetStore.select_subjects"><code class="docutils literal notranslate"><span class="pre">URITargetStore.select_subjects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.URITargetStore.verify"><code class="docutils literal notranslate"><span class="pre">URITargetStore.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TargetStore.get_j2rdf_builder"><code class="docutils literal notranslate"><span class="pre">get_j2rdf_builder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytravharv.TravHarvConfigBuilder">pytravharv.TravHarvConfigBuilder module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.AssertPath"><code class="docutils literal notranslate"><span class="pre">AssertPath</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.AssertPath.get_max_size"><code class="docutils literal notranslate"><span class="pre">AssertPath.get_max_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.AssertPath.get_path_for_depth"><code class="docutils literal notranslate"><span class="pre">AssertPath.get_path_for_depth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.AssertPath.get_path_parts"><code class="docutils literal notranslate"><span class="pre">AssertPath.get_path_parts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.AssertPathSet"><code class="docutils literal notranslate"><span class="pre">AssertPathSet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.LiteralSubjectDefinition"><code class="docutils literal notranslate"><span class="pre">LiteralSubjectDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.LiteralSubjectDefinition.listSubjects"><code class="docutils literal notranslate"><span class="pre">LiteralSubjectDefinition.listSubjects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.SPARQLSubjectDefinition"><code class="docutils literal notranslate"><span class="pre">SPARQLSubjectDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.SPARQLSubjectDefinition.listSubjects"><code class="docutils literal notranslate"><span class="pre">SPARQLSubjectDefinition.listSubjects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.SubjectDefinition"><code class="docutils literal notranslate"><span class="pre">SubjectDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.SubjectDefinition.listSubjects"><code class="docutils literal notranslate"><span class="pre">SubjectDefinition.listSubjects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig.ConfigName"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.ConfigName</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig.PrefixSet"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.PrefixSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig.tasks"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.tasks</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_config"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_folder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvTask"><code class="docutils literal notranslate"><span class="pre">TravHarvTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvTask.assert_path_set"><code class="docutils literal notranslate"><span class="pre">TravHarvTask.assert_path_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvTask.subject_definition"><code class="docutils literal notranslate"><span class="pre">TravHarvTask.subject_definition</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytravharv.TravHarvExecuter">pytravharv.TravHarvExecuter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvExecuter.TravHarvExecutor"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvExecuter.TravHarvExecutor.assert_all_paths"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor.assert_all_paths()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pytravharv.WebAccess">pytravharv.WebAccess module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.WebAccess.MyHTMLParser"><code class="docutils literal notranslate"><span class="pre">MyHTMLParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.WebAccess.MyHTMLParser.handle_data"><code class="docutils literal notranslate"><span class="pre">MyHTMLParser.handle_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.WebAccess.MyHTMLParser.handle_endtag"><code class="docutils literal notranslate"><span class="pre">MyHTMLParser.handle_endtag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.WebAccess.MyHTMLParser.handle_starttag"><code class="docutils literal notranslate"><span class="pre">MyHTMLParser.handle_starttag()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.WebAccess.WebAccess"><code class="docutils literal notranslate"><span class="pre">WebAccess()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.WebAccess.download_uri_to_store"><code class="docutils literal notranslate"><span class="pre">download_uri_to_store()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-0">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TargetStore"><code class="docutils literal notranslate"><span class="pre">TargetStore</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TargetStore.get_target_store"><code class="docutils literal notranslate"><span class="pre">TargetStore.get_target_store()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarv"><code class="docutils literal notranslate"><span class="pre">TravHarv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarv.run"><code class="docutils literal notranslate"><span class="pre">TravHarv.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfig"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfig.ConfigName"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.ConfigName</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfig.PrefixSet"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.PrefixSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfig.tasks"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.tasks</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.build_from_config"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.build_from_folder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pytravharv.TravHarvExecutor"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pytravharv.TravHarvExecutor.assert_all_paths"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor.assert_all_paths()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyTravHarv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pytravharv package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pytravharv.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pytravharv-package">
+<h1>pytravharv package<a class="headerlink" href="#pytravharv-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-pytravharv.SubjPropPathAssertion">
+<span id="pytravharv-subjproppathassertion-module"></span><h2>pytravharv.SubjPropPathAssertion module<a class="headerlink" href="#module-pytravharv.SubjPropPathAssertion" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.SubjPropPathAssertion.SubjPropPathAssertion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.SubjPropPathAssertion.</span></span><span class="sig-name descname"><span class="pre">SubjPropPathAssertion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assertion_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.AssertPath" title="pytravharv.TravHarvConfigBuilder.AssertPath"><span class="pre">AssertPath</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore"><span class="pre">TargetStore</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/SubjPropPathAssertion.html#SubjPropPathAssertion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.SubjPropPathAssertion.SubjPropPathAssertion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent the assertion of all given property traversal paths for a given subject.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.SubjPropPathAssertion.SubjPropPathAssertion.assert_path">
+<span class="sig-name descname"><span class="pre">assert_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/SubjPropPathAssertion.html#SubjPropPathAssertion.assert_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.SubjPropPathAssertion.SubjPropPathAssertion.assert_path" title="Link to this definition"></a></dt>
+<dd><p>Assert a property path for a given subject.
+Put the results in a TargetStore.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytravharv.SubjPropPathAssertion.get_j2rdf_builder">
+<span class="sig-prename descclassname"><span class="pre">pytravharv.SubjPropPathAssertion.</span></span><span class="sig-name descname"><span class="pre">get_j2rdf_builder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/SubjPropPathAssertion.html#get_j2rdf_builder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.SubjPropPathAssertion.get_j2rdf_builder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytravharv.TargetStore">
+<span id="pytravharv-targetstore-module"></span><h2>pytravharv.TargetStore module<a class="headerlink" href="#module-pytravharv.TargetStore" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.MemoryTargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">MemoryTargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#MemoryTargetStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.MemoryTargetStore" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess" title="pytravharv.TargetStore.TargetStoreAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">TargetStoreAccess</span></code></a></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is a pointer to a triple store in memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_store</strong> (<em>str</em>) – The target store to harvest from.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.MemoryTargetStore.ingest">
+<span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph=&lt;Graph</span> <span class="pre">identifier=Nee4066d1c0b24dbe82c3aa72f74c7d21</span> <span class="pre">(&lt;class</span> <span class="pre">'rdflib.graph.Graph'&gt;)&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#MemoryTargetStore.ingest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.MemoryTargetStore.ingest" title="Link to this definition"></a></dt>
+<dd><p>Ingest given graph into the remote store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>Graph</em>) – The graph to ingest.</p></li>
+<li><p><strong>context</strong> (<em>str</em>) – The context to ingest the graph into.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.MemoryTargetStore.lastmod">
+<span class="sig-name descname"><span class="pre">lastmod</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#MemoryTargetStore.lastmod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.MemoryTargetStore.lastmod" title="Link to this definition"></a></dt>
+<dd><p>Get the lastmod from the registry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.MemoryTargetStore.select_subjects">
+<span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#MemoryTargetStore.select_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.MemoryTargetStore.select_subjects" title="Link to this definition"></a></dt>
+<dd><p>Select subjects from the target store using a SPARQL query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sparql</strong> (<em>str</em>) – The SPARQL query to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the SPARQL query.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SPARQLResult</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.MemoryTargetStore.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#MemoryTargetStore.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.MemoryTargetStore.verify" title="Link to this definition"></a></dt>
+<dd><p>Verify a given subject using a property path to see if this returns triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<em>str</em>) – The query to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the query returns triples, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">TargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStore" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is either a URI or a pointer to a triple store in memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_store</strong> (<em>str</em>) – The target store to harvest from.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the target store is not a URI or a filepath.</p></li>
+<li><p><strong>SystemExit</strong> – If the target store is not a URI or a filepath.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The target store to harvest from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore">TargetStore</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStore.get_target_store">
+<span class="sig-name descname"><span class="pre">get_target_store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStore.get_target_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStore.get_target_store" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStoreAccess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">TargetStoreAccess</span></span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStoreAccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStoreAccess" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract base class for accessing a target store.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStoreAccess.ingest">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph=&lt;Graph</span> <span class="pre">identifier=Nd04bf120c9de49289c7b96b44bf0a42b</span> <span class="pre">(&lt;class</span> <span class="pre">'rdflib.graph.Graph'&gt;)&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStoreAccess.ingest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStoreAccess.ingest" title="Link to this definition"></a></dt>
+<dd><p>Ingest given graph into teh self.graph</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStoreAccess.lastmod">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lastmod</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStoreAccess.lastmod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStoreAccess.lastmod" title="Link to this definition"></a></dt>
+<dd><p>Get the lastmod from the registry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStoreAccess.select_subjects">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparsl=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStoreAccess.select_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStoreAccess.select_subjects" title="Link to this definition"></a></dt>
+<dd><p>Select subjects from the target store using a SPARQL query.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.TargetStoreAccess.verify">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_path=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStoreAccess.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.TargetStoreAccess.verify" title="Link to this definition"></a></dt>
+<dd><p>Verify a given subject using a property path to see if this returns triples.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.URITargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">URITargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#URITargetStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.URITargetStore" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytravharv.TargetStore.TargetStoreAccess" title="pytravharv.TargetStore.TargetStoreAccess"><code class="xref py py-class docutils literal notranslate"><span class="pre">TargetStoreAccess</span></code></a></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is a URI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_store</strong> (<em>str</em>) – The target store to harvest from.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.URITargetStore.ingest">
+<span class="sig-name descname"><span class="pre">ingest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph=&lt;Graph</span> <span class="pre">identifier=Nb8ebfa0b8d41455586ba6d65ac4dfd94</span> <span class="pre">(&lt;class</span> <span class="pre">'rdflib.graph.Graph'&gt;)&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context:</span> <span class="pre">str</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#URITargetStore.ingest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.URITargetStore.ingest" title="Link to this definition"></a></dt>
+<dd><p>Ingest given graph into the remote store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>Graph</em>) – The graph to ingest.</p></li>
+<li><p><strong>context</strong> (<em>str</em>) – The context to ingest the graph into.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.URITargetStore.lastmod">
+<span class="sig-name descname"><span class="pre">lastmod</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#URITargetStore.lastmod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.URITargetStore.lastmod" title="Link to this definition"></a></dt>
+<dd><p>Get the lastmod from the registry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.URITargetStore.select_subjects">
+<span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#URITargetStore.select_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.URITargetStore.select_subjects" title="Link to this definition"></a></dt>
+<dd><p>Select subjects from the target store using a SPARQL query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sparql</strong> (<em>str</em>) – The SPARQL query to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the SPARQL query.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SPARQLResult</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.URITargetStore.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#URITargetStore.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.URITargetStore.verify" title="Link to this definition"></a></dt>
+<dd><p>Verify a given subject using a property path to see if this returns triples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query</strong> (<em>str</em>) – The query to use.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the query returns triples, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.get_j2rdf_builder">
+<span class="sig-prename descclassname"><span class="pre">pytravharv.TargetStore.</span></span><span class="sig-name descname"><span class="pre">get_j2rdf_builder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#get_j2rdf_builder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.get_j2rdf_builder" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-pytravharv.TravHarvConfigBuilder">
+<span id="pytravharv-travharvconfigbuilder-module"></span><h2>pytravharv.TravHarvConfigBuilder module<a class="headerlink" href="#module-pytravharv.TravHarvConfigBuilder" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.AssertPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">AssertPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assert_path=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#AssertPath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.AssertPath" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A path to assert.
+This class contains the following:
+- Path_parts: a list of strings
+- max_size: a function to return the len of the list of path_parts
+- get_path_for_depth(): a function that returns a path at a given depth</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.AssertPath.get_max_size">
+<span class="sig-name descname"><span class="pre">get_max_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#AssertPath.get_max_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.AssertPath.get_max_size" title="Link to this definition"></a></dt>
+<dd><p>Get the max size</p>
+<p>return: int
+rtype: int</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.AssertPath.get_path_for_depth">
+<span class="sig-name descname"><span class="pre">get_path_for_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#AssertPath.get_path_for_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.AssertPath.get_path_for_depth" title="Link to this definition"></a></dt>
+<dd><p>Get a concatination of the path parts up to a given depth</p>
+<p>return: str
+rtype: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.AssertPath.get_path_parts">
+<span class="sig-name descname"><span class="pre">get_path_parts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#AssertPath.get_path_parts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.AssertPath.get_path_parts" title="Link to this definition"></a></dt>
+<dd><p>Get the path parts</p>
+<p>return: list[str]
+rtype: list[str]</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.AssertPathSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">AssertPathSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assert_path_set</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#AssertPathSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.AssertPathSet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A set/list of assert paths</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.LiteralSubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">LiteralSubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#LiteralSubjectDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.LiteralSubjectDefinition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.SubjectDefinition" title="pytravharv.TravHarvConfigBuilder.SubjectDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubjectDefinition</span></code></a></p>
+<p>A subject definition that is a list of strings</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.LiteralSubjectDefinition.listSubjects">
+<span class="sig-name descname"><span class="pre">listSubjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#LiteralSubjectDefinition.listSubjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.LiteralSubjectDefinition.listSubjects" title="Link to this definition"></a></dt>
+<dd><p>Get the subjects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.SPARQLSubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">SPARQLSubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SPARQL=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetstore=&lt;class</span> <span class="pre">'pytravharv.TargetStore.TargetStore'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#SPARQLSubjectDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.SPARQLSubjectDefinition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.SubjectDefinition" title="pytravharv.TravHarvConfigBuilder.SubjectDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubjectDefinition</span></code></a></p>
+<p>A subject definition that is a SPARQL query</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.SPARQLSubjectDefinition.listSubjects">
+<span class="sig-name descname"><span class="pre">listSubjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#SPARQLSubjectDefinition.listSubjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.SPARQLSubjectDefinition.listSubjects" title="Link to this definition"></a></dt>
+<dd><p>Get the subjects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.SubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">SubjectDefinition</span></span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#SubjectDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.SubjectDefinition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.SubjectDefinition.listSubjects">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">listSubjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#SubjectDefinition.listSubjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.SubjectDefinition.listSubjects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">travharv_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Configuration for the travharv
+This class contains the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PrefixSet: a dictionary of prefixes</p></li>
+<li><p>tasks: a list of tasks</p></li>
+<li><p>ConfigName: a string</p></li>
+</ul>
+</div></blockquote>
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfig.ConfigName">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ConfigName</span></span><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig.ConfigName" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfig.PrefixSet">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PrefixSet</span></span><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig.PrefixSet" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfig.tasks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tasks</span></span><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig.tasks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfigBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore"><span class="pre">TargetStore</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">configFolder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfigBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_config">
+<span class="sig-name descname"><span class="pre">build_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfigBuilder.build_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_config" title="Link to this definition"></a></dt>
+<dd><p>Build a TravHarvConfig from a given config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_name</strong> (<em>str</em>) – The name of the config file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TravHarvConfig object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig" title="pytravharv.TravHarvConfigBuilder.TravHarvConfig">TravHarvConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_folder">
+<span class="sig-name descname"><span class="pre">build_from_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfigBuilder.build_from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfigBuilder.build_from_folder" title="Link to this definition"></a></dt>
+<dd><p>Build a list of TravHarvConfig objects from a given folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of TravHarvConfig objects.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig" title="pytravharv.TravHarvConfigBuilder.TravHarvConfig">TravHarvConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvConfigBuilder.</span></span><span class="sig-name descname"><span class="pre">TravHarvTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvTask" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A task for the travharv
+This task contains the following:
+- SubjectDefinition class: a class that defines the subjects
+- AssertPathSet class: a class that contains a list of AssertPath objects</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvTask.assert_path_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assert_path_set</span></span><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvTask.assert_path_set" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.TravHarvTask.subject_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subject_definition</span></span><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.TravHarvTask.subject_definition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pytravharv.TravHarvExecuter">
+<span id="pytravharv-travharvexecuter-module"></span><h2>pytravharv.TravHarvExecuter module<a class="headerlink" href="#module-pytravharv.TravHarvExecuter" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvExecuter.TravHarvExecutor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.TravHarvExecuter.</span></span><span class="sig-name descname"><span class="pre">TravHarvExecutor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore"><span class="pre">TargetStore</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvExecuter.html#TravHarvExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvExecuter.TravHarvExecutor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a TravHarvExecutor.
+This class will assert all paths for all subjects given for each task per config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_filename</strong> – str</p></li>
+<li><p><strong>prefix_set</strong> – dict</p></li>
+<li><p><strong>tasks</strong> – list</p></li>
+<li><p><strong>target_store</strong> – TargetStore</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvExecuter.TravHarvExecutor.assert_all_paths">
+<span class="sig-name descname"><span class="pre">assert_all_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvExecuter.html#TravHarvExecutor.assert_all_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvExecuter.TravHarvExecutor.assert_all_paths" title="Link to this definition"></a></dt>
+<dd><p>Assert all paths for all subjects given for each task per config.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pytravharv.WebAccess">
+<span id="pytravharv-webaccess-module"></span><h2>pytravharv.WebAccess module<a class="headerlink" href="#module-pytravharv.WebAccess" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.WebAccess.MyHTMLParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.WebAccess.</span></span><span class="sig-name descname"><span class="pre">MyHTMLParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/WebAccess.html#MyHTMLParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.WebAccess.MyHTMLParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HTMLParser</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.WebAccess.MyHTMLParser.handle_data">
+<span class="sig-name descname"><span class="pre">handle_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/WebAccess.html#MyHTMLParser.handle_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.WebAccess.MyHTMLParser.handle_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.WebAccess.MyHTMLParser.handle_endtag">
+<span class="sig-name descname"><span class="pre">handle_endtag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/WebAccess.html#MyHTMLParser.handle_endtag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.WebAccess.MyHTMLParser.handle_endtag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.WebAccess.MyHTMLParser.handle_starttag">
+<span class="sig-name descname"><span class="pre">handle_starttag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/WebAccess.html#MyHTMLParser.handle_starttag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.WebAccess.MyHTMLParser.handle_starttag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytravharv.WebAccess.WebAccess">
+<span class="sig-prename descclassname"><span class="pre">pytravharv.WebAccess.</span></span><span class="sig-name descname"><span class="pre">WebAccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/WebAccess.html#WebAccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.WebAccess.WebAccess" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pytravharv.WebAccess.download_uri_to_store">
+<span class="sig-prename descclassname"><span class="pre">pytravharv.WebAccess.</span></span><span class="sig-name descname"><span class="pre">download_uri_to_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triplestore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json-ld'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/WebAccess.html#download_uri_to_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.WebAccess.download_uri_to_store" title="Link to this definition"></a></dt>
+<dd><p>Download the uri to the triplestore</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uri</strong> – str</p></li>
+<li><p><strong>triplestore</strong> – rdflib.Graph</p></li>
+<li><p><strong>format</strong> – str</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-0">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-0" title="Link to this heading"></a></h2>
+<p>pytravharv</p>
+<dl class="field-list simple" id="module-pytravharv">
+<dt class="field-odd">platform<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix, Windows</p>
+</dd>
+<dt class="field-even">synopsis<span class="colon">:</span></dt>
+<dd class="field-even"><p>A package for traversing and harvesting RDF data by dereferencing URIs and asserting paths.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TargetStore">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.</span></span><span class="sig-name descname"><span class="pre">TargetStore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStore"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a target store to harvest from.
+The given target_store string is either a URI or a pointer to a triple store in memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>target_store</strong> (<em>str</em>) – The target store to harvest from.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the target store is not a URI or a filepath.</p></li>
+<li><p><strong>SystemExit</strong> – If the target store is not a URI or a filepath.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The target store to harvest from.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore">TargetStore</a></p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TargetStore.get_target_store">
+<span class="sig-name descname"><span class="pre">get_target_store</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TargetStore.html#TargetStore.get_target_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TargetStore.get_target_store" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.</span></span><span class="sig-name descname"><span class="pre">TravHarv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/__main__.html#TravHarv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarv" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Assert all paths for given subjects.
+Given a configuration file, assert all paths for all subjects in the configuration file.
+:param config_folder: str
+:param name: str
+:param output_folder: str
+:param target_store: str
+:param verbose: bool</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarv.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/__main__.html#TravHarv.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarv.run" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">travharv_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Configuration for the travharv
+This class contains the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>PrefixSet: a dictionary of prefixes</p></li>
+<li><p>tasks: a list of tasks</p></li>
+<li><p>ConfigName: a string</p></li>
+</ul>
+</div></blockquote>
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfig.ConfigName">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ConfigName</span></span><a class="headerlink" href="#pytravharv.TravHarvConfig.ConfigName" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfig.PrefixSet">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PrefixSet</span></span><a class="headerlink" href="#pytravharv.TravHarvConfig.PrefixSet" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfig.tasks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tasks</span></span><a class="headerlink" href="#pytravharv.TravHarvConfig.tasks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfigBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore"><span class="pre">TargetStore</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">configFolder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfigBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.build_from_config">
+<span class="sig-name descname"><span class="pre">build_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfigBuilder.build_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.build_from_config" title="Link to this definition"></a></dt>
+<dd><p>Build a TravHarvConfig from a given config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_name</strong> (<em>str</em>) – The name of the config file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TravHarvConfig object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig" title="pytravharv.TravHarvConfigBuilder.TravHarvConfig">TravHarvConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvConfigBuilder.build_from_folder">
+<span class="sig-name descname"><span class="pre">build_from_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvConfigBuilder.html#TravHarvConfigBuilder.build_from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvConfigBuilder.build_from_folder" title="Link to this definition"></a></dt>
+<dd><p>Build a list of TravHarvConfig objects from a given folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of TravHarvConfig objects.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#pytravharv.TravHarvConfigBuilder.TravHarvConfig" title="pytravharv.TravHarvConfigBuilder.TravHarvConfig">TravHarvConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pytravharv.TravHarvExecutor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pytravharv.</span></span><span class="sig-name descname"><span class="pre">TravHarvExecutor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_store</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pytravharv.TargetStore.TargetStore" title="pytravharv.TargetStore.TargetStore"><span class="pre">TargetStore</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvExecuter.html#TravHarvExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvExecutor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a TravHarvExecutor.
+This class will assert all paths for all subjects given for each task per config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config_filename</strong> – str</p></li>
+<li><p><strong>prefix_set</strong> – dict</p></li>
+<li><p><strong>tasks</strong> – list</p></li>
+<li><p><strong>target_store</strong> – TargetStore</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pytravharv.TravHarvExecutor.assert_all_paths">
+<span class="sig-name descname"><span class="pre">assert_all_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pytravharv/TravHarvExecuter.html#TravHarvExecutor.assert_all_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pytravharv.TravHarvExecutor.assert_all_paths" title="Link to this definition"></a></dt>
+<dd><p>Assert all paths for all subjects given for each task per config.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cedric_Decruw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

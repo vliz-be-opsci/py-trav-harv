@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pytravharv.SubjPropPathAssertion &mdash; pyTravHarv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyTravHarv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pytravharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyTravHarv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">pytravharv.SubjPropPathAssertion</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pytravharv.SubjPropPathAssertion</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">rdflib</span>
+<span class="kn">import</span> <span class="nn">validators</span>
+<span class="kn">from</span> <span class="nn">pyrdfj2</span> <span class="kn">import</span> <span class="n">J2RDFSyntaxBuilder</span>
+<span class="kn">from</span> <span class="nn">pytravharv.TargetStore</span> <span class="kn">import</span> <span class="n">TargetStore</span>
+<span class="kn">from</span> <span class="nn">pytravharv.TravHarvConfigBuilder</span> <span class="kn">import</span> <span class="n">AssertPath</span>
+<span class="kn">from</span> <span class="nn">pytravharv.WebAccess</span> <span class="kn">import</span> <span class="n">WebAccess</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># log = logging.getLogger(&quot;pyTravHarv&quot;)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="get_j2rdf_builder">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.SubjPropPathAssertion.get_j2rdf_builder">[docs]</a>
+<span class="k">def</span> <span class="nf">get_j2rdf_builder</span><span class="p">():</span>
+    <span class="n">template_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;pysubyt_templates&quot;</span>
+    <span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;template_folder == </span><span class="si">{</span><span class="n">template_folder</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># init J2RDFSyntaxBuilder</span>
+    <span class="n">j2rdf</span> <span class="o">=</span> <span class="n">J2RDFSyntaxBuilder</span><span class="p">(</span><span class="n">templates_folder</span><span class="o">=</span><span class="n">template_folder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">j2rdf</span></div>
+
+
+
+<span class="n">J2RDF</span> <span class="o">=</span> <span class="n">get_j2rdf_builder</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="SubjPropPathAssertion">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.SubjPropPathAssertion.SubjPropPathAssertion">[docs]</a>
+<span class="k">class</span> <span class="nc">SubjPropPathAssertion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent the assertion of all given property traversal paths for a given subject.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">assertion_path</span><span class="p">:</span> <span class="n">AssertPath</span><span class="p">,</span>
+        <span class="n">target_store</span><span class="p">:</span> <span class="n">TargetStore</span><span class="p">,</span>
+        <span class="n">prefix_set</span><span class="p">,</span>
+        <span class="n">config_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a SubjPropPathAssertion object.</span>
+<span class="sd">        Automatically asserts a property path for a given subject.</span>
+<span class="sd">        Puts the results in a TargetStore.</span>
+
+<span class="sd">        :param subject: str</span>
+<span class="sd">        :param assertion_path: AssertPath</span>
+<span class="sd">        :param target_store: TargetStore</span>
+<span class="sd">        :param prefix_set: dict</span>
+<span class="sd">        :param config_filename: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject_str_check</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Subject is not a valid URIRef or str: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span> <span class="o">=</span> <span class="n">assertion_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span> <span class="o">=</span> <span class="n">target_store</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_bounce_depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span><span class="o">.</span><span class="n">get_max_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix_set</span> <span class="o">=</span> <span class="n">prefix_set</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span> <span class="o">=</span> <span class="n">config_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_path</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_subject_str_check</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">subject</span>
+    <span class="p">):</span>  <span class="c1"># This whole function is jank, work out a way to offload this in a decent way</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if subject is a strict str , if subject is rdflib.term.URIRef , convert to str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">subject</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">subject</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">ResultRow</span>
+            <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span>
+        <span class="p">):</span>
+            <span class="c1"># extract URIRef from ResultRow</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="o">==</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">ResultRow</span><span class="p">:</span>
+                <span class="n">subject_row</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">subject_row</span> <span class="o">=</span> <span class="n">subject_row</span><span class="p">[</span>
+                        <span class="s2">&quot;value&quot;</span>
+                    <span class="p">]</span>  <span class="c1"># janky way of getting the URIRef from the ResultRow</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Subject row: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject_row</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)):</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Subject row is not a URIRef: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Subject is not a URIRef: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Subject is of type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Subject is not a URIRef or a str: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SubjPropPathAssertion.assert_path">
+<a class="viewcode-back" href="../../pytravharv.html#pytravharv.SubjPropPathAssertion.SubjPropPathAssertion.assert_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">assert_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assert a property path for a given subject.</span>
+<span class="sd">        Put the results in a TargetStore.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Asserting a property path for a given subject&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Subject: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">))</span>
+        <span class="c1"># Implement method to assert a property path for a given subject</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_bounce_depth</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_assert_at_depth</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_increase_depth</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_assert_at_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assert a property path for a given subject at a given depth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Asserting a property path for a given subject at a given depth&quot;</span>
+        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Depth: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span><span class="p">))</span>
+        <span class="n">SPARQLQuery</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sparql_trajectory_check</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">SPARQLQuery</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_harvest_and_surface</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_store</span><span class="o">.</span><span class="n">ingest</span><span class="p">(</span><span class="n">WebAccess</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">)</span>
+
+        <span class="c1"># Implement method to assert a property path for a given subject at a given depth</span>
+
+    <span class="k">def</span> <span class="nf">_increase_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Increase the depth of the property path assertion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Increasing the depth of the property path assertion&quot;</span><span class="p">)</span>
+        <span class="c1"># Implement method to increase the depth of the property path assertion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_harvest_and_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Harvest the property path and surface back to depth 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Harvesting the property path and backtracking to the previous depth&quot;</span>
+        <span class="p">)</span>
+        <span class="c1"># Implement method to harvest the property path and backtrack to the previous depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_bounce_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_bail_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Bail out of the property path assertion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Bailing out of the property path assertion&quot;</span><span class="p">)</span>
+        <span class="c1"># quit the assert path loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span>
+
+    <span class="k">def</span> <span class="nf">_sparql_trajectory_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;assertion_path: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span><span class="o">.</span><span class="n">get_path_for_depth</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;trajectory.sparql&quot;</span>
+        <span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="s2">&quot;property_trajectory&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span><span class="o">.</span><span class="n">get_path_for_depth</span><span class="p">(</span>
+                <span class="n">depth</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;prefixes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix_set</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">J2RDF</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span><span class="n">template</span><span class="p">,</span> <span class="o">**</span><span class="nb">vars</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;SPARQL query: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">query</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Cedric_Decruw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
