@@ -69,7 +69,14 @@ def get_arg_parser():
 
 
 class TravHarv:
-    """Main entry point for the module"""
+    """Assert all paths for given subjects.
+    Given a configuration file, assert all paths for all subjects in the configuration file.
+    :param config_folder: str
+    :param name: str
+    :param output_folder: str
+    :param target_store: str
+    :param verbose: bool
+    """
 
     def __init__(
         self,
