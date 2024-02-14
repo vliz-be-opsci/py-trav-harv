@@ -36,7 +36,8 @@ def get_arg_parser():
     parser.add_argument(
         "-cf",
         "--config-folder",
-        type=str,
+        nargs="?",
+        required=True,
         default=os.path.join(os.getcwd(), "config"),
         help="Folder containing configuration files, relative to the folder or file this was called from",
     )
@@ -45,24 +46,44 @@ def get_arg_parser():
         "-n",
         "--name",
         type=str,
+        required=False,
         default=None,
         help="Name of the configuration to use",
     )
 
     parser.add_argument(
+        "-m",
+        "--mode",
+        choices=["memory", "uristore"],
+        default="memory",
+        required=True,
+        help="Mode to use, either memory or uristore. Default is memory. If memory is used, the target store will be a temporary in-memory store. If uristore is used, the target store will be a URI store.",
+    )
+
+    parser.add_argument(
         "-o",
-        "--output-folder",
+        "--output",
         type=str,
-        default=os.path.join(os.getcwd(), "output"),
-        help="Folder to output files to",
+        default=None,
+        required=False,
+        help="File to write output to, if not specified, output will be written to stdout",
+    )
+
+    parser.add_argument(
+        "-c",
+        "--context",
+        nargs="*",
+        required=False,
+        default=None,
+        help="Context to add to graph when asserting paths. This will be a list of Paths to either a file containing triples or a folder containing files that can contain triples.",
     )
 
     parser.add_argument(
         "-ts",
         "--target-store",
-        type=str,
-        default=None,
-        help="Target store to harvest, this can be a pointer to a triple store in memory or the base URI of a triple store",
+        nargs=2,
+        required=False,
+        help="A pair of URLS for the Targetstore to harvest from. The first is the url to get statments from , the second one is to post statements to.",
     )
 
     return parser
@@ -103,13 +124,12 @@ class TravHarv:
     def run(self):
         if self.verbose:
             file_location = os.path.dirname(os.path.realpath(__file__))
-            parent_location = os.path.dirname(file_location)
             with open(
-                os.path.join(parent_location, "debug-logconf.yml"), "r"
+                os.path.join(file_location, "debug-logconf.yml"), "r"
             ) as f:
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
-
+        log.debug("started logging")
         self.target_store = TargetStore(self.target_store)
         self.travharv_config_builder = TravHarvConfigBuilder(
             self.target_store, self.config_folder
@@ -170,12 +190,12 @@ class mainRunner:
 
         if self.args.verbose:
             file_location = os.path.dirname(os.path.realpath(__file__))
-            parent_location = os.path.dirname(file_location)
             with open(
-                os.path.join(parent_location, "debug-logconf.yml"), "r"
+                os.path.join(file_location, "debug-logconf.yml"), "r"
             ) as f:
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
+        log.debug("started logging")
 
         self.target_store = TargetStore(args.target_store)
         self.travharv_config_builder = TravHarvConfigBuilder(

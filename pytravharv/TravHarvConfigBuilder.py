@@ -219,16 +219,16 @@ class TravHarvConfig:
         return self.travharv_config
 
     @property
-    def PrefixSet(self):
-        return self.travharv_config["PrefixSet"]
+    def prefixset(self):
+        return self.travharv_config["prefixset"]
 
     @property
     def tasks(self):
         return self.travharv_config["tasks"]
 
     @property
-    def ConfigName(self):
-        return self.travharv_config["ConfigName"]
+    def configname(self):
+        return self.travharv_config["configname"]
 
     def __str__(self):
         return str(self.travharv_config)
@@ -342,25 +342,28 @@ class TravHarvConfigBuilder:
         for assert_task in dict_object["assert"]:
             self._assert_subjects(assert_task["subjects"])
         # Add more assertions as needed...
-
-        # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
-        # if it is older then the last modified date of the admin graph then we can continue
-        # if it is not older then the last modified date of the admin graph then we can snooze the config
-        if self._check_snooze(
-            dict_object["snooze-till-graph-age-minutes"],
-            self.lastmodified_admin,
-            name_config,
-        ):
-            log.info(
-                "Snoozing config {} for {} minutes".format(
-                    name_config, dict_object["snooze-till-graph-age-minutes"]
+        try:
+            # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
+            # if it is older then the last modified date of the admin graph then we can continue
+            # if it is not older then the last modified date of the admin graph then we can snooze the config
+            if self._check_snooze(
+                dict_object["snooze-till-graph-age-minutes"],
+                self.lastmodified_admin,
+                name_config,
+            ):
+                log.info(
+                    "Snoozing config {} for {} minutes".format(
+                        name_config,
+                        dict_object["snooze-till-graph-age-minutes"],
+                    )
                 )
-            )
-            return
+                return
+        except Exception as e:
+            log.error("Error: {}".format(e))
 
         travharvconfig = {
-            "ConfigName": name_config,
-            "PrefixSet": dict_object["prefix"],
+            "configname": name_config,
+            "prefixset": dict_object["prefix"],
             "tasks": [
                 TravHarvTask(
                     {
