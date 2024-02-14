@@ -128,9 +128,9 @@ class TravHarv:
                     continue
                 log.info("Config object: {}".format(travHarvConfig()))
                 # from travHarvConfig we need , prefix_set, tasks, config_file
-                prefix_set = self.travHarvConfig.PrefixSet
-                config_name = self.travHarvConfig.ConfigName
-                tasks = self.travHarvConfig.tasks
+                prefix_set = travHarvConfig.PrefixSet
+                config_name = travHarvConfig.ConfigName
+                tasks = travHarvConfig.tasks
 
                 self.travharvexecutor = TravHarvExecutor(
                     config_name, prefix_set, tasks, self.target_store
