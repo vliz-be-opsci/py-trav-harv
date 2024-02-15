@@ -4,7 +4,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from pytravharv.TargetStore import TargetStore
 from pytravharv.TravHarvConfigBuilder import AssertPath
-from pytravharv.WebAccess import WebAccess
+from pytravharv.WebAccess import web_access
 import logging
 
 # log = logging.getLogger("pyTravHarv")
@@ -85,7 +85,7 @@ class SubjPropPathAssertion:
                         "value"
                     ]  # janky way of getting the URIRef from the ResultRow
                 log.debug("Subject row: {}".format(subject_row))
-                if validators.url(str(subject_row)):
+                if validators.url(subject_row):
                     return str(subject_row)
                 log.warning(
                     "Subject row is not a URIRef: {}".format(subject_row)
@@ -126,7 +126,9 @@ class SubjPropPathAssertion:
         if self.target_store.verify(SPARQLQuery):
             self._harvest_and_surface()
             return
-        self.target_store.ingest(WebAccess(self.subject), self.config_filename)
+        self.target_store.ingest(
+            web_access(self.subject), self.config_filename
+        )
 
         # Implement method to assert a property path for a given subject at a given depth
 

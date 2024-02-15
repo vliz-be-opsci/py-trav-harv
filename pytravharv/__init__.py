@@ -14,7 +14,7 @@ from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfig,
 )
 from pytravharv.TravHarvExecuter import TravHarvExecutor
-from pytravharv.__main__ import TravHarv
+from pytravharv.pytravharv import TravHarv
 
 
 __all__ = [

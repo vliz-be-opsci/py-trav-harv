@@ -43,7 +43,7 @@ class MyHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def WebAccess(url):
+def web_access(url):
     triplestore = Graph()
     download_uri_to_store(url, triplestore)
     return triplestore
@@ -88,8 +88,14 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
             format = "json-ld"
         elif "text/turtle" in r.headers["Content-Type"]:
             format = "turtle"
-        triplestore.parse(data=r.text, format=format, publicID=uri)
-        log.info(f"content of {uri} added to the triplestore")
+        try:
+            triplestore.parse(data=r.text, format=format, publicID=uri)
+            log.info(f"content of {uri} added to the triplestore")
+        except Exception as e:
+            log.warning(
+                f"failed to parse {uri} with format {format} with error {e}"
+            )
+
     else:
         # perform a check in the html to see if there is any link to fair signposting
         # perform request to uri with accept header text/html

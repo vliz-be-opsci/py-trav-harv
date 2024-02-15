@@ -1,5 +1,4 @@
 import argparse
-import os
 from pytravharv.TargetStore import TargetStore
 from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfigBuilder,
@@ -85,96 +84,6 @@ def get_arg_parser():
     return parser
 
 
-class TravHarv:
-    """Assert all paths for given subjects.
-    Given a configuration file, assert all paths for all subjects in the configuration file.
-    :param config_folder: str
-    :param name: str
-    :param output_folder: str
-    :param target_store: str
-    :param verbose: bool
-    """
-
-    def __init__(
-        self,
-        config_folder: str = "",
-        name: str = "",
-        output_folder: str = "",
-        target_store: str = "",
-        verbose: bool = False,
-    ):
-        """Assert all paths for given subjects.
-        Given a configuration file, assert all paths for all subjects in the configuration file.
-        :param config_folder: str
-        :param name: str
-        :param output_folder: str
-        :param target_store: str
-        :param verbose: bool
-        """
-        self.config_folder = config_folder
-        self.name = name
-        self.output_folder = output_folder
-        self.target_store = target_store
-        self.verbose = verbose
-
-    def run(self):
-        if self.verbose:
-            file_location = os.path.dirname(os.path.realpath(__file__))
-            with open(
-                os.path.join(file_location, "debug-logconf.yml"), "r"
-            ) as f:
-                config = yaml.safe_load(f.read())
-                logging.config.dictConfig(config)
-        log.debug("started logging")
-
-        self.target_store = TargetStore(self.target_store)
-        self.travharv_config_builder = TravHarvConfigBuilder(
-            self.target_store, self.config_folder
-        )
-        self.travharvexecutor = None
-
-        log.debug("started run")
-
-        if self.name is None:
-            self.travHarvConfigList = (
-                self.travharv_config_builder.build_from_folder()
-            )
-
-            for travHarvConfig in self.travHarvConfigList:
-                if travHarvConfig is None:
-                    continue
-                log.info("Config object: {}".format(travHarvConfig()))
-                # from travHarvConfig we need , prefix_set, tasks, config_file
-                prefix_set = travHarvConfig.PrefixSet
-                config_name = travHarvConfig.ConfigName
-                tasks = travHarvConfig.tasks
-
-                self.travharvexecutor = TravHarvExecutor(
-                    config_name, prefix_set, tasks, self.target_store
-                )
-
-                self.travharvexecutor.assert_all_paths()
-            return
-
-        self.travHarvConfig = self.travharv_config_builder.build_from_config(
-            self.name
-        )
-        if self.travHarvConfig is None:
-            return
-
-        log.info("Config object: {}".format(self.travHarvConfig()))
-
-        # from travHarvConfig we need , prefix_set, tasks, config_file
-        prefix_set = self.travHarvConfig.prefixset
-        config_name = self.travHarvConfig.configname
-        tasks = self.travHarvConfig.tasks
-        self.travharvexecutor = TravHarvExecutor(
-            config_name, prefix_set, tasks, self.target_store
-        )
-
-        self.travharvexecutor.assert_all_paths()
-
-
 class mainRunner:
     """
     A class to represent the main class.
@@ -194,11 +103,41 @@ class mainRunner:
                 logging.config.dictConfig(config)
         log.debug("started logging")
 
-        self.target_store = TargetStore(args.target_store)
+        log.debug("type target store: {}".format(type(args.target_store)))
+        log.debug(args)
+
+        # targetstore can be a list of paths, a single path to a folder or a list of urls
+        self._setup_targetstore()
         self.travharv_config_builder = TravHarvConfigBuilder(
             self.target_store, args.config_folder
         )
         self.travharvexecutor = None
+
+    def _setup_targetstore(self):
+        """checks the different arguments to see what setup will be used"""
+
+        # arguments that can influence setup
+        # -m --mode
+        # -ts --target-store
+        # -c --context
+        # -o --output
+
+        # if mode is memory, target store will be a temporary in-memory store memory store => it can be written to an output
+        # if mode is uristore, target store will be a URI store => target store will be a list of urls and must not be empty then
+        # if context is not None, it will be added to the graph when asserting paths
+        # if target store is not None, it will be used as the target store
+
+        if self.args.mode == "uristore":
+            assert (
+                self.args.target_store is not None
+            ), "No target store provided for uristore mode. Exiting."
+        self.target_store = TargetStore(
+            mode=self.args.mode,
+            context=self.args.context,
+            store_info=self.args.target_store,
+            output=self.args.output,
+        )
+        return
 
     def run(self):
         log.debug(self.args)

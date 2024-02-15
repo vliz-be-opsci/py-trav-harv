@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import time
+from typing import Optional, List
 from abc import ABC, abstractmethod
 from typing import Any
 from urllib.parse import (  # backup for validators since this cannot handle localhost
@@ -15,6 +16,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib.plugins.sparql.processor import SPARQLResult
 from SPARQLWrapper import JSON, SPARQLWrapper
+from pytravharv.WebAccess import web_access
 from datetime import datetime
 import logging
 
@@ -74,14 +76,24 @@ class URITargetStore(TargetStoreAccess):
     A class to represent a target store to harvest from.
     The given target_store string is a URI.
 
-    :param target_store: The target store to harvest from.
-    :type target_store: str
+    :param store_info: The target store to harvest from.
+    :type store_info: str
+    :param context: The context to ingest the graph into.
+    :type context: str
+
     """
 
-    def __init__(self, target_store):
-        self.target_store = target_store
+    def __init__(
+        self, store_info: List[str], context: Optional[List[str]] = None
+    ):
+
+        self.store_info = store_info
+        self.context = context
         self.graph = rdflib.Graph()
-        self.GDB = self._detect_type_remote_store()
+        if self.context is not None:
+            for resource in self.context:
+                self.graph = _insert_resource_into_graph(self.graph, resource)
+        self.GDB = self._setup_sparql_wrapper()
 
     def select_subjects(self, sparql=str):
         """Select subjects from the target store using a SPARQL query.
@@ -287,19 +299,16 @@ class URITargetStore(TargetStoreAccess):
             return uri_and_id
         return None
 
-    def _graphDB_config(self):
+    def _setup_sparql_wrapper(self):
         """
-        Setup graphdb config
+        Setup sparql wrapper
         """
-        # Implement method to get the graphDB config
-        self.endpoint = self.target_store
-        self.updateEndpoint = self.target_store + "/statements"
-
+        # Implement method to get the sparql wrapper
         GDB = SPARQLWrapper(
-            endpoint=self.endpoint,
-            updateEndpoint=self.updateEndpoint,
+            endpoint=self.store_info[0],
+            updateEndpoint=self.store_info[1],
             returnFormat=JSON,
-            agent="lwua-python-sparql-client",
+            agent="pytravharv-python-sparql-client",
         )
         GDB.method = "POST"
         return GDB
@@ -366,15 +375,25 @@ class MemoryTargetStore(TargetStoreAccess):
     A class to represent a target store to harvest from.
     The given target_store string is a pointer to a triple store in memory.
 
-    :param target_store: The target store to harvest from.
-    :type target_store: str
+    :param store_info: The target store to harvest from.
+    :type store_info: str
+    :param context: The context to ingest the graph into.
+    :type context: str
     """
 
-    def __init__(self, target_store):
-        log.debug("MemoryTargetStore: {}".format(target_store))
-        self.target_store = target_store
+    def __init__(
+        self,
+        context: Optional[List[str]] = None,
+        output: Optional[str] = None,
+    ):
         self.graph = rdflib.Graph()
-        self._read_file_in_graph()
+
+        if context is not None:
+            for resource in context:
+                self.graph = _insert_resource_into_graph(self.graph, resource)
+
+        self.output = output
+
         log.debug("MemoryTargetStore initialized")
         log.debug("graph: {}".format(self.graph))
         log.debug(
@@ -436,8 +455,15 @@ class MemoryTargetStore(TargetStoreAccess):
         graph = new_graph
         # combine graphs
         self.graph = self.graph + graph
-        # write graph to file
-        self.graph.serialize(destination=self.target_store, format="turtle")
+        # write graph to file if output is given
+        if self.output is not None:
+            self.graph.serialize(destination=self.output, format="turtle")
+
+        if self.output is None:
+            for triple in graph:
+                log.debug("triple: {}".format(triple))
+
+        log.info("graph length: {}".format(len(self.graph)))
 
     def lastmod(self):
         return None
@@ -447,27 +473,6 @@ class MemoryTargetStore(TargetStoreAccess):
         Get the ammount of triples in the graph
         """
         return len(self.graph)
-
-    def _read_file_in_graph(self):
-        """
-        Read in the target store
-        """
-        # read in the target_store into self.graph this can be a ttl of a jsonld file
-        # if file ends in .jsonld then use jsonld
-        # if file ends in .ttl then use turtle
-        # if file ends in .nt then use nt
-        if self.target_store.endswith(".jsonld"):
-            self.graph.parse(self.target_store, format="json-ld")
-            return
-        if self.target_store.endswith(".ttl"):
-            self.graph.parse(self.target_store, format="turtle")
-            return
-        if self.target_store.endswith(".nt"):
-            self.graph.parse(self.target_store, format="nt")
-            return
-        log.error(
-            "Target store is not a valid file extension. Please use .jsonld, .ttl or .nt"
-        )
 
     def _create_graph(self):
         """
@@ -501,16 +506,31 @@ class TargetStore:
     A class to represent a target store to harvest from.
     The given target_store string is either a URI or a pointer to a triple store in memory.
 
-    :param target_store: The target store to harvest from.
-    :type target_store: str
-    :raises ValueError: If the target store is not a URI or a filepath.
-    :raises SystemExit: If the target store is not a URI or a filepath.
+    :param mode: The mode to use, either memory or uristore.
+    :type mode: str
+    :param context: The context to ingest the graph into.
+    :type context: str
+    :param store_info: The target store to harvest from.
+    :type store_info: str
+    :output: file location to write output to
+    :type output: str
+    :rtype: TargetStore
     :return: The target store to harvest from.
     :rtype: TargetStore
     """
 
-    def __init__(self, target_store=str):
-        self.target_store = self._detect_type(target_store)
+    def __init__(
+        self,
+        mode: str,
+        context: str,
+        store_info: Optional[List[str]] = None,
+        output: Optional[str] = None,
+    ):
+        self.mode = mode
+        self.context = context
+        self.store_info = store_info
+        self.output = output
+        self.target_store = self._detect_type()
 
     def __repr__(self) -> str:
         return "TargetStore({})".format(self.target_store)
@@ -518,31 +538,46 @@ class TargetStore:
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         return self.target_store
 
-    def get_target_store(self):
-        return self.target_store
-
-    def _detect_type(self, target_store):
+    def _detect_type(self):
         """
         Detect the type of the target store. if URI then use URITargetStore, filepath then use MemoryTargetStore
         """
 
-        if os.path.isfile(target_store):
-            return MemoryTargetStore(target_store)
+        if self.mode == "uristore":
+            return URITargetStore(self.store_info, self.context)
 
-        # Implement method to detect type of target store
-        if _is_valid_url(target_store):
-            return URITargetStore(target_store)
-
-        log.debug("TargetStore: {}".format(target_store))
-        log.error("Target store is not a URI or a filepath")
-        sys.exit(1)
+        return MemoryTargetStore(self.context, self.output)
 
 
-def _is_valid_url(url):
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc])
-    except ValueError:
-        if validators.url(url):
-            return True
-        return False
+def _insert_resource_into_graph(graph: rdflib.Graph, resource: str):
+    """
+    Insert a resource into a graph.
+    """
+    # resource can be a path or a URI
+
+    # check if resource is a URI
+    if validators.url(resource):
+        # get triples from the uri
+        to_insert = web_access(resource)
+        graph = graph + to_insert
+        return graph
+
+    # check if resource is a file
+    if os.path.isfile(resource):
+        # get triples from the file
+        # determine the format of the file and use the correct parser
+        case = resource.split(".")[-1]
+        if case == "jsonld":
+            graph.parse(resource, format="json-ld")
+            return graph
+        if case == "ttl":
+            graph.parse(resource, format="ttl")
+            return graph
+        if case == "nt":
+            graph.parse(resource, format="nt")
+            return graph
+
+    # if resource is neither a URI nor a file then raise an error
+    raise ValueError(
+        "Resource is not a valid URI or file path: {}".format(resource)
+    )

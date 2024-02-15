@@ -124,28 +124,31 @@ You can also use the `pytravharv` package directly in your Python code. Here's a
 
 .. code-block:: python
 
-  import os
-  from pytravharv import TargetStore, TravHarvConfigBuilder, TravHarvExecutor
+  from pytravharv import TravHarv
 
-  config_folder = os.path.join(os.path.dirname(__file__), "cf")
+  config_folder = "./tests/config"
+  name = "base_test.yml"
+  output = "output.ttl"
+  context = ["./tests/inputs/63523.ttl"]
 
-  url = "http://localhost:7200/repositories/lwua23"
-
-  TARGETSTORE = TargetStore(url)
-  CONFIGBUILDER = TravHarvConfigBuilder(TARGETSTORE, str(config_folder))
-
-  CONFIGLIST = CONFIGBUILDER.build_from_folder()
-
-  for travHarvConfig in CONFIGLIST:
-      print(travHarvConfig())
-      prefix_set = travHarvConfig.PrefixSet
-      print(prefix_set)
-      config_name = travHarvConfig.ConfigName
-      print(config_name)
-      tasks = travHarvConfig.tasks
-      print(tasks)
-      travharvexecutor = TravHarvExecutor(config_name, prefix_set, tasks, TARGETSTORE)
-
-      travharvexecutor.assert_all_paths()
+  TravHarv(
+      config_folder, "memory", name, output, context, None, True
+  ).run_dereference_tasks()
 
 Replace `<config_file>` with the path to your configuration folder where the config file(s) are located.
+
+An example with mode uristore:
+
+.. code-block:: python
+
+  from pytravharv import TravHarv
+
+  config_folder = "./tests/config"
+  name = "base_test.yml"
+  output = "output.ttl"
+  context = ["./tests/inputs/63523.ttl"]
+  target_store = ["http://graphdb:7200/repositories/uristore", "http://graphdb:7200/repositories/uristore/statements"]
+
+  TravHarv(
+      config_folder, "uristore", name, output, context, target_store, True
+  ).run_dereference_tasks()
