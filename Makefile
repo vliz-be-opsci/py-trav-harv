@@ -1,7 +1,7 @@
 TEST_PATH = ./tests/
 FLAKE8_EXCLUDE = venv,.venv,.eggs,.tox,.git,__pycache__,*.pyc
 PROJECT = pytravharv
-AUTHOR = Cedric_Decruw
+AUTHOR = "Cedric Decruw"#
 
 clean:
 	@find . -name '*.pyc' -exec rm --force {} +
@@ -29,7 +29,7 @@ init-docs: startup
 	poetry install --with 'docs'
 
 docs:
-	if ! [ -d "./docs" ]; then poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author $(AUTHOR) docs; fi
+	if ! [ -d "./docs" ]; then poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author '${AUTHOR}' docs; fi
 	cp ./pre_docs/* ./docs/source/
 	sleep 1
 	poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT)
@@ -51,10 +51,6 @@ check:
 lint-fix:
 	poetry run black .
 	poetry run isort .
-
-docker-build:
-	docker build . -t pysubyt
-
 
 update:
 	poetry update

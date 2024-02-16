@@ -1,27 +1,15 @@
 import os
 import rdflib
 import validators
-from pyrdfj2 import J2RDFSyntaxBuilder
+from pytravharv.common import QUERY_BUILDER as J2RDF
+
 from pytravharv.TargetStore import TargetStore
 from pytravharv.TravHarvConfigBuilder import AssertPath
-from pytravharv.WebAccess import web_access
+from pytravharv.WebAccess import fetch as web_access
 import logging
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
-
-
-def get_j2rdf_builder():
-    template_folder = os.path.join(
-        os.path.dirname(__file__), "pysubyt_templates"
-    )
-    log.info(f"template_folder == {template_folder}")
-    # init J2RDFSyntaxBuilder
-    j2rdf = J2RDFSyntaxBuilder(templates_folder=template_folder)
-    return j2rdf
-
-
-J2RDF = get_j2rdf_builder()
 
 
 class SubjPropPathAssertion:

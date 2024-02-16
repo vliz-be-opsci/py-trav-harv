@@ -16,7 +16,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib.plugins.sparql.processor import SPARQLResult
 from SPARQLWrapper import JSON, SPARQLWrapper
-from pytravharv.WebAccess import web_access
+from pytravharv.WebAccess import fetch
 from datetime import datetime
 import logging
 
@@ -248,25 +248,6 @@ class URITargetStore(TargetStoreAccess):
             # get current time in utc
             lastmod = datetime.utcnow().isoformat()
             self._update_registry_lastmod(lastmod, context)
-
-        """
-        Detect the repositories for a GRAPHDB endpoint.
-        """
-        # Implement method to detect the repositories for a GRAPHDB endpoint do accept application/json
-        response = requests.get(
-            f"{self.target_store}/repositories",
-            headers={"Accept": "application/json"},
-        )
-        if response.status_code == 200:
-            response_json = response.json()
-            # Extract 'uri' and 'id' from the response
-            uri_and_id = [
-                {"uri": repo["uri"]["value"], "id": repo["id"]["value"]}
-                for repo in response_json["results"]["bindings"]
-            ]
-            log.debug("uri and id: {}".format(uri_and_id))
-            return uri_and_id
-        return None
 
     def _setup_sparql_wrapper(self):
         """
@@ -527,7 +508,7 @@ def _insert_resource_into_graph(graph: rdflib.Graph, resource: str):
     # check if resource is a URI
     if validators.url(resource):
         # get triples from the uri
-        to_insert = web_access(resource)
+        to_insert = fetch(resource)
         graph = graph + to_insert
         return graph
 

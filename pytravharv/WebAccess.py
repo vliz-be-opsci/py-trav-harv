@@ -43,7 +43,7 @@ class MyHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def web_access(url):
+def fetch(url):
     triplestore = Graph()
     download_uri_to_store(url, triplestore)
     return triplestore
