@@ -249,37 +249,6 @@ class URITargetStore(TargetStoreAccess):
             lastmod = datetime.utcnow().isoformat()
             self._update_registry_lastmod(lastmod, context)
 
-    def _detect_type_remote_store(self):
-        """TODO: Implement method to detect type of remote target store.
-        For now there is only an endpoint for GRAPHDB repositories.
-        """
-        GRAPHDB_RE = r"http://([\w.-]+:\d+)/repositories/(\w+)"
-        match = re.match(GRAPHDB_RE, self.target_store)
-        if match:
-            return self._graphDB_config()
-
-        # TODO: add more remote target store types
-
-        # if no match is found then try and get a request to get all possible graph of a store
-        # if this fails then raise an error that the store given is not a valid remote store
-        if self._detect_repos_for_graphdb() is not None:
-            # return a table like overview of what repositories are avialable
-            log.debug(
-                "repositories: {}".format(self._detect_repos_for_graphdb())
-            )
-            raise ValueError(
-                "Target store is not a valid remote store URI, use one of the following repositories: {}".format(
-                    self._detect_repos_for_graphdb()
-                )
-            )
-
-        raise ValueError(
-            "Target store is not a valid remote store URI: {}".format(
-                self.target_store
-            )
-        )
-
-    def _detect_repos_for_graphdb(self):
         """
         Detect the repositories for a GRAPHDB endpoint.
         """

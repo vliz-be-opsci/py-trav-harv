@@ -1,128 +1,232 @@
+from pytravharv.TargetStore import TargetStore, _insert_resource_into_graph
+from pytravharv.WebAccess import web_access
 import os
-
 import pytest
-
-from pyTravHarv.TargetStore import (
-    MemoryTargetStore,
-    TargetStore,
-    URITargetStore,
+import re
+import sys
+import time
+from typing import Optional, List
+from abc import ABC, abstractmethod
+from typing import Any
+from urllib.parse import (  # backup for validators since this cannot handle localhost
+    quote,
+    unquote,
+    urlparse,
 )
+import rdflib
+import requests
+from pyrdfj2 import J2RDFSyntaxBuilder
+from rdflib.plugins.sparql.processor import SPARQLResult
+from SPARQLWrapper import JSON, SPARQLWrapper
+from datetime import datetime
+import validators
 
 
-def test_get_target_store():
-    store_path = "https://example.com/repositories/test"
+def test_select_subjects_memory_store():
+    # Create an instance of TargetStore
     target_store = TargetStore(
-        store_path
-    )  # This test gets halted by validators for some reason
-    assert target_store() == target_store.target_store
-
-
-def test_detect_type_uri_target_store():
-    target_store = TargetStore()
-    uri_target_store = target_store._detect_type(
-        "https://example.com"
-    )  # same here
-    assert isinstance(uri_target_store, URITargetStore)
-
-
-def test_detect_type_memory_target_store():
-    target_store = TargetStore()
-    memory_target_store = target_store._detect_type(
-        os.path.join(os.getcwd(), "example.jsonld")
+        mode="memory",
+        context=None,
     )
-    assert isinstance(memory_target_store, MemoryTargetStore)
+
+    # Define a sample SPARQL query
+    sparql_query = "SELECT ?subject WHERE { ?subject rdf:type foaf:Person }"
+
+    # Call the select_subjects method with the sample query
+    result = target_store().select_subjects(sparql_query)
+
+    # Assert that the result is of type SPARQLResult
+    assert isinstance(result, SPARQLResult)
+
+    # Assert that the result contains the expected bindings
+    assert len(result.bindings) == 0
 
 
-def test_detect_type_invalid_target_store():
-    target_store = TargetStore()
-    with pytest.raises(SystemExit):
-        target_store._detect_type("invalid_target_store")
+"""
+def test_select_subjects_uri_store():
+    # Create an instance of TargetStore
+    # This test wil fail because I don't have a local graph store running
+    target_store = TargetStore(
+        mode="uristore",
+        context=None,
+        store_info=[
+            "http://localhost:3030/ds/query",  # TODO: change to a valid graph store
+            "http://localhost:3030/ds/update",
+        ],
+    )
+
+    # Define a sample SPARQL query
+    sparql_query = "SELECT ?subject WHERE { ?subject rdf:type foaf:Person }"
+
+    # Call the select_subjects method with the sample query
+    result = target_store().select_subjects(sparql_query)
+
+    # Assert that the result is of type SPARQLResult
+    assert isinstance(result, SPARQLResult)
+
+    # Assert that the result contains the expected bindings
+    assert len(result.bindings) == 0
+"""
 
 
-def test_ammount_triples_graph():
-    target_store = TargetStore()
-    assert target_store._ammount_triples_graph() == len(target_store.graph)
+def test_verify_returns_true_memory_store():
+    # Create an instance of TargetStore
+    target_store = TargetStore(
+        mode="memory",
+        context=["./tests/inputs/63523.ttl"],
+    )
+
+    # Define a sample SPARQL query
+    sparql_query = "SELECT ?subject WHERE { ?subject a <http://marineregions.org/ns/ontology#MRGeoObject> }"
+
+    # Call the verify method with the sample query
+    result = target_store().verify(sparql_query)
+
+    # Assert that the result is True
+    assert result is True
 
 
-def test_get_target_store():
-    target_store = TargetStore()
-    assert target_store() == target_store.target_store
+def test_verify_returns_false_memory_store():
+    # Create an instance of TargetStore
+    target_store = TargetStore(
+        mode="memory",
+        context=None,
+    )
+
+    # Define a sample SPARQL query
+    sparql_query = "SELECT ?subject WHERE { ?subject a <http://marineregions.org/ns/ontology#MRGeoObject> }"
+
+    # Call the verify method with the sample query
+    result = target_store().verify(sparql_query)
+
+    # Assert that the result is False
+    assert result is False
 
 
-def test_detect_type_uri_target_store():
-    target_store = TargetStore()
-    uri_target_store = target_store._detect_type("https://example.com")
-    assert isinstance(uri_target_store, URITargetStore)
+def test_ingest_memory_store():
+    # Create an instance of TargetStore
+    target_store = TargetStore(
+        mode="memory",
+        context=None,
+    )
+
+    # Create a sample RDF graph
+    graph = rdflib.Graph()
+    graph.add(
+        (
+            rdflib.URIRef("http://example.org/subject1"),
+            rdflib.URIRef("http://example.org/predicate"),
+            rdflib.URIRef("http://example.org/object1"),
+        )
+    )
+    graph.add(
+        (
+            rdflib.URIRef("http://example.org/subject2"),
+            rdflib.URIRef("http://example.org/predicate"),
+            rdflib.URIRef("http://example.org/object2"),
+        )
+    )
+
+    # Call the ingest method with the sample graph
+    target_store().ingest(graph)
+
+    # Assert that the graph is ingested into the memory store
+    assert len(target_store().graph) == 2
 
 
-def test_detect_type_memory_target_store():
-    target_store = TargetStore()
-    memory_target_store = target_store._detect_type("/path/to/file")
-    assert isinstance(memory_target_store, MemoryTargetStore)
+"""
+def test_ingest_uri_store():
+    # Create an instance of TargetStore
+    # This test will fail because I don't have a local graph store running
+    target_store = TargetStore(
+        mode="uristore",
+        context=None,
+        store_info=[
+            "http://localhost:3030/ds/query",  # TODO: change to a valid graph store
+            "http://localhost:3030/ds/update",
+        ],
+    )
+
+    # Create a sample RDF graph
+    graph = rdflib.Graph()
+    graph.add(
+        (
+            rdflib.URIRef("http://example.org/subject1"),
+            rdflib.URIRef("http://example.org/predicate"),
+            rdflib.URIRef("http://example.org/object1"),
+        )
+    )
+    graph.add(
+        (
+            rdflib.URIRef("http://example.org/subject2"),
+            rdflib.URIRef("http://example.org/predicate"),
+            rdflib.URIRef("http://example.org/object2"),
+        )
+    )
+
+    # Call the ingest method with the sample graph
+    target_store().ingest(graph)
+
+    # Assert that the graph is ingested into the URI store
+    assert len(target_store().graph) == 2
+"""
 
 
-def test_detect_type_invalid_target_store():
-    target_store = TargetStore()
-    with pytest.raises(SystemExit):
-        target_store._detect_type("invalid_target_store")
+def test_insert_resource_into_graph_with_uri():
+    # Create an empty graph
+    graph = rdflib.Graph()
+
+    # Define a sample URI
+    uri = "https://marineregions.org/mrgid/3293.ttl"
+
+    # Call the _insert_resource_into_graph function with the sample URI
+    result = _insert_resource_into_graph(graph, uri)
+
+    # Assert that the graph is not empty
+    assert len(result) > 0
 
 
-def test_ammount_triples_graph():
-    target_store = TargetStore()
-    assert target_store._ammount_triples_graph() == len(target_store.graph)
+def test_insert_resource_into_graph_with_file_jsonld():
+    # Create an empty graph
+    graph = rdflib.Graph()
+
+    # Define a sample JSON-LD file path
+    file_path = "./tests/inputs/3293.jsonld"
+
+    # Call the _insert_resource_into_graph function with the sample file path
+    result = _insert_resource_into_graph(graph, file_path)
+
+    # Assert that the graph is not empty
+    assert len(result) > 0
 
 
-def test_read_file_in_graph_jsonld():
-    target_store = TargetStore()
-    target_store.target_store = "example.jsonld"
-    target_store._read_file_in_graph()
-    assert len(target_store.graph) > 0
+def test_insert_resource_into_graph_with_file_ttl():
+    # Create an empty graph
+    graph = rdflib.Graph()
+
+    # Define a sample Turtle file path
+    file_path = "./tests/inputs/63523.ttl"
+
+    # Call the _insert_resource_into_graph function with the sample file path
+    result = _insert_resource_into_graph(graph, file_path)
+
+    # Assert that the graph is not empty
+    assert len(result) > 0
 
 
-def test_read_file_in_graph_ttl():
-    target_store = TargetStore()
-    target_store.target_store = "example.ttl"
-    target_store._read_file_in_graph()
-    assert len(target_store.graph) > 0
+def test_insert_resource_into_graph_with_invalid_resource():
+    # Create an empty graph
+    graph = rdflib.Graph()
 
+    # Define an invalid resource
+    resource = "invalid_resource"
 
-def test_read_file_in_graph_nt():
-    target_store = TargetStore()
-    target_store.target_store = "example.nt"
-    target_store._read_file_in_graph()
-    assert len(target_store.graph) > 0
-
-
-def test_read_file_in_graph_invalid_extension():
-    target_store = TargetStore()
-    target_store.target_store = "example.txt"
-    with pytest.raises(Exception):
-        target_store._read_file_in_graph()
-
-
-def test_create_graph_valid_file():
-    target_store = TargetStore()
-    target_store.target_store = "example.jsonld"
-    target_store._create_graph()
-    assert len(target_store.graph) > 0
-
-
-def test_create_graph_invalid_file():
-    target_store = TargetStore()
-    target_store.target_store = "invalid_file.txt"
-    with pytest.raises(SystemExit):
-        target_store._create_graph()
-
-
-def test_create_graph_unsupported_format():
-    target_store = TargetStore()
-    target_store.target_store = "example.txt"
-    with pytest.raises(SystemExit):
-        target_store._create_graph()
-
-
-def test_context_2_urn():
-    target_store = TargetStore()
-    context = "example_context"
-    expected_urn = "urn:PYTRAVHARV:example_context"
-    assert target_store._context_2_urn(context) == expected_urn
+    # Call the _insert_resource_into_graph function with the invalid resource
+    try:
+        _insert_resource_into_graph(graph, resource)
+    except ValueError:
+        # Expected ValueError to be raised
+        assert True
+    else:
+        # If ValueError is not raised, fail the test
+        assert False
