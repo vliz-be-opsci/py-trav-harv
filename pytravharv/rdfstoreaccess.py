@@ -69,8 +69,12 @@ class RDFStoreAccess:
         result: SPARQLResult = self._target.select(sparql)
         log.debug("result: {}".format(result))
         # todo convert response into list of subjects
-        list_of_subjects = [row[0] for row in result]
-        log.debug("list_of_subjects: {}".format(list_of_subjects))
+        try:
+            list_of_subjects = [row[0]["value"] for row in result]
+            log.debug("list_of_subjects: {}".format(list_of_subjects))
+        except Exception as e:
+            log.debug(e)
+            list_of_subjects = []
         return list_of_subjects
 
     def verify(self, subject, property_path, prefixes=None) -> bool:
