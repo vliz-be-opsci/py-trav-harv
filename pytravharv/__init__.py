@@ -15,11 +15,11 @@ from pytravharv.TravHarvConfigBuilder import (
 )
 from pytravharv.TravHarvExecuter import TravHarvExecutor
 from pytravharv.pytravharv import TravHarv
-from pytravharv.store import TargetStore
+from pytravharv.rdfstoreaccess import RDFStoreAccess
 
 
 __all__ = [
-    "TargetStore",
+    "RDFStoreAccess",
     "TravHarvConfigBuilder",
     "TravHarvConfig",
     "TravHarvExecutor",
