@@ -32,7 +32,7 @@ class TravHarv:
     def __init__(
         self,
         config_folder: str,
-        name: Optional[str],
+        name: Optional[str] = None,
         output: Optional[str] = None,
         context: Optional[List[str]] = None,
         target_store_info: Optional[List[str]] = None,
