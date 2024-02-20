@@ -392,5 +392,5 @@ class TravHarvConfigBuilder:
     def _check_snooze(self, snooze_time, name_config):
         return self._rdf_store_access.verify_max_age(
             named_graph=graph_name_to_uri(name_config),
-            max_age=timedelta(minutes=snooze_time),
+            age_minutes=timedelta(minutes=snooze_time),
         )
