@@ -350,7 +350,6 @@ class TravHarvConfigBuilder:
             # if it is not older then the last modified date of the admin graph then we can snooze the config
             if self._check_snooze(
                 dict_object["snooze-till-graph-age-minutes"],
-                self.lastmodified_admin,
                 name_config,
             ):
                 log.info(
