@@ -332,9 +332,9 @@ class TravHarvConfigBuilder:
                 print(exc)
 
     def _makeTravHarvConfigPartFromDict(
-        self, dict_object, name_config="default"
+        self, dict_object, name_config: str = "default"
     ):
-
+        log.debug("Making TravHarvConfig from dict for {}".format(name_config))
         # make it so that the assertions are always checked for lowercase
         dict_object = {k.lower(): v for k, v in dict_object.items()}
         assert (

@@ -80,17 +80,43 @@ class TravHarv:
         self.travharvexecutor = None
 
     def run_dereference_tasks(self):
-        log.debug("running dereference tasks")
-        trav_harv_config: Optional[TravHarvConfig] = None
-        if self.name is None:
-            self.travHarvConfigList = (
-                self.travharv_config_builder.build_from_folder()
-            )
+        try:
+            log.debug("running dereference tasks")
+            trav_harv_config: Optional[TravHarvConfig] = None
+            if self.name is None:
+                log.debug("running all configurations")
+                self.travHarvConfigList = (
+                    self.travharv_config_builder.build_from_folder()
+                )
+                log.debug(
+                    "self.travHarvConfigList: {}".format(
+                        self.travHarvConfigList
+                    )
+                )
+                for trav_harv_config in self.travHarvConfigList:
+                    if trav_harv_config is None:
+                        continue
 
-            for trav_harv_config in self.travHarvConfigList:
+                    self.travharvexecutor = TravHarvExecutor(
+                        trav_harv_config.configname,
+                        trav_harv_config.prefixset,
+                        trav_harv_config.tasks,
+                        self.target_store_access,
+                        self.output,
+                    )
+                    self.travharvexecutor.assert_all_paths()
+            else:
+                trav_harv_config = (
+                    self.travharv_config_builder.build_from_config(self.name)
+                )
+
                 if trav_harv_config is None:
-                    continue
-
+                    log.error(
+                        "No configuration found with name: {}".format(
+                            self.name
+                        )
+                    )
+                    return
                 self.travharvexecutor = TravHarvExecutor(
                     trav_harv_config.configname,
                     trav_harv_config.prefixset,
@@ -99,21 +125,7 @@ class TravHarv:
                     self.output,
                 )
                 self.travharvexecutor.assert_all_paths()
-        else:
-            trav_harv_config = self.travharv_config_builder.build_from_config(
-                self.name
-            )
-
-            if trav_harv_config is None:
-                log.error(
-                    "No configuration found with name: {}".format(self.name)
-                )
-                return
-            self.travharvexecutor = TravHarvExecutor(
-                trav_harv_config.configname,
-                trav_harv_config.prefixset,
-                trav_harv_config.tasks,
-                self.target_store_access,
-                self.output,
-            )
-            self.travharvexecutor.assert_all_paths()
+        except Exception as e:
+            log.error(e)
+            log.error("Error running dereference tasks")
+            raise e
