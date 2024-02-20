@@ -1,5 +1,9 @@
 from typing import Optional, List
-from pytravharv.TargetStore import TargetStore
+from pytravharv.common import insert_resource_into_graph
+from pyrdfstore import create_rdf_store
+from rdflib import Graph
+from pytravharv.rdfstoreaccess import RDFStoreAccess
+from pytravharv.common import QUERY_BUILDER
 from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfigBuilder,
     TravHarvConfig,
@@ -21,19 +25,18 @@ class TravHarv:
     :param name: str
     :param output: str
     :param context: list[str]
-    :param target_store: list[str]
+    :param target_store_info: Optional[list[str]]
     :param verbose: bool
     """
 
     def __init__(
         self,
         config_folder: str,
-        mode: str,
         name: Optional[str],
-        output: Optional[str],
-        context: Optional[List[str]],
-        target_store: Optional[List[str]],
-        verbose: bool = False,
+        output: Optional[str] = None,
+        context: Optional[List[str]] = None,
+        target_store_info: Optional[List[str]] = None,
+        verbose: bool = True,
     ):
         """Assert all paths for given subjects.
         Given a configuration file, assert all paths for all subjects in the configuration file.
@@ -46,13 +49,10 @@ class TravHarv:
         """
         self.config_folder = config_folder
         self.name = name
-        self.mode = mode
         self.output = output
-        self.context = context
-        self.target_store = target_store
-        self.verbose = verbose
+        self.context = context  # have better names for this
 
-        if self.verbose:
+        if verbose:
             file_location = os.path.dirname(os.path.realpath(__file__))
             with open(
                 os.path.join(file_location, "debug-logconf.yml"), "r"
@@ -61,9 +61,21 @@ class TravHarv:
                 logging.config.dictConfig(config)
         log.debug("started logging")
 
-        self._setup_targetstore()
+        self.target_store = create_rdf_store(target_store_info)
+
+        self.target_store_access = RDFStoreAccess(
+            self.target_store, QUERY_BUILDER
+        )
+
+        # if there is context add it to the target store
+        if context is not None:
+            graph = Graph()
+            for context in self.context:
+                insert_resource_into_graph(graph, context)
+            self.target_store_access.ingest(graph, "urn:PYTRAVHARV:context")
+
         self.travharv_config_builder = TravHarvConfigBuilder(
-            self.target_store, self.config_folder
+            self.target_store_access, self.config_folder
         )
         self.travharvexecutor = None
 
@@ -83,7 +95,8 @@ class TravHarv:
                     trav_harv_config.configname,
                     trav_harv_config.prefixset,
                     trav_harv_config.tasks,
-                    self.target_store,
+                    self.target_store_access,
+                    self.output,
                 )
                 self.travharvexecutor.assert_all_paths()
         else:
@@ -100,21 +113,7 @@ class TravHarv:
                 trav_harv_config.configname,
                 trav_harv_config.prefixset,
                 trav_harv_config.tasks,
-                self.target_store,
+                self.target_store_access,
+                self.output,
             )
             self.travharvexecutor.assert_all_paths()
-
-    def _setup_targetstore(self):
-        """checks the different arguments to see what setup will be used"""
-
-        if self.mode == "uristore":
-            assert (
-                self.target_store is not None
-            ), "No target store provided for uristore mode. Exiting."
-        self.target_store = TargetStore(
-            mode=self.mode,
-            context=self.context,
-            store_info=self.target_store,
-            output=self.output,
-        )
-        return

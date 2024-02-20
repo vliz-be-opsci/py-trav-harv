@@ -15,6 +15,7 @@ pyrdfj2 = "^0.0.5"
 sphinx-rtd-theme = "^2.0.0"
 recommonmark = "^0.7.1"
 myst-parser = "^2.0.0"
+pyrdfstore = {git = "https://github.com/vliz-be-opsci/py-RDF-store.git", rev = "dev"}
 
 [tool.poetry.group.docs]
 optional = true

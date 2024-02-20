@@ -1,4 +1,4 @@
-from pytravharv.TargetStore import TargetStore, _insert_resource_into_graph
+from pytravharv.rdfstoreaccess import TargetStore, _insert_resource_into_graph
 from pytravharv.WebAccess import web_access
 import os
 import pytest

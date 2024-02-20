@@ -6,7 +6,9 @@ from typing import Any
 import yaml
 import logging
 from datetime import datetime, timedelta
-from pytravharv.TargetStore import TargetStore
+from pytravharv.rdfstoreaccess import RDFStoreAccess
+from pytravharv.common import graph_name_to_uri, uri_to_graph_name
+from pyrdfstore.store import RDFStore
 from rdflib.plugins.sparql.parser import parseQuery
 from abc import ABC, abstractmethod
 
@@ -86,7 +88,7 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     A subject definition that is a SPARQL query
     """
 
-    def __init__(self, SPARQL=str, targetstore=TargetStore):
+    def __init__(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
         """
         Initialise the SPARQL subject definition
 
@@ -96,7 +98,7 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         :type targetstore: TargetStore
         """
         log.debug("init SPARQL subjects")
-        self.subjects = self._get_subjects(SPARQL, targetstore)
+        self.subjects = self._get_subjects(SPARQL, rdf_store_access)
         log.debug(self.subjects)
 
     def __call__(self, *args: Any, **kwds: Any) -> list[str]:
@@ -111,9 +113,9 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         """
         return self.subjects
 
-    def _get_subjects(self, SPARQL=str, targetstore=TargetStore):
+    def _get_subjects(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
         log.debug("getting subjects")
-        return targetstore().select_subjects(SPARQL)
+        return rdf_store_access.select_subjects(SPARQL)
 
 
 class AssertPathSet:
@@ -235,12 +237,14 @@ class TravHarvConfig:
 
 
 class TravHarvConfigBuilder:
-    def __init__(self, target_store: TargetStore, configFolder: str = ""):
+    def __init__(
+        self, rdf_store_access: RDFStoreAccess, configFolder: str = ""
+    ):
         """
         Initialize the TravHarvConfigBuilder.
 
-        :param target_store: The target store for the TravHarvConfigBuilder.
-        :type target_store: TargetStore
+        :param rdf_store_access: The RDF store access.
+        :type rdf_store_access: RDFStoreAccess
         :param configFolder: The folder containing the config files.
         :type configFolder: str
         :return: A TravHarvConfigBuilder object.
@@ -252,9 +256,7 @@ class TravHarvConfigBuilder:
                 "Config folder is None, using current working directory as config folder"
             )
         self.config_files_folder = configFolder
-        self._target_store = target_store
-        self.lastmodified_admin = target_store().lastmod()
-        log.debug(self.lastmodified_admin)
+        self._rdf_store_access = rdf_store_access
         log.debug("TravHarvConfigBuilder initialized")
 
     def build_from_config(self, config_name):
@@ -374,7 +376,7 @@ class TravHarvConfigBuilder:
                             if "literal" in assert_task["subjects"]
                             else SPARQLSubjectDefinition(
                                 assert_task["subjects"]["SPARQL"],
-                                self._target_store,
+                                self._rdf_store_access,
                             )
                         ),
                         "assert_path_set": AssertPathSet(
@@ -388,19 +390,8 @@ class TravHarvConfigBuilder:
 
         return TravHarvConfig(travharvconfig)
 
-    def _check_snooze(self, snooze_time, lastmodified_admin, name_config):
-        if name_config in lastmodified_admin:
-            lastmodified_admin_time = lastmodified_admin[name_config]
-            log.debug(
-                "lastmodified_admin_time: {}".format(lastmodified_admin_time)
-            )
-            tosnooze_time = lastmodified_admin_time + timedelta(
-                minutes=snooze_time
-            )
-
-            log.debug("tosnooze_time: {}".format(tosnooze_time))
-
-            if tosnooze_time > datetime.now():
-                return True
-            else:
-                return False
+    def _check_snooze(self, snooze_time, name_config):
+        return self._rdf_store_access.verify_max_age(
+            named_graph=graph_name_to_uri(name_config),
+            max_age=timedelta(minutes=snooze_time),
+        )

@@ -1,9 +1,12 @@
 from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
-from pytravharv.TargetStore import TargetStore
+from pytravharv.rdfstoreaccess import RDFStoreAccess
+from pytravharv.common import graph_name_to_uri, uri_to_graph_name
 from pytravharv.TravHarvConfigBuilder import (
     LiteralSubjectDefinition,
     SPARQLSubjectDefinition,
+    TravHarvConfig,
 )
+from typing import Optional
 import logging
 
 # log = logging.getLogger("pyTravHarv")
@@ -18,21 +21,23 @@ class TravHarvExecutor:
     :param config_filename: str
     :param prefix_set: dict
     :param tasks: list
-    :param target_store: TargetStore
+    :param rdf_store_access: RDFStoreAccess
 
     """
 
     def __init__(
         self,
         config_filename: str,
-        prefix_set,
+        prefix_set: TravHarvConfig.prefixset,
         tasks: list,
-        target_store: TargetStore,
+        rdf_store_access: RDFStoreAccess,
+        output: Optional[str] = None,
     ):
         self.config_filename = config_filename
         self.prefix_set = prefix_set
         self.tasks = tasks
-        self.target_store = target_store
+        self.rdf_store_access = rdf_store_access
+        self.output = output
         log.debug("TravHarvExecutor initialized")
         log.debug("Config filename: {}".format(self.config_filename))
         log.debug("Prefix set: {}".format(self.prefix_set))
@@ -60,7 +65,23 @@ class TravHarvExecutor:
                     SubjPropPathAssertion(
                         subject,
                         assertion_path,
-                        self.target_store,
+                        self.rdf_store_access,
                         self.prefix_set,
                         self.config_filename,
                     )
+            log.debug("All paths asserted for task: {}".format(task))
+            if self.output:
+                log.debug("Output to file: {}".format(self.output))
+                # write graph to file
+                full_graph = self.rdf_store_access.full_graph(
+                    graph_name_to_uri(self.config_filename)
+                )
+                log.debug("Full graph: {}".format(full_graph))
+                full_graph.serialize(self.output, format="turtle")
+            else:
+                log.debug("No output file specified")
+                log.debug(
+                    self.rdf_store_access.select_subjects(
+                        "SELECT ?s ?p ?o WHERE { ?s ?p ?o }"
+                    )
+                )
