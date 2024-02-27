@@ -29,13 +29,16 @@ init-docs: startup
 	poetry install --with 'docs'
 
 docs:
-	if ! [ -d "./docs" ]; then poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author '${AUTHOR}' docs; fi
-	cp ./pre_docs/* ./docs/source/
-	sleep 1
-	poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT)
-	poetry run sphinx-build -b html ./docs/source ./docs/build/html
-	cp ./docs/source/custom.css ./docs/build/html/_static/custom.css
-	cp ./docs/source/UML_Diagram.svg ./docs/build/html/_static/UML_Diagram.svg
+	@echo "Building documentation"
+	@if ! [ -d "./docs" ]; then \
+		poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author '${AUTHOR}' docs; \
+	else \
+		rm -f ./docs/build; \
+		poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT); \
+		poetry run sphinx-build -b html ./docs/source ./docs/build/html; \
+		cp ./docs/source/custom.css ./docs/build/html/_static/custom.css; \
+		cp ./docs/source/UML_Diagram.svg ./docs/build/html/_static/UML_Diagram.svg; \
+	fi
 
 test:
 	poetry run pytest ${TEST_PATH}
