@@ -69,6 +69,15 @@ def test_select_subjects_uri_store():
 """
 
 
+def test_big_single_line_triple():
+    target_store = TargetStore(
+        mode="memory",
+        context=["./tests/inputs/marineinfo-publication-288351.jsonld"],
+    )
+
+    assert len(target_store().graph) == 0
+
+
 def test_verify_returns_true_memory_store():
     # Create an instance of TargetStore
     target_store = TargetStore(

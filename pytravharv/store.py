@@ -152,9 +152,8 @@ class URITargetStore(TargetStore):
             line = line.strip()
             if len(line) == 0:
                 return groups
-            assert (
-                len(line) < max_str_size
-            ), "single line exceeds max_batch_size"
+            if len(line) < max_str_size:
+                log.warning("single line is already less than max_batch_size")
             if (
                 len(line) + len(groups[-1]) > max_str_size
             ):  # if this new line can't fit into the current last
