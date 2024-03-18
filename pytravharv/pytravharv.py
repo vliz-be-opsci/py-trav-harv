@@ -79,7 +79,7 @@ class TravHarv:
         )
         self.travharvexecutor = None
 
-    def run_dereference_tasks(self):
+    def process(self):
         try:
             log.debug("running dereference tasks")
             trav_harv_config: Optional[TravHarvConfig] = None
