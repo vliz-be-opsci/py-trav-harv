@@ -6,12 +6,8 @@ from pytravharv.store import TargetStoreAccess, TargetStore, URITargetStore
 import math
 import random
 from rdflib import Graph, URIRef, BNode, Literal
+import datetime
 from pytravharv.common import QUERY_BUILDER
-
-
-@pytest.mark.usefixtures("target_store")
-def test_ingest(target_store):
-    pass
 
 
 @pytest.mark.usefixtures("prepopulated_target_store")
@@ -37,7 +33,7 @@ def test_graph_to_batches():
     cnt = 0
     for i in range(10):
         for c in ascii_lowercase:
-            j = int(math.floor(random.randint(0, available_len) / 3))
+            j = int(math.floor(random.randint(0, int(available_len)) / 3))
             element_lengths = [i, j, (int(available_len) - (int(i) + int(j)))]
             # Create the list
             elements = [URIRef(c * int(element_lengths[k])) for k in range(3)]
@@ -63,6 +59,51 @@ def test_graph_to_batches():
     assert (
         found_sizes == expected_sizes
     ), f"all batches should be of size {expected_sizes} not {found_sizes}"
+
+
+@pytest.mark.usefixtures("target_store")
+def test_insert(target_store):
+    graph = Graph()
+    context = "test_context"
+
+    # Insert graph without context
+    target_store.insert(graph)
+    assert len(target_store._all) == len(graph)
+
+    # Insert graph with context
+    target_store.insert(graph, context)
+    assert len(target_store._all) == len(graph)
+    assert len(target_store._named_graphs[context]) == len(graph)
+    assert context in target_store._admin_registry
+
+
+@pytest.mark.usefixtures("target_store")
+def test_lastmod_for_context(target_store):
+
+    context = "test_context"
+    target_store.insert(Graph(), context)
+    lastmod = target_store.lastmod_for_context(context)
+
+    # Add some data to the context
+    target_store._admin_registry[context] = datetime.datetime.now()
+    lastmod = target_store.lastmod_for_context(context)
+    assert lastmod is not None, "lastmod should not be None after adding data"
+    assert isinstance(
+        lastmod, datetime.datetime
+    ), "lastmod should be a datetime object"
+
+
+@pytest.mark.usefixtures("target_store")
+def test_big_insert_triple(target_store):
+    graph = Graph()
+    graph.parse(
+        "tests/inputs/marineinfo-publication-288351.jsonld", format="json-ld"
+    )
+    target_store.insert(graph)
+
+    all_triples = target_store.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
+
+    assert len(all_triples) > 0
 
 
 if __name__ == "__main__":
