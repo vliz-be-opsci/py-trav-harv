@@ -127,5 +127,6 @@ class TravHarv:
                 self.travharvexecutor.assert_all_paths()
         except Exception as e:
             log.error(e)
+            log.exception(e)
             log.error("Error running dereference tasks")
             raise e
