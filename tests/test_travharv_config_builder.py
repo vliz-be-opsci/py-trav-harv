@@ -15,9 +15,18 @@ import random
 from rdflib import Graph, URIRef, BNode, Literal
 import datetime
 from pytravharv.common import QUERY_BUILDER
+from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 CONFIG_FOLDER = pathlib.Path(__file__).parent / "config"
 INPUT_FOLDER = pathlib.Path(__file__).parent / "inputs"
+OUTPUT_FOLDER = pathlib.Path(__file__).parent / "output"
+
+if not OUTPUT_FOLDER.exists():
+    OUTPUT_FOLDER.mkdir()
+
+# clean up the output folder
+for file in OUTPUT_FOLDER.glob("*"):
+    file.unlink()
 
 
 @pytest.mark.usefixtures("target_store_access_memory")
@@ -170,6 +179,30 @@ def test_check_snooze(target_store_access_memory):
 
     test_pass = travharvconfigbuilder._check_snooze(10, "base_test.yml")
     assert test_pass == True
+
+
+@pytest.mark.usefixtures("target_store_access_memory")
+def test_run_good_config(target_store_access_memory):
+    graph = Graph()
+    graph.parse(str(INPUT_FOLDER / "63523.ttl"), format="turtle")
+    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+
+    travharvconfigbuilder = TravHarvConfigBuilder(
+        target_store_access_memory,
+        str(CONFIG_FOLDER / "good_folder"),
+    )
+
+    travharvconfig = travharvconfigbuilder.build_from_config("base_test.yml")
+
+    travharvexecutor = TravHarvExecutor(
+        travharvconfig.configname,
+        travharvconfig.prefixset,
+        travharvconfig.tasks,
+        target_store_access_memory,
+        str(OUTPUT_FOLDER / "output.ttl"),
+    )
+
+    travharvexecutor.assert_all_paths()
 
 
 if __name__ == "__main__":

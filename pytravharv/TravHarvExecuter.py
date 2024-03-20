@@ -1,5 +1,8 @@
 from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
-from pytravharv.rdfstoreaccess import RDFStoreAccess
+from rdflib import Graph
+from pytravharv.store import (
+    TargetStoreAccess,
+)
 from pytravharv.common import graph_name_to_uri, uri_to_graph_name
 from pytravharv.TravHarvConfigBuilder import (
     LiteralSubjectDefinition,
@@ -30,7 +33,7 @@ class TravHarvExecutor:
         config_filename: str,
         prefix_set: TravHarvConfig.prefixset,
         tasks: list,
-        rdf_store_access: RDFStoreAccess,
+        rdf_store_access: TargetStoreAccess,
         output: Optional[str] = None,
     ):
         self.config_filename = config_filename
@@ -56,12 +59,15 @@ class TravHarvExecutor:
             log.debug("Info task: {}".format(task))
             subject_definition = task.subject_definition
             assertion_path_set = task.assert_path_set
+            print("Subject definition: {}".format(subject_definition()))
             log.debug("Subject definition: {}".format(subject_definition))
+            print("Assertion path set: {}".format(assertion_path_set()))
             log.debug("Assertion path set: {}".format(assertion_path_set))
             for subject in subject_definition():
                 log.debug("Subject: {}".format(subject))
                 for assertion_path in assertion_path_set():
                     log.debug("Assertion path: {}".format(str(assertion_path)))
+                    print("Assertion path: {}".format(str(assertion_path)))
                     SubjPropPathAssertion(
                         subject,
                         assertion_path,
@@ -73,11 +79,15 @@ class TravHarvExecutor:
             if self.output:
                 log.debug("Output to file: {}".format(self.output))
                 # write graph to file
-                full_graph = self.rdf_store_access.full_graph(
-                    graph_name_to_uri(self.config_filename)
-                )
+                full_graph = self.rdf_store_access.full_graph()
                 log.debug("Full graph: {}".format(full_graph))
-                full_graph.serialize(self.output, format="turtle")
+                # go from list of tuples to graph
+                output_graph = Graph()
+                if full_graph:
+                    for triple in full_graph:
+                        print(triple)
+                        output_graph.add(triple)
+                    output_graph.serialize(self.output, format="turtle")
             else:
                 log.debug("No output file specified")
                 log.debug(

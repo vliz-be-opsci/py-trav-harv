@@ -118,5 +118,8 @@ class TargetStoreAccess:
     def ingest(self, graph: Graph, context: str):
         self._target.insert(graph, context)
 
+    def full_graph(self):
+        return self._target.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
+
     def lastmod_for_context(self, context: str) -> datetime:
         return self._target.lastmod_for_context(context)
