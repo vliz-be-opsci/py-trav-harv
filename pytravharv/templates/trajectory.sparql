@@ -7,10 +7,11 @@
         - "property_trajectory" : A list of the URIs of the subjects of the trajectory
         - "prefixes": A dict of the prefixes used in the query
 #}
-
+{% if prefixes != None %}
 {% for prefix, uri in prefixes.items() %}
 PREFIX {{ prefix }}: {{ uri }}
 {% endfor %}
+{% endif %}
 
 SELECT ?o
 WHERE {

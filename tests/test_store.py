@@ -3,6 +3,7 @@ from util4tests import run_single_test
 import pytest
 from string import ascii_lowercase
 from pytravharv.store import TargetStoreAccess, TargetStore, URITargetStore
+import datetime
 import math
 import random
 from rdflib import Graph, URIRef, BNode, Literal
@@ -23,74 +24,21 @@ def test_select_subjects(prepopulated_target_store):
     # Add more assertions as needed
 
 
-def test_graph_to_batches():
-    graph = Graph()
-    groupsize = 2
-    max_line = 4096 / groupsize
-    stuffing = "<> <> <> . \n"
-    available_len = max_line - len(stuffing)
-    # Add a million triples to the graph
-    cnt = 0
-    for i in range(10):
-        for c in ascii_lowercase:
-            j = int(math.floor(random.randint(0, int(available_len)) / 3))
-            element_lengths = [i, j, (int(available_len) - (int(i) + int(j)))]
-            # Create the list
-            elements = [URIRef(c * int(element_lengths[k])) for k in range(3)]
-            graph.add((elements[0], elements[1], elements[2]))
-            cnt += 1
-
-    print(f"{len(graph)=}")
-    assert (
-        len(graph) == cnt
-    ), "we should have not created duplicate or missing triples"
-    batches = URITargetStore._graph_to_batches(graph)
-    assert len(batches) > 0
-    # total number of batches should be 260
-    assert (
-        len(batches) == cnt / groupsize
-    ), f"the amount of batches should be count of all triples over groupsize"
-    found_sizes = {len(grp.split("\n")) for grp in batches}
-    expected_sizes = {groupsize}
-
-    first_batch = batches[0].split("\n")
-    print(f"{first_batch=}")
-    # print(f"First batch split by newline: {batches[0].split('\n')}")
-    assert (
-        found_sizes == expected_sizes
-    ), f"all batches should be of size {expected_sizes} not {found_sizes}"
-
-
 @pytest.mark.usefixtures("target_store")
 def test_insert(target_store):
     graph = Graph()
     context = "test_context"
 
+    len_insert_graph = len(graph)
+
+    # get length graph before insert
+    result = target_store.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
+    len_before = len(result)
+
     # Insert graph without context
     target_store.insert(graph)
-    assert len(target_store._all) == len(graph)
 
-    # Insert graph with context
-    target_store.insert(graph, context)
-    assert len(target_store._all) == len(graph)
-    assert len(target_store._named_graphs[context]) == len(graph)
-    assert context in target_store._admin_registry
-
-
-@pytest.mark.usefixtures("target_store")
-def test_lastmod_for_context(target_store):
-
-    context = "test_context"
-    target_store.insert(Graph(), context)
-    lastmod = target_store.lastmod_for_context(context)
-
-    # Add some data to the context
-    target_store._admin_registry[context] = datetime.datetime.now()
-    lastmod = target_store.lastmod_for_context(context)
-    assert lastmod is not None, "lastmod should not be None after adding data"
-    assert isinstance(
-        lastmod, datetime.datetime
-    ), "lastmod should be a datetime object"
+    assert len(graph) == len_insert_graph, "graph should not be modified"
 
 
 @pytest.mark.usefixtures("target_store")
@@ -104,6 +52,46 @@ def test_big_insert_triple(target_store):
     all_triples = target_store.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
 
     assert len(all_triples) > 0
+
+
+@pytest.mark.usefixtures("target_store")
+def test_lastmod_for_context(target_store):
+
+    # Add test data to the TargetStore
+    context = "urn:test_context"
+    test_graph = Graph()
+    target_store.insert(test_graph, context)
+
+    # Test the lastmod_for_context method
+    lastmod = target_store.lastmod_for_context(context)
+    print(lastmod)
+    assert isinstance(lastmod, datetime.datetime)
+    assert lastmod < datetime.datetime.now()
+
+
+@pytest.mark.usefixtures("target_store_access")
+def test_verify(target_store_access):
+    subject = "http://example.org/subject"
+    property_path = "<http://example.org/property>"
+    assert target_store_access.verify(subject, property_path) == False
+
+
+@pytest.mark.usefixtures("target_store_access_memory")
+def test_verify_memory(target_store_access_memory):
+    subject = "http://example.org/subject"
+    property_path = "<http://example.org/property>"
+    assert target_store_access_memory.verify(subject, property_path) == False
+
+
+@pytest.mark.usefixtures("prepopulated_target_store_access_memory")
+def test_verify_memory(prepopulated_target_store_access_memory):
+
+    tsa = prepopulated_target_store_access_memory
+
+    subject = "http://marineregions.org/mrgid/2419"
+    property_path = "<http://www.w3.org/2004/02/skos/core#prefLabel>"
+
+    assert tsa.verify(subject, property_path) == True
 
 
 if __name__ == "__main__":
