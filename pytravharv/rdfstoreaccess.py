@@ -66,6 +66,7 @@ class RDFStoreAccess:
         self._qryBuilder = qryBuilder
 
     def select_subjects(self, sparql) -> List[str]:
+        log.debug(sparql)
         result: SPARQLResult = self._target.select(sparql)
         log.debug("result: {}".format(result))
         # todo convert response into list of subjects
