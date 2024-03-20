@@ -108,5 +108,69 @@ def test_assert_path():
     )
 
 
+@pytest.mark.usefixtures("target_store_access_memory")
+def test_travharvconfig(target_store_access_memory):
+    graph = Graph()
+    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
+    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+
+    # travharvconfig
+    travharvconfig = TravHarvConfigBuilder(
+        target_store_access_memory,
+        str(CONFIG_FOLDER / "good_folder"),
+    ).build_from_config("base_test.yml")
+
+    assert travharvconfig is not None
+    print(travharvconfig)
+
+    # config should contain the following keys
+    assert "configname" in travharvconfig()
+    assert "prefixset" in travharvconfig()
+    assert "tasks" in travharvconfig()
+
+    assert travharvconfig.configname == "base_test.yml"
+    assert len(travharvconfig.prefixset) == 3
+    assert len(travharvconfig.tasks) == 3
+
+
+@pytest.mark.usefixtures("target_store_access_memory")
+def test_travharv_config_builder_from_folder(target_store_access_memory):
+    travharvconfigbuilder = TravHarvConfigBuilder(
+        target_store_access_memory,
+        str(CONFIG_FOLDER / "good_folder"),
+    )
+
+    travharvconfiglist = travharvconfigbuilder.build_from_folder()
+
+    assert len(travharvconfiglist) == 2
+    assert travharvconfiglist[0].configname == "base_test.yml"
+
+
+@pytest.mark.usefixtures("target_store_access_memory")
+def test_travharv_config_builder_from_folder_bad(target_store_access_memory):
+    travharvconfigbuilder = TravHarvConfigBuilder(
+        target_store_access_memory,
+        str(CONFIG_FOLDER / "bad_folder"),
+    )
+
+    with pytest.raises(Exception):
+        travharvconfigbuilder.build_from_folder()
+
+
+@pytest.mark.usefixtures("target_store_access_memory")
+def test_check_snooze(target_store_access_memory):
+    graph = Graph()
+    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
+    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+
+    travharvconfigbuilder = TravHarvConfigBuilder(
+        target_store_access_memory,
+        str(CONFIG_FOLDER / "good_folder"),
+    )
+
+    test_pass = travharvconfigbuilder._check_snooze(10, "base_test.yml")
+    assert test_pass == True
+
+
 if __name__ == "__main__":
     run_single_test(__file__)

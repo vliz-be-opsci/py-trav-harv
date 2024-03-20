@@ -360,7 +360,7 @@ class TravHarvConfigBuilder:
                 )
                 return
         except Exception as e:
-            log.error("Error: {}".format(e))
+            log.warning("warning: {} not in admin context yet".format(e))
 
         travharvconfig = {
             "configname": name_config,
