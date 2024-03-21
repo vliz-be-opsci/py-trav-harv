@@ -14,7 +14,7 @@ write_uri = os.getenv("TEST_SPARQL_WRITE_URI")
 
 def test_pytravharv():
     config_folder = Path(__file__).parent / "config"
-    name = "base_test.yml"
+    name = "config_sparql_uri_string_fail.yml"
     output = "output"
     target_store_info = [read_uri, write_uri]
     verbose = True

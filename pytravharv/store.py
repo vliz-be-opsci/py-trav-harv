@@ -117,6 +117,11 @@ class TargetStoreAccess:
         print(f"sparql: {sparql}")
         result: Result = self._target.select(sparql)
         # result is a tuple of bindings , convert into a list of bindings
+
+        if result == (400, "HTTP Error 400: ", None):
+            print(sparql)
+            return False
+
         list_of_bindings = [row for row in result]
         print(f"len list_of_bindings: {len(list_of_bindings)}")
         return bool(len(list_of_bindings) > 0)
