@@ -2,7 +2,7 @@ from typing import Optional, List
 from pytravharv.common import insert_resource_into_graph
 from pyrdfstore import create_rdf_store
 from rdflib import Graph
-from pytravharv.rdfstoreaccess import RDFStoreAccess
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
 from pytravharv.common import QUERY_BUILDER
 from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfigBuilder,

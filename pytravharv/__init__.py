@@ -8,14 +8,13 @@
     
 """
 
-# from pytravharv.rdfstoreaccess import TargetStore
 from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfigBuilder,
     TravHarvConfig,
 )
 from pytravharv.TravHarvExecuter import TravHarvExecutor
 from pytravharv.pytravharv import TravHarv
-from pytravharv.rdfstoreaccess import RDFStoreAccess
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
 
 
 __all__ = [

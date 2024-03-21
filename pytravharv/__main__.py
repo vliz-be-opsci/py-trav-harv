@@ -1,5 +1,5 @@
 import argparse
-from pytravharv.rdfstoreaccess import TargetStore
+from pytravharv.store import TargetStore
 from pytravharv.TravHarvConfigBuilder import (
     TravHarvConfigBuilder,
     TravHarvConfig,

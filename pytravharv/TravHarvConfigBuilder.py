@@ -6,7 +6,7 @@ from typing import Any
 import yaml
 import logging
 from datetime import datetime, timedelta
-from pytravharv.rdfstoreaccess import RDFStoreAccess
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
 from pytravharv.common import graph_name_to_uri, uri_to_graph_name
 from pyrdfstore.store import RDFStore
 from rdflib.plugins.sparql.parser import parseQuery
