@@ -122,6 +122,8 @@ class TargetStoreAccess:
         return bool(len(list_of_bindings) > 0)
 
     def ingest(self, graph: Graph, context: str):
+        print(context)
+        log.debug(context)
         self._target.insert(graph, context)
 
     def full_graph(self):
