@@ -97,8 +97,6 @@ class TargetStoreAccess:
 
     def select_subjects(self, sparql) -> List[str]:
         result: Result = self._target.select(sparql)
-        print(f"result: {result}")
-        log.debug(f"result: {result}")
         # if result is (400, 'HTTP Error 400: ', None) then return empty list
         if result == (400, "HTTP Error 400: ", None):
             print(sparql)
@@ -106,6 +104,7 @@ class TargetStoreAccess:
 
         # todo convert response into list of subjects
         list_of_subjects = [row[0] for row in result]
+        log.debug(f"length list_of_subjects: {len(list_of_subjects)}")
         return list_of_subjects
 
     def verify(self, subject, property_path, prefixes=None):
@@ -119,7 +118,7 @@ class TargetStoreAccess:
         result: Result = self._target.select(sparql)
         # result is a tuple of bindings , convert into a list of bindings
         list_of_bindings = [row for row in result]
-        print(f"list_of_bindings: {list_of_bindings}")
+        print(f"len list_of_bindings: {len(list_of_bindings)}")
         return bool(len(list_of_bindings) > 0)
 
     def ingest(self, graph: Graph, context: str):
