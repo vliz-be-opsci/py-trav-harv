@@ -99,6 +99,11 @@ class TargetStoreAccess:
         result: Result = self._target.select(sparql)
         print(f"result: {result}")
         log.debug(f"result: {result}")
+        # if result is (400, 'HTTP Error 400: ', None) then return empty list
+        if result == (400, "HTTP Error 400: ", None):
+            print(sparql)
+            return []
+
         # todo convert response into list of subjects
         list_of_subjects = [row[0] for row in result]
         return list_of_subjects
