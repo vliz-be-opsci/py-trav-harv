@@ -97,6 +97,8 @@ class TargetStoreAccess:
 
     def select_subjects(self, sparql) -> List[str]:
         result: Result = self._target.select(sparql)
+        print(f"result: {result}")
+        log.debug(f"result: {result}")
         # todo convert response into list of subjects
         list_of_subjects = [row[0] for row in result]
         return list_of_subjects
