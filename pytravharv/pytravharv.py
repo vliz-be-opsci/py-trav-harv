@@ -59,10 +59,8 @@ class TravHarv:
             ) as f:
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
-        log.debug("started logging")
 
-        self.target_store = create_rdf_store(target_store_info)
-
+            self.target_store = create_rdf_store(target_store_info)
         self.target_store_access = RDFStoreAccess(
             self.target_store, QUERY_BUILDER
         )
