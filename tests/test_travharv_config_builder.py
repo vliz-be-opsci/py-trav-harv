@@ -1,20 +1,15 @@
-from util4tests import run_single_test
-import pytest
-from string import ascii_lowercase
-from pytravharv.TravHarvConfigBuilder import (
-    TravHarvConfigBuilder,
-    SPARQLSubjectDefinition,
-    LiteralSubjectDefinition,
-    AssertPathSet,
-    AssertPath,
-)
 import pathlib
-import datetime
-import math
-import random
-from rdflib import Graph, URIRef, BNode, Literal
-import datetime
-from pytravharv.common import QUERY_BUILDER
+
+import pytest
+from rdflib import Graph
+from util4tests import run_single_test
+
+from pytravharv.TravHarvConfigBuilder import (
+    AssertPath,
+    LiteralSubjectDefinition,
+    SPARQLSubjectDefinition,
+    TravHarvConfigBuilder,
+)
 from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 CONFIG_FOLDER = pathlib.Path(__file__).parent / "config"

@@ -51,6 +51,15 @@
     ns2:next <http://marineregions.org/mrgid/3293?page=2> ;
     prov:hadPrimarySource <http://www.marineregions.org> .
 
+<http://marineregions.org/mrgid/63523> a ns1:MRGeoObject,
+        <http://marineregions.org/ns/placetypes#SamplingStation> ;
+    ns1:isPartOf <http://marineregions.org/mrgid/17595> ;
+    dcterms:modified "2023-11-28T10:02:22+00:00"^^xsd:dateTime ;
+    skos:prefLabel "BENTHOBS Boyardville"@en ;
+    dcat:centroid "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-1.2146 45.57755)"^^geo:wktLiteral ;
+    prov:hadPrimarySource [ prov:wasAttributedTo <https://www.ir-ilico.fr/> ],
+        [ prov:wasAttributedTo <https://www.ir-ilico.fr/> ] .
+
 <http://marineregions.org/mrgid/13871> a ns1:MRGeoObject,
         <http://marineregions.org/ns/placetypes#GeneralRegion> ;
     skos:prefLabel "Victoria Land"@en .
@@ -73,19 +82,7 @@
 
 <http://marineregions.org/mrgid/17595> a ns1:MRGeoObject,
         <http://marineregions.org/ns/placetypes#Estuary> ;
-    ns1:contains <http://marineregions.org/mrgid/21670>,
-        <http://marineregions.org/mrgid/63523>,
-        <http://marineregions.org/mrgid/63525> ;
-    ns1:hasGeometry <http://marineregions.org/mrgid/17595/geometries?source=158&attributeValue=17595> ;
-    ns1:isPartOf <http://marineregions.org/mrgid/3771>,
-        <http://marineregions.org/mrgid/3796> ;
-    ns1:isRelatedTo <http://marineregions.org/mrgid/2359> ;
-    dcterms:modified "2023-05-20T08:43:05+00:00"^^xsd:dateTime ;
-    skos:altLabel "Embouchure de la Gironde"@fr,
-        "L'Estuaire de la Gironde"@fr ;
-    skos:prefLabel "Gironde Estuary"@en ;
-    dcat:centroid "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-1.05 45.58333)"^^geo:wktLiteral ;
-    prov:hadPrimarySource [ rdfs:label "Aphia"^^xsd:string ] .
+    skos:prefLabel "Gironde Estuary"@en .
 
 <http://marineregions.org/mrgid/17666> a ns1:MRGeoObject,
         <http://marineregions.org/ns/placetypes#Wreck> ;
@@ -103,17 +100,9 @@
         <http://marineregions.org/ns/placetypes#InhabitedPlace> ;
     skos:prefLabel "Nieuwpoort-Bad"@nl .
 
-<http://marineregions.org/mrgid/21670> a ns1:MRGeoObject,
-        <http://marineregions.org/ns/placetypes#Lighthouse> ;
-    skos:prefLabel "Cordouan (phare)"@fr .
-
 <http://marineregions.org/mrgid/2350> a ns1:MRGeoObject,
         <http://marineregions.org/ns/placetypes#IHOSeaArea> ;
     skos:prefLabel "North Sea"@en .
-
-<http://marineregions.org/mrgid/2359> a ns1:MRGeoObject,
-        <http://marineregions.org/ns/placetypes#IHOSeaArea> ;
-    skos:prefLabel "Bay of Biscay"@en .
 
 <http://marineregions.org/mrgid/2419> a ns1:MRGeoObject,
         <http://marineregions.org/ns/placetypes#SandbankSystem> ;
@@ -171,32 +160,9 @@
         <http://marineregions.org/ns/placetypes#Natura2000SpecialProtectionAreaSPAEUBirdsDirective> ;
     skos:prefLabel "Sbz 1 / Zps 1"@nl .
 
-<http://marineregions.org/mrgid/3771> a ns1:MRGeoObject,
-        <http://marineregions.org/ns/placetypes#Region> ;
-    skos:prefLabel "Aquitaine"@fr .
-
-<http://marineregions.org/mrgid/3796> a ns1:MRGeoObject,
-        <http://marineregions.org/ns/placetypes#Region> ;
-    skos:prefLabel "Poitou-Charentes"@fr .
-
 <http://marineregions.org/mrgid/4675> a ns1:MRGeoObject,
         <http://marineregions.org/ns/placetypes#SandbankSystem> ;
     skos:prefLabel "Coastal Banks"@en .
-
-<http://marineregions.org/mrgid/63523> a ns1:MRGeoObject,
-        <http://marineregions.org/ns/placetypes#SamplingStation> ;
-    ns1:isPartOf <http://marineregions.org/mrgid/17595> ;
-    dcterms:modified "2023-11-28T10:02:22+00:00"^^xsd:dateTime ;
-    skos:prefLabel "BENTHOBS Boyardville"@en ;
-    dcat:centroid "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT (-1.2146 45.57755)"^^geo:wktLiteral ;
-    prov:hadPrimarySource [ prov:wasAttributedTo <https://www.ir-ilico.fr/> ],
-        [ prov:wasAttributedTo <https://www.ir-ilico.fr/> ],
-        [ prov:wasAttributedTo <https://www.ir-ilico.fr/> ],
-        [ prov:wasAttributedTo <https://www.ir-ilico.fr/> ] .
-
-<http://marineregions.org/mrgid/63525> a ns1:MRGeoObject,
-        <http://marineregions.org/ns/placetypes#SamplingStation> ;
-    skos:prefLabel "BENTHOBS Gironde"@en .
 
 <http://www.marineregions.org> rdfs:label "Flanders Marine Institute (2023). Maritime Boundaries Geodatabase: Maritime Boundaries and Exclusive Economic Zones (200NM), version 12. Available online at http://www.marineregions.org/. https://doi.org/10.14284/632"^^xsd:string .
 

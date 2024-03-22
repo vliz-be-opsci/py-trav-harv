@@ -1,12 +1,12 @@
-import os
+import logging
+
 import rdflib
 import validators
-from pytravharv.common import graph_name_to_uri, uri_to_graph_name
 
+from pytravharv.common import graph_name_to_uri
 from pytravharv.store import TargetStoreAccess
 from pytravharv.TravHarvConfigBuilder import AssertPath
 from pytravharv.WebAccess import fetch as web_access
-import logging
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

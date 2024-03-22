@@ -1,18 +1,19 @@
-from typing import Optional, List
-from pytravharv.common import insert_resource_into_graph
-from pyrdfstore import create_rdf_store
-from rdflib import Graph
-from pytravharv.store import TargetStoreAccess as RDFStoreAccess
-from pytravharv.common import QUERY_BUILDER
-from pytravharv.TravHarvConfigBuilder import (
-    TravHarvConfigBuilder,
-    TravHarvConfig,
-)
-import yaml
-import os
-from pytravharv.TravHarvExecuter import TravHarvExecutor
 import logging
 import logging.config
+import os
+from typing import List, Optional
+
+import yaml
+from pyrdfstore import create_rdf_store
+from rdflib import Graph
+
+from pytravharv.common import QUERY_BUILDER, insert_resource_into_graph
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
+from pytravharv.TravHarvConfigBuilder import (
+    TravHarvConfig,
+    TravHarvConfigBuilder,
+)
+from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

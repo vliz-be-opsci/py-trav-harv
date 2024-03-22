@@ -1,16 +1,17 @@
 # from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
-import re
-import os
-import sys
-from typing import Any
-import yaml
 import logging
-from datetime import datetime, timedelta
-from pytravharv.store import TargetStoreAccess as RDFStoreAccess
-from pytravharv.common import graph_name_to_uri, uri_to_graph_name
-from pyrdfstore.store import RDFStore
-from rdflib.plugins.sparql.parser import parseQuery
+import os
+import re
+import sys
 from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
+from typing import Any
+
+import yaml
+from rdflib.plugins.sparql.parser import parseQuery
+
+from pytravharv.common import graph_name_to_uri
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

@@ -1,10 +1,10 @@
 import os
 from logging import getLogger
+from urllib.parse import quote, unquote
+
+import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib import Graph
-from urllib.parse import quote, unquote
-import validators
-
 
 log = getLogger(__name__)
 

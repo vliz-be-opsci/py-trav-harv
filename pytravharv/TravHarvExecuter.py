@@ -1,16 +1,11 @@
-from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
-from rdflib import Graph
-from pytravharv.store import (
-    TargetStoreAccess,
-)
-from pytravharv.common import graph_name_to_uri, uri_to_graph_name
-from pytravharv.TravHarvConfigBuilder import (
-    LiteralSubjectDefinition,
-    SPARQLSubjectDefinition,
-    TravHarvConfig,
-)
-from typing import Optional
 import logging
+from typing import Optional
+
+from rdflib import Graph
+
+from pytravharv.store import TargetStoreAccess
+from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
+from pytravharv.TravHarvConfigBuilder import TravHarvConfig
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
