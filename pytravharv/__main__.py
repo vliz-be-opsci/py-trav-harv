@@ -1,15 +1,17 @@
 import argparse
-from pytravharv.rdfstoreaccess import TargetStore
-from pytravharv.TravHarvConfigBuilder import (
-    TravHarvConfigBuilder,
-    TravHarvConfig,
-)
-from pytravharv.TravHarvExecuter import TravHarvExecutor
 import logging
 import logging.config
-import yaml
 import os
 from typing import Optional
+
+import yaml
+
+from pytravharv.store import TargetStore
+from pytravharv.TravHarvConfigBuilder import (
+    TravHarvConfig,
+    TravHarvConfigBuilder,
+)
+from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

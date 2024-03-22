@@ -1,16 +1,17 @@
 # from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
-import re
-import os
-import sys
-from typing import Any
-import yaml
 import logging
-from datetime import datetime, timedelta
-from pytravharv.rdfstoreaccess import RDFStoreAccess
-from pytravharv.common import graph_name_to_uri, uri_to_graph_name
-from pyrdfstore.store import RDFStore
-from rdflib.plugins.sparql.parser import parseQuery
+import os
+import re
+import sys
 from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
+from typing import Any
+
+import yaml
+from rdflib.plugins.sparql.parser import parseQuery
+
+from pytravharv.common import graph_name_to_uri
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
@@ -360,7 +361,7 @@ class TravHarvConfigBuilder:
                 )
                 return
         except Exception as e:
-            log.error("Error: {}".format(e))
+            log.warning("warning: {} not in admin context yet".format(e))
 
         travharvconfig = {
             "configname": name_config,
@@ -390,7 +391,6 @@ class TravHarvConfigBuilder:
         return TravHarvConfig(travharvconfig)
 
     def _check_snooze(self, snooze_time, name_config):
-        return self._rdf_store_access.verify_max_age(
-            named_graph=graph_name_to_uri(name_config),
-            age_minutes=timedelta(minutes=snooze_time),
-        )
+        return self._rdf_store_access.lastmod_for_context(
+            graph_name_to_uri(name_config)
+        ) < datetime.now() - timedelta(minutes=snooze_time)
