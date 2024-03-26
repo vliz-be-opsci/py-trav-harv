@@ -75,18 +75,12 @@ class TravHarvExecutor:
                 log.debug("Output to file: {}".format(self.output))
                 # write graph to file
                 full_graph = self.rdf_store_access.full_graph()
-                log.debug("Full graph: {}".format(full_graph))
+                # log.debug("Full graph: {}".format(full_graph))
                 # go from list of tuples to graph
                 output_graph = Graph()
                 if full_graph:
                     for triple in full_graph:
-                        print(triple)
                         output_graph.add(triple)
                     output_graph.serialize(self.output, format="turtle")
             else:
                 log.debug("No output file specified")
-                log.debug(
-                    self.rdf_store_access.select_subjects(
-                        "SELECT ?s ?p ?o WHERE { ?s ?p ?o }"
-                    )
-                )

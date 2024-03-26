@@ -349,7 +349,7 @@ class TravHarvConfigBuilder:
             # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
             # if it is older then the last modified date of the admin graph then we can continue
             # if it is not older then the last modified date of the admin graph then we can snooze the config
-            if self._check_snooze(
+            if not self._check_snooze(
                 dict_object["snooze-till-graph-age-minutes"],
                 name_config,
             ):
@@ -361,7 +361,8 @@ class TravHarvConfigBuilder:
                 )
                 return
         except Exception as e:
-            log.warning("warning: {} not in admin context yet".format(e))
+            log.exception(e)
+            log.warning("{}".format(e))
 
         travharvconfig = {
             "configname": name_config,
@@ -391,6 +392,17 @@ class TravHarvConfigBuilder:
         return TravHarvConfig(travharvconfig)
 
     def _check_snooze(self, snooze_time, name_config):
-        return self._rdf_store_access.lastmod_for_context(
-            graph_name_to_uri(name_config)
-        ) < datetime.now() - timedelta(minutes=snooze_time)
+        log.debug(
+            "Checking if config {} is older then {} minutes".format(
+                name_config, snooze_time
+            )
+        )
+        log.debug(graph_name_to_uri(name_config))
+        return (
+            False
+            if not self._rdf_store_access
+            else self._rdf_store_access.lastmod_for_context(
+                graph_name_to_uri(name_config)
+            )
+            < datetime.now() - timedelta(minutes=snooze_time)
+        )
