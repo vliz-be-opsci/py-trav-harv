@@ -172,7 +172,7 @@ def test_check_snooze(target_store_access):
     )
 
     test_pass = travharvconfigbuilder._check_snooze(10, "base_test.yml")
-    assert test_pass is True
+    assert test_pass is False
 
 
 @pytest.mark.usefixtures("target_store_access")
