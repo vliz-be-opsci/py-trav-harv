@@ -27,8 +27,8 @@ def target_store():
 def prepopulated_target_store(target_store):
     graph = Graph()
     graph.parse("tests/inputs/3293.jsonld", format="json-ld")
-    rdf_store.insert(graph)
-    return rdf_store
+    target_store.insert(graph)
+    return target_store
 
 
 @pytest.fixture()

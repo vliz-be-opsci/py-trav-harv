@@ -60,17 +60,17 @@ class SubjPropPathAssertion:
         """
         Check if subject is a strict str , if subject is rdflib.term.URIRef , convert to str
         """
-        if type(subject) == str and validators.url(subject):
+        if type(subject) is str and validators.url(subject):
             log.debug("Subject is a valid URIRef: {}".format(subject))
             return subject
         if (
-            type(subject) == rdflib.query.ResultRow
-            or type(subject) == rdflib.term.URIRef
+            type(subject) is rdflib.query.ResultRow
+            or type(subject) is rdflib.term.URIRef
         ):
             # extract URIRef from ResultRow
-            if type(subject) == rdflib.query.ResultRow:
+            if type(subject) is rdflib.query.ResultRow:
                 subject_row = subject[0]
-                if type(subject_row) == dict:
+                if type(subject_row) is dict:
                     subject_row = subject_row[
                         "value"
                     ]  # janky way of getting the URIRef from the ResultRow

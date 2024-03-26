@@ -1,12 +1,11 @@
 import logging
-from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from pyrdfj2 import J2RDFSyntaxBuilder
-from pyrdfstore import RDFStore, create_rdf_store
+from pyrdfstore import RDFStore
 from rdflib import Graph
-from rdflib.plugins.sparql.processor import Result, SPARQLResult
+from rdflib.plugins.sparql.processor import Result
 
 log = logging.getLogger(__name__)
 
