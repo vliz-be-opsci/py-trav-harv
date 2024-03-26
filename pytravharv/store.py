@@ -4,10 +4,9 @@ from datetime import datetime
 from typing import List, Optional
 
 from pyrdfj2 import J2RDFSyntaxBuilder
-from pyrdfstore import create_rdf_store
+from pyrdfstore import RDFStore, create_rdf_store
 from rdflib import Graph
 from rdflib.plugins.sparql.processor import Result, SPARQLResult
-from pyrdfstore import RDFStore
 
 log = logging.getLogger(__name__)
 

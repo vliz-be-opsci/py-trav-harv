@@ -3,12 +3,11 @@ from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
-from rdflib import Graph
 from pyrdfstore import create_rdf_store
+from rdflib import Graph
+
 from pytravharv.common import QUERY_BUILDER
-from pytravharv.store import (
-    TargetStoreAccess,
-)
+from pytravharv.store import TargetStoreAccess
 
 load_dotenv()
 
