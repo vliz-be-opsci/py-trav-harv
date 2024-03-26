@@ -1,7 +1,8 @@
-import os
 import pathlib
+
 import pytest
 from rdflib import Graph
+
 from pytravharv.common import insert_resource_into_graph
 
 INPUT_PATH = pathlib.Path(__file__).parent / "inputs"
