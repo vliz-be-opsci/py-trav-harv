@@ -1,6 +1,5 @@
 import pytest
 from rdflib import Graph
-
 from pytravharv.WebAccess import download_uri_to_store
 
 

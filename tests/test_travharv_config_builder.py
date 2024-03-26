@@ -24,16 +24,16 @@ for file in OUTPUT_FOLDER.glob("*"):
     file.unlink()
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_good_config_builder(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_good_config_builder(target_store_access):
     # first populate the memory store with some data
     graph = Graph()
     graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
-    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # travharvconfigbuilder
     travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER / "good_folder"),
     )
 
@@ -43,16 +43,16 @@ def test_good_config_builder(target_store_access_memory):
     assert True
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_bad_config_builder(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_bad_config_builder(target_store_access):
     # first populate the memory store with some data
     graph = Graph()
     graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
-    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # travharvconfigbuilder
     travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER),
     )
     # the following command should raise an exception
@@ -74,16 +74,16 @@ def test_literal_subject_definition():
     assert literal_subject_definition.listSubjects() == subjects
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_sparql_subject_definition(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_sparql_subject_definition(target_store_access):
     graph = Graph()
     graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
-    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # sparql subject definition
     sparql = "SELECT ?subject ?p WHERE { ?subject ?p ?o }"
     sparql_subject_definition = SPARQLSubjectDefinition(
-        sparql, target_store_access_memory
+        sparql, target_store_access
     )
 
     assert sparql_subject_definition is not None
@@ -112,15 +112,15 @@ def test_assert_path():
     )
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_travharvconfig(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_travharvconfig(target_store_access):
     graph = Graph()
     graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
-    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # travharvconfig
     travharvconfig = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER / "good_folder"),
     ).build_from_config("base_test.yml")
 
@@ -137,10 +137,10 @@ def test_travharvconfig(target_store_access_memory):
     assert len(travharvconfig.tasks) == 3
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_travharv_config_builder_from_folder(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_travharv_config_builder_from_folder(target_store_access):
     travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER / "good_folder"),
     )
 
@@ -150,10 +150,10 @@ def test_travharv_config_builder_from_folder(target_store_access_memory):
     assert travharvconfiglist[0].configname == "base_test.yml"
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_travharv_config_builder_from_folder_bad(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_travharv_config_builder_from_folder_bad(target_store_access):
     travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER / "bad_folder"),
     )
 
@@ -161,14 +161,14 @@ def test_travharv_config_builder_from_folder_bad(target_store_access_memory):
         travharvconfigbuilder.build_from_folder()
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_check_snooze(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_check_snooze(target_store_access):
     graph = Graph()
     graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
-    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER / "good_folder"),
     )
 
@@ -176,14 +176,14 @@ def test_check_snooze(target_store_access_memory):
     assert test_pass == True
 
 
-@pytest.mark.usefixtures("target_store_access_memory")
-def test_run_good_config(target_store_access_memory):
+@pytest.mark.usefixtures("target_store_access")
+def test_run_good_config(target_store_access):
     graph = Graph()
     graph.parse(str(INPUT_FOLDER / "63523.ttl"), format="turtle")
-    target_store_access_memory.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
+    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access_memory,
+        target_store_access,
         str(CONFIG_FOLDER / "good_folder"),
     )
 
@@ -193,7 +193,7 @@ def test_run_good_config(target_store_access_memory):
         travharvconfig.configname,
         travharvconfig.prefixset,
         travharvconfig.tasks,
-        target_store_access_memory,
+        target_store_access,
         str(OUTPUT_FOLDER / "output.ttl"),
     )
 
