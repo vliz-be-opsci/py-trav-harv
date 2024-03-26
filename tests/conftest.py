@@ -3,12 +3,11 @@ from pathlib import Path
 
 import pytest
 from dotenv import load_dotenv
-from rdflib import Graph
 from pyrdfstore import create_rdf_store
+from rdflib import Graph
+
 from pytravharv.common import QUERY_BUILDER
-from pytravharv.store import (
-    TargetStoreAccess,
-)
+from pytravharv.store import TargetStoreAccess
 
 load_dotenv()
 
@@ -21,6 +20,7 @@ def target_store():
     write_uri = os.getenv("TEST_SPARQL_WRITE_URI", None)
     print(f"read_uri: {read_uri}")
     print(f"write_uri: {write_uri}")
+    return create_rdf_store(None, None)
     return create_rdf_store(read_uri, write_uri)
 
 
@@ -28,8 +28,8 @@ def target_store():
 def prepopulated_target_store(target_store):
     graph = Graph()
     graph.parse("tests/inputs/3293.jsonld", format="json-ld")
-    rdf_store.insert(graph)
-    return rdf_store
+    target_store.insert(graph)
+    return target_store
 
 
 @pytest.fixture()

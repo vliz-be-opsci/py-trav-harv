@@ -128,14 +128,14 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
                 log.info(f"script: {script}")
                 # { 'application/ld+json': '...'} | {'text/turtle': '...'}
                 if "application/ld+json" in script:
-                    log.info(f"found script with type application/ld+json")
+                    log.info("found script with type application/ld+json")
                     triplestore.parse(
                         data=script["application/ld+json"],
                         format="json-ld",
                         publicID=uri,
                     )
                 elif "text/turtle" in script:
-                    log.info(f"found script with type text/turtle")
+                    log.info("found script with type text/turtle")
                     triplestore.parse(
                         data=script["text/turtle"],
                         format="turtle",

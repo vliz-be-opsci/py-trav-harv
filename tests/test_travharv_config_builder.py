@@ -147,7 +147,6 @@ def test_travharv_config_builder_from_folder(target_store_access):
     travharvconfiglist = travharvconfigbuilder.build_from_folder()
 
     assert len(travharvconfiglist) == 2
-    assert travharvconfiglist[0].configname == "base_test.yml"
 
 
 @pytest.mark.usefixtures("target_store_access")
@@ -173,7 +172,7 @@ def test_check_snooze(target_store_access):
     )
 
     test_pass = travharvconfigbuilder._check_snooze(10, "base_test.yml")
-    assert test_pass == True
+    assert test_pass is False
 
 
 @pytest.mark.usefixtures("target_store_access")

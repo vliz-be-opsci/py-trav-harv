@@ -5,7 +5,6 @@
 :synopsis: A package for traversing and harvesting RDF data by dereferencing URIs and asserting paths.
 
 .. moduleauthor:: Cedric Decruw <cedric.decruw@vliz.be>
-    
 """
 
 from pytravharv.pytravharv import TravHarv
