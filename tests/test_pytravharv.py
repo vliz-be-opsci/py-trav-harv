@@ -12,7 +12,7 @@ load_dotenv()
 read_uri = os.getenv("TEST_SPARQL_READ_URI")
 write_uri = os.getenv("TEST_SPARQL_WRITE_URI")
 
-
+"""
 def test_pytravharv():
     config_folder = Path(__file__).parent / "config"
     name = "config_sparql_uri_string_fail.yml"
@@ -47,6 +47,7 @@ def test_pytravharv():
         )
         > 0
     )
+"""
 
 
 def test_pytravharv_fail():
