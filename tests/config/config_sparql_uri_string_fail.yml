@@ -26,16 +26,15 @@ assert:
       # identifiers van alle resources (personen, instituten, projecten, events, publicaties en datasets) gelinkt aan een LW spcol
       # (identifiers van personen moeten ervantussen wegens GDPR)
       # bij publicaties zijn dit: DOI, WoS code en VABB code
-      - "dcat:resource / dct:title"
+      - "<http://www.w3.org/ns/dcat#resource> "
   - subjects:
       SPARQL: >
-        PREFIX dcat: <http://www.w3.org/ns/dcat#>
         SELECT ?s
         WHERE {
-          [] dcat:resource ?s .
+          [] <http://www.w3.org/ns/dcat#resource> ?s .
         }
     paths:
-      - "dcat:resource / dct:title"
-      - "dcat:resource / mi:hasBibType"
-      - "dcat:resource / mi:hasBiblvlCode"
-      - "dcat:resource / schema:datePublished"
+      - "<http://www.w3.org/ns/dcat#resource> / <http://purl.org/dc/terms/title>"
+      - "<http://www.w3.org/ns/dcat#resource> / <http://www.marineinfo.org/ns/ontology#hasBibType>"
+      - "<http://www.w3.org/ns/dcat#resource> / <http://www.marineinfo.org/ns/ontology#hasBiblvlCode>"
+      - "<http://www.w3.org/ns/dcat#resource> / <https://schema.org/datePublished>"
