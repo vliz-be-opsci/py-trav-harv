@@ -1,10 +1,11 @@
-from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
-from pytravharv.TargetStore import TargetStore
-from pytravharv.TravHarvConfigBuilder import (
-    LiteralSubjectDefinition,
-    SPARQLSubjectDefinition,
-)
 import logging
+from typing import Optional
+
+from rdflib import Graph
+
+from pytravharv.store import TargetStoreAccess
+from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
+from pytravharv.TravHarvConfigBuilder import TravHarvConfig
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
@@ -18,21 +19,23 @@ class TravHarvExecutor:
     :param config_filename: str
     :param prefix_set: dict
     :param tasks: list
-    :param target_store: TargetStore
+    :param rdf_store_access: RDFStoreAccess
 
     """
 
     def __init__(
         self,
         config_filename: str,
-        prefix_set,
+        prefix_set: TravHarvConfig.prefixset,
         tasks: list,
-        target_store: TargetStore,
+        rdf_store_access: TargetStoreAccess,
+        output: Optional[str] = None,
     ):
         self.config_filename = config_filename
         self.prefix_set = prefix_set
         self.tasks = tasks
-        self.target_store = target_store
+        self.rdf_store_access = rdf_store_access
+        self.output = output
         log.debug("TravHarvExecutor initialized")
         log.debug("Config filename: {}".format(self.config_filename))
         log.debug("Prefix set: {}".format(self.prefix_set))
@@ -51,16 +54,33 @@ class TravHarvExecutor:
             log.debug("Info task: {}".format(task))
             subject_definition = task.subject_definition
             assertion_path_set = task.assert_path_set
+            print("Subject definition: {}".format(subject_definition()))
             log.debug("Subject definition: {}".format(subject_definition))
+            print("Assertion path set: {}".format(assertion_path_set()))
             log.debug("Assertion path set: {}".format(assertion_path_set))
             for subject in subject_definition():
                 log.debug("Subject: {}".format(subject))
                 for assertion_path in assertion_path_set():
                     log.debug("Assertion path: {}".format(str(assertion_path)))
+                    print("Assertion path: {}".format(str(assertion_path)))
                     SubjPropPathAssertion(
                         subject,
                         assertion_path,
-                        self.target_store,
+                        self.rdf_store_access,
                         self.prefix_set,
                         self.config_filename,
                     )
+            log.debug("All paths asserted for task: {}".format(task))
+            if self.output:
+                log.debug("Output to file: {}".format(self.output))
+                # write graph to file
+                full_graph = self.rdf_store_access.full_graph()
+                # log.debug("Full graph: {}".format(full_graph))
+                # go from list of tuples to graph
+                output_graph = Graph()
+                if full_graph:
+                    for triple in full_graph:
+                        output_graph.add(triple)
+                    output_graph.serialize(self.output, format="turtle")
+            else:
+                log.debug("No output file specified")

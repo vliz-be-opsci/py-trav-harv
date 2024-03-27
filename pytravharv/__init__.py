@@ -5,20 +5,18 @@
 :synopsis: A package for traversing and harvesting RDF data by dereferencing URIs and asserting paths.
 
 .. moduleauthor:: Cedric Decruw <cedric.decruw@vliz.be>
-    
 """
 
-from pytravharv.TargetStore import TargetStore
+from pytravharv.pytravharv import TravHarv
+from pytravharv.store import TargetStoreAccess as RDFStoreAccess
 from pytravharv.TravHarvConfigBuilder import (
-    TravHarvConfigBuilder,
     TravHarvConfig,
+    TravHarvConfigBuilder,
 )
 from pytravharv.TravHarvExecuter import TravHarvExecutor
-from pytravharv.__main__ import TravHarv
-
 
 __all__ = [
-    "TargetStore",
+    "RDFStoreAccess",
     "TravHarvConfigBuilder",
     "TravHarvConfig",
     "TravHarvExecutor",

@@ -1,10 +1,11 @@
+import logging
 from html.parser import HTMLParser
 from urllib.parse import urljoin
+
 import requests
 from rdflib import Graph
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-import logging
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ class MyHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def WebAccess(url):
+def fetch(url):
     triplestore = Graph()
     download_uri_to_store(url, triplestore)
     return triplestore
@@ -88,8 +89,14 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
             format = "json-ld"
         elif "text/turtle" in r.headers["Content-Type"]:
             format = "turtle"
-        triplestore.parse(data=r.text, format=format, publicID=uri)
-        log.info(f"content of {uri} added to the triplestore")
+        try:
+            triplestore.parse(data=r.text, format=format, publicID=uri)
+            log.info(f"content of {uri} added to the triplestore")
+        except Exception as e:
+            log.warning(
+                f"failed to parse {uri} with format {format} with error {e}"
+            )
+
     else:
         # perform a check in the html to see if there is any link to fair signposting
         # perform request to uri with accept header text/html
@@ -121,14 +128,14 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
                 log.info(f"script: {script}")
                 # { 'application/ld+json': '...'} | {'text/turtle': '...'}
                 if "application/ld+json" in script:
-                    log.info(f"found script with type application/ld+json")
+                    log.info("found script with type application/ld+json")
                     triplestore.parse(
                         data=script["application/ld+json"],
                         format="json-ld",
                         publicID=uri,
                     )
                 elif "text/turtle" in script:
-                    log.info(f"found script with type text/turtle")
+                    log.info("found script with type text/turtle")
                     triplestore.parse(
                         data=script["text/turtle"],
                         format="turtle",

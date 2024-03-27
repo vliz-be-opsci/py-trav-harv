@@ -7,7 +7,7 @@ assert:
   - subjects:
       literal:
         - http://marineregions.org/mrgid/63523
-        - http://marineregions.org/mrgid/2540
+        - http://marineregions.org/mrgid/3293
         - http://marineregions.org/mrgid/12548
     paths:
       - "mr:hasGeometry"
