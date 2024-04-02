@@ -30,7 +30,7 @@ test_cases = [
     {"uri": "https://data.arms-mbon.org/", "length": 102},
     {
         "uri": "https://data.arms-mbon.org/data_release_001/latest/#",
-        "length": 115,
+        "length": 117,
     },  # add more test cases as needed
 ]
 
