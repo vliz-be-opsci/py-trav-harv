@@ -10,7 +10,6 @@ from pytravharv.TravHarvConfigBuilder import (
     SPARQLSubjectDefinition,
     TravHarvConfigBuilder,
 )
-from pytravharv.TravHarvExecuter import TravHarvExecutor
 
 CONFIG_FOLDER = pathlib.Path(__file__).parent / "config"
 INPUT_FOLDER = pathlib.Path(__file__).parent / "inputs"
