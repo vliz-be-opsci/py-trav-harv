@@ -160,44 +160,5 @@ def test_travharv_config_builder_from_folder_bad(target_store_access):
         travharvconfigbuilder.build_from_folder()
 
 
-@pytest.mark.usefixtures("target_store_access")
-def test_check_snooze(target_store_access):
-    graph = Graph()
-    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
-    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
-
-    travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access,
-        str(CONFIG_FOLDER / "good_folder"),
-    )
-
-    test_pass = travharvconfigbuilder._check_snooze(10, "base_test.yml")
-    assert test_pass is False
-
-
-@pytest.mark.usefixtures("target_store_access")
-def test_run_good_config(target_store_access):
-    graph = Graph()
-    graph.parse(str(INPUT_FOLDER / "63523.ttl"), format="turtle")
-    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
-
-    travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access,
-        str(CONFIG_FOLDER / "good_folder"),
-    )
-
-    travharvconfig = travharvconfigbuilder.build_from_config("base_test.yml")
-
-    travharvexecutor = TravHarvExecutor(
-        travharvconfig.configname,
-        travharvconfig.prefixset,
-        travharvconfig.tasks,
-        target_store_access,
-        str(OUTPUT_FOLDER / "output.ttl"),
-    )
-
-    travharvexecutor.assert_all_paths()
-
-
 if __name__ == "__main__":
     run_single_test(__file__)

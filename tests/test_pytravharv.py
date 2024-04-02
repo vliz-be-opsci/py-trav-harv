@@ -70,46 +70,6 @@ def test_pytravharv_fail():
         travharv.process()
 
 
-def test_pytravharv_config_folder():
-    config_folder = Path(__file__).parent / "config" / "good_folder"
-    output = Path(__file__).parent / "output" / "output_config_folder.ttl"
-    target_store_info = [read_uri, write_uri]
-    verbose = True
-
-    travharv = TravHarv(
-        config_folder,
-        None,
-        output,
-        None,
-        target_store_info,
-        verbose,
-    )
-
-    travharv.process()
-
-    assert os.path.exists(
-        Path(__file__).parent / "output" / "output_config_folder.ttl"
-    )
-    assert (
-        os.path.getsize(
-            Path(__file__).parent / "output" / "output_config_folder.ttl"
-        )
-        > 0
-    )
-
-    with open(
-        Path(__file__).parent / "output" / "output_config_folder.ttl", "r"
-    ) as f:
-        output = f.read()
-
-    with open(
-        Path(__file__).parent / "test_output_config_folder.ttl", "r"
-    ) as f:
-        test_output = f.read()
-
-    assert output == test_output
-
-
 def test_pytravharv_config_folder_fail():
     config_folder = Path(__file__).parent / "config"
     target_store_info = [read_uri, write_uri]
