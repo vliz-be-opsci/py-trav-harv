@@ -31,10 +31,12 @@ assert:
       SPARQL: >
         SELECT ?s
         WHERE {
-          [] <http://www.w3.org/ns/dcat#resource> ?s .
+          # [] <http://www.w3.org/ns/dcat#resource> ?s .
+          [] dcat:resource ?s .
         }
     paths:
-      - "<http://www.w3.org/ns/dcat#resource> / <http://purl.org/dc/terms/title>"
+      # - "<http://www.w3.org/ns/dcat#resource> / <http://purl.org/dc/terms/title>"
+      - "dcat:resource / dct:title"
       - "<http://www.w3.org/ns/dcat#resource> / <http://www.marineinfo.org/ns/ontology#hasBibType>"
       - "<http://www.w3.org/ns/dcat#resource> / <http://www.marineinfo.org/ns/ontology#hasBiblvlCode>"
       - "<http://www.w3.org/ns/dcat#resource> / <https://schema.org/datePublished>"
