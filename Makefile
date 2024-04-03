@@ -1,7 +1,11 @@
 TEST_PATH = ./tests/
 FLAKE8_EXCLUDE = venv,.venv,.eggs,.tox,.git,__pycache__,*.pyc
 PROJECT = pytravharv
-AUTHOR = "Cedric Decruw"#
+AUTHOR = "Flanders Marine Institute, VLIZ vzw"
+
+
+.PHONY: help clean startup install init init-dev init-docs docs docs-build test test-quick test-with-graphdb test-coverage test-coverage test-coverage-with-graphdb check lint-fix update
+.DEFAULT_GOAL := help
 
 clean:
 	@find . -name '*.pyc' -exec rm --force {} +
@@ -28,17 +32,17 @@ init-dev: startup
 init-docs: startup
 	poetry install --with 'docs'
 
-docs:
-	@echo "Building documentation"
-	@if ! [ -d "./docs" ]; then \
-		poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author '${AUTHOR}' docs; \
-	else \
-		rm -f ./docs/build; \
-		poetry run sphinx-apidoc -o ./docs/source ./$(PROJECT); \
-		poetry run sphinx-build -b html ./docs/source ./docs/build/html; \
-		cp ./docs/source/custom.css ./docs/build/html/_static/custom.css; \
-		cp ./docs/source/UML_Diagram.svg ./docs/build/html/_static/UML_Diagram.svg; \
-	fi
+init-docs: startup  ## initial prepare of the environment for local execution and reading the docs
+	@poetry install --with 'docs'
+
+docs:  ## builds the docs
+	@poetry run sphinx-quickstart -q --ext-autodoc --ext-githubpages --ext-viewcode --sep --project $(PROJECT) --author '${AUTHOR} -f' source_docs
+	@cp ./docs/* ./source_docs/source/
+	@sleep 1
+	@poetry run sphinx-apidoc -o ./source_docs/source ./$(PROJECT)
+	@poetry run sphinx-build -b html ./source_docs/source ./source_docs/build/html
+	@cp ./source_docs/source/custom.css ./source_docs/build/html/_static/custom.css
+	@cp ./source_docs/source/UML_Diagram.svg ./source_docs/build/html/_static/UML_Diagram.svg
 
 test:
 	poetry run pytest ${TEST_PATH}

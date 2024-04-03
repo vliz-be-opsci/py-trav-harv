@@ -25,12 +25,12 @@ jobs:
 
       - name: Run make init-dev
         run: |
-            make init-dev
-      
+          make init-dev
+
       - name: list all files and directories in tree format
         run: |
           tree -a -L 2
-      
+
       - name: Make docs
         run: |
           make docs
@@ -40,6 +40,5 @@ jobs:
         with:
           publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build/html
+          publish_dir: source_docs/build/html
           force_orphan: true
-

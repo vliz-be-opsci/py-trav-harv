@@ -7,3 +7,4 @@ docs/
 dist/
 tests/output/
 .vscode/
+source_docs/
