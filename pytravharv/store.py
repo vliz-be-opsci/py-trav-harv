@@ -27,7 +27,7 @@ class TargetStoreAccess:
         log.debug(f"length list_of_subjects: {len(list_of_subjects)}")
         return list_of_subjects
 
-    def verify(self, subject, property_path, prefixes=None):
+    def verify_path(self, subject, property_path, prefixes=None):
         sparql = self._qryBuilder.build_syntax(
             "trajectory.sparql",
             subject=subject,

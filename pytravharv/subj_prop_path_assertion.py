@@ -109,7 +109,7 @@ class SubjPropPathAssertion:
             "Asserting a property path for a given subject at a given depth"
         )
         log.debug("Depth: {}".format(self.max_depth - self.current_depth))
-        if self.rdf_store_access.verify(
+        if self.rdf_store_access.verify_path(
             self.subject,
             self.assertion_path.get_path_for_depth(
                 self.max_depth - self.current_depth
