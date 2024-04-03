@@ -7,11 +7,11 @@ from typing import Optional
 import yaml
 
 from pytravharv.store import TargetStore
-from pytravharv.TravHarvConfigBuilder import (
+from pytravharv.trav_harv_config_builder import (
     TravHarvConfig,
     TravHarvConfigBuilder,
 )
-from pytravharv.TravHarvExecuter import TravHarvExecutor
+from pytravharv.trav_harv_executer import TravHarvExecutor
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

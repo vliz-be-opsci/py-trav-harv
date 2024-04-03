@@ -6,7 +6,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib import Graph
 
-from pytravharv.WebAccess import fetch
+from pytravharv.web_access import fetch
 
 log = getLogger(__name__)
 

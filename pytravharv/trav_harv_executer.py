@@ -4,8 +4,8 @@ from typing import Optional
 from rdflib import Graph
 
 from pytravharv.store import TargetStoreAccess
-from pytravharv.SubjPropPathAssertion import SubjPropPathAssertion
-from pytravharv.TravHarvConfigBuilder import TravHarvConfig
+from pytravharv.subj_prop_path_assertion import SubjPropPathAssertion
+from pytravharv.trav_harv_config_builder import TravHarvConfig
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

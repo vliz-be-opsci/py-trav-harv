@@ -9,11 +9,11 @@
 
 from pytravharv.pytravharv import TravHarv
 from pytravharv.store import TargetStoreAccess as RDFStoreAccess
-from pytravharv.TravHarvConfigBuilder import (
+from pytravharv.trav_harv_config_builder import (
     TravHarvConfig,
     TravHarvConfigBuilder,
 )
-from pytravharv.TravHarvExecuter import TravHarvExecutor
+from pytravharv.trav_harv_executer import TravHarvExecutor
 
 __all__ = [
     "RDFStoreAccess",

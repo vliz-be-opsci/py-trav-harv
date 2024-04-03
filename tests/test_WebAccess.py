@@ -1,7 +1,7 @@
 import pytest
 from rdflib import Graph
 
-from pytravharv.WebAccess import download_uri_to_store
+from pytravharv.web_access import download_uri_to_store
 
 
 @pytest.mark.usefixtures("target_store_access")

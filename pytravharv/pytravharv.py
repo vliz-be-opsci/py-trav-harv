@@ -9,11 +9,11 @@ from rdflib import Graph
 
 from pytravharv.common import QUERY_BUILDER, insert_resource_into_graph
 from pytravharv.store import TargetStoreAccess as RDFStoreAccess
-from pytravharv.TravHarvConfigBuilder import (
+from pytravharv.trav_harv_config_builder import (
     TravHarvConfig,
     TravHarvConfigBuilder,
 )
-from pytravharv.TravHarvExecuter import TravHarvExecutor
+from pytravharv.trav_harv_executer import TravHarvExecutor
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)

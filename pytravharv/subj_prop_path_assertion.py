@@ -5,8 +5,8 @@ import validators
 
 from pytravharv.common import graph_name_to_uri
 from pytravharv.store import TargetStoreAccess
-from pytravharv.TravHarvConfigBuilder import AssertPath
-from pytravharv.WebAccess import fetch as web_access
+from pytravharv.trav_harv_config_builder import AssertPath
+from pytravharv.web_access import fetch as web_access
 
 # log = logging.getLogger("pyTravHarv")
 log = logging.getLogger(__name__)
