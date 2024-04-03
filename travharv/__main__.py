@@ -31,12 +31,12 @@ def get_arg_parser():
     )
 
     parser.add_argument(
-        "-cf",
+        "-f",
         "--config-folder",
         nargs="?",
         required=True,
         default=os.path.join(os.getcwd(), "config"),
-        help="Folder containing configuration files, relative to the folder or file this was called from",
+        help="Folder containing configuration files, relative to the working directory",
     )
 
     parser.add_argument(
@@ -76,7 +76,7 @@ def get_arg_parser():
     )
 
     parser.add_argument(
-        "-ts",
+        "-s",
         "--target-store",
         nargs=2,
         required=False,
