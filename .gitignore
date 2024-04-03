@@ -1,8 +1,9 @@
 .env
-pyTravHarv.log
-poetry.lock
-pyTravHarv/__pycache__
+trav_harv.log
+travharv/__pycache__
 tests/__pycache__
 .coverage
-docs/
 dist/
+tests/output/
+.vscode/
+source_docs/

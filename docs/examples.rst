@@ -4,17 +4,17 @@ Examples
 Using the CLI
 -------------
 
-You can use the `pytravharv` package from the command line like this:
+You can use the `travharv` package from the command line like this:
 
 .. code-block:: bash
 
-   python -m pytravharv <arguments>
+   python -m travharv <arguments>
 
 For example, if you want to use the `TravHarvExecuter` module, you might do something like this:
 
 .. code-block:: bash
 
-   python -m pytravharv TravHarvExecuter --config <config_file>
+   python -m travharv TravHarvExecuter --config <config_file>
 
 Replace `<config_file>` with the path to your configuration file.
 
@@ -120,32 +120,31 @@ In the second case the paths to be asserted are ``mr:hasGeometry``, ``mr:isPartO
 Using the API
 -------------
 
-You can also use the `pytravharv` package directly in your Python code. Here's an example of how you might use the `TravHarvExecuter` and `TravHarvConfigBuilder` modules:
+You can also use the `travharv` package directly in your Python code. Here's an example of how you might use the `TravHarvExecuter` and `TravHarvConfigBuilder` modules:
 
 .. code-block:: python
 
   import os
-  from pytravharv import TargetStore, TravHarvConfigBuilder, TravHarvExecutor
+  from travharv import TargetStore, TravHarvConfigBuilder, TravHarvExecuter
 
-  config_folder = os.path.join(os.path.dirname(__file__), "cf")
+  config_folder = os.path.join(os.path.dirname(__file__), "cf") # path to the configuration folder
 
-  url = "http://localhost:7200/repositories/lwua23"
+  url = "http://localhost:7200/repositories/lwua23" # URL of the triple store repository
 
-  TARGETSTORE = TargetStore(url)
-  CONFIGBUILDER = TravHarvConfigBuilder(TARGETSTORE, str(config_folder))
+  TARGETSTORE = TargetStore.TargetStore(url)
+  CONFIGBUILDER = TravHarvConfigBuilder.TravHarvConfigBuilder(
+    TARGETSTORE, str(config_folder)
+  )
 
   CONFIGLIST = CONFIGBUILDER.build_from_folder()
 
   for travHarvConfig in CONFIGLIST:
-      print(travHarvConfig())
-      prefix_set = travHarvConfig.PrefixSet
-      print(prefix_set)
-      config_name = travHarvConfig.ConfigName
-      print(config_name)
-      tasks = travHarvConfig.tasks
-      print(tasks)
-      travharvexecutor = TravHarvExecutor(config_name, prefix_set, tasks, TARGETSTORE)
-
-      travharvexecutor.assert_all_paths()
+    prefix_set = travHarvConfig.PrefixSet
+    config_name = travHarvConfig.ConfigName
+    tasks = travHarvConfig.tasks
+    travharvexecutor = TravHarvExecuter.TravHarvExecutor(
+      config_name, prefix_set, tasks, TARGETSTORE
+    )
+    travharvexecutor.assert_all_paths()
 
 Replace `<config_file>` with the path to your configuration folder where the config file(s) are located.

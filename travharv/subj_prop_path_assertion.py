@@ -1,27 +1,15 @@
-import os
-import rdflib
-import validators
-from pyrdfj2 import J2RDFSyntaxBuilder
-from pytravharv.TargetStore import TargetStore
-from pytravharv.TravHarvConfigBuilder import AssertPath
-from pytravharv.WebAccess import WebAccess
 import logging
 
-# log = logging.getLogger("pyTravHarv")
+import rdflib
+import validators
+
+from travharv.common import graph_name_to_uri
+from travharv.store import TargetStoreAccess
+from travharv.trav_harv_config_builder import AssertPath
+from travharv.web_discovery import _into_graph
+
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
-
-
-def get_j2rdf_builder():
-    template_folder = os.path.join(
-        os.path.dirname(__file__), "pysubyt_templates"
-    )
-    log.info(f"template_folder == {template_folder}")
-    # init J2RDFSyntaxBuilder
-    j2rdf = J2RDFSyntaxBuilder(templates_folder=template_folder)
-    return j2rdf
-
-
-J2RDF = get_j2rdf_builder()
 
 
 class SubjPropPathAssertion:
@@ -33,23 +21,23 @@ class SubjPropPathAssertion:
         self,
         subject: str,
         assertion_path: AssertPath,
-        target_store: TargetStore,
+        rdf_store_access: TargetStoreAccess,
         prefix_set,
-        config_filename: str,
+        graph_name: str,
     ):
         """
         Construct a SubjPropPathAssertion object.
         Automatically asserts a property path for a given subject.
-        Puts the results in a TargetStore.
+        Puts the results in a RDFStoreAccess.
 
         :param subject: str
         :param assertion_path: AssertPath
-        :param target_store: TargetStore
+        :param rdf_store_access: RDFStoreAccess
         :param prefix_set: dict
-        :param config_filename: str
+        :param graph_name: str
 
         """
-
+        log.debug(subject)
         self.subject = self._subject_str_check(subject)
         if not self.subject:
             log.warning(
@@ -58,11 +46,11 @@ class SubjPropPathAssertion:
             return
         self.assertion_path = assertion_path
         self.current_depth = 0
-        self.target_store = target_store()
+        self.rdf_store_access = rdf_store_access
         self.previous_bounce_depth = 0
         self.max_depth = self.assertion_path.get_max_size()
         self.prefix_set = prefix_set
-        self.config_filename = config_filename
+        self.graph_name = graph_name
         self.assert_path()
 
     def _subject_str_check(
@@ -71,21 +59,22 @@ class SubjPropPathAssertion:
         """
         Check if subject is a strict str , if subject is rdflib.term.URIRef , convert to str
         """
-        if type(subject) == str and validators.url(subject):
+        if type(subject) is str and validators.url(subject):
+            log.debug("Subject is a valid URIRef: {}".format(subject))
             return subject
         if (
-            type(subject) == rdflib.query.ResultRow
-            or type(subject) == rdflib.term.URIRef
+            type(subject) is rdflib.query.ResultRow
+            or type(subject) is rdflib.term.URIRef
         ):
             # extract URIRef from ResultRow
-            if type(subject) == rdflib.query.ResultRow:
+            if type(subject) is rdflib.query.ResultRow:
                 subject_row = subject[0]
-                if type(subject_row) == dict:
+                if type(subject_row) is dict:
                     subject_row = subject_row[
                         "value"
                     ]  # janky way of getting the URIRef from the ResultRow
                 log.debug("Subject row: {}".format(subject_row))
-                if validators.url(str(subject_row)):
+                if validators.url(subject_row):
                     return str(subject_row)
                 log.warning(
                     "Subject row is not a URIRef: {}".format(subject_row)
@@ -101,7 +90,7 @@ class SubjPropPathAssertion:
     def assert_path(self):
         """
         Assert a property path for a given subject.
-        Put the results in a TargetStore.
+        Put the results in a RDFStoreAccess.
         """
         log.debug("Asserting a property path for a given subject")
         log.debug("Subject: {}".format(self.subject))
@@ -120,13 +109,18 @@ class SubjPropPathAssertion:
             "Asserting a property path for a given subject at a given depth"
         )
         log.debug("Depth: {}".format(self.max_depth - self.current_depth))
-        SPARQLQuery = self._sparql_trajectory_check(
-            self.max_depth - self.current_depth
-        )
-        if self.target_store.verify(SPARQLQuery):
+        if self.rdf_store_access.verify_path(
+            self.subject,
+            self.assertion_path.get_path_for_depth(
+                self.max_depth - self.current_depth
+            ),
+            self.prefix_set,
+        ):
             self._harvest_and_surface()
             return
-        self.target_store.ingest(WebAccess(self.subject), self.config_filename)
+        self.rdf_store_access.ingest(
+            _into_graph(self.subject), graph_name_to_uri(self.graph_name)
+        )
 
         # Implement method to assert a property path for a given subject at a given depth
 
@@ -148,29 +142,3 @@ class SubjPropPathAssertion:
         # Implement method to harvest the property path and backtrack to the previous depth
         self.previous_bounce_depth = self.current_depth
         self.current_depth = 0
-
-    def _bail_out(self):
-        """
-        Bail out of the property path assertion.
-        """
-        log.debug("Bailing out of the property path assertion")
-        # quit the assert path loop
-        self.current_depth = self.max_depth
-
-    def _sparql_trajectory_check(self, depth):
-        log.debug(
-            "assertion_path: {}".format(
-                self.assertion_path.get_path_for_depth(depth)
-            )
-        )
-        template = "trajectory.sparql"
-        vars = {
-            "subject": self.subject,
-            "property_trajectory": self.assertion_path.get_path_for_depth(
-                depth
-            ),
-            "prefixes": self.prefix_set,
-        }
-        query = J2RDF.build_syntax(template, **vars)
-        log.debug("SPARQL query: {}".format(query))
-        return query

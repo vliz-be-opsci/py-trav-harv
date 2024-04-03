@@ -1,16 +1,18 @@
 # from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
-import re
-import os
-import sys
-from typing import Any
-import yaml
 import logging
-from datetime import datetime, timedelta
-from pytravharv.TargetStore import TargetStore
-from rdflib.plugins.sparql.parser import parseQuery
+import os
+import re
 from abc import ABC, abstractmethod
+from datetime import datetime, timedelta
+from typing import Any
 
-# log = logging.getLogger("pyTravHarv")
+import yaml
+from rdflib.plugins.sparql.parser import parseQuery
+
+from travharv.common import graph_name_to_uri
+from travharv.store import TargetStoreAccess as RDFStoreAccess
+
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -86,7 +88,7 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     A subject definition that is a SPARQL query
     """
 
-    def __init__(self, SPARQL=str, targetstore=TargetStore):
+    def __init__(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
         """
         Initialise the SPARQL subject definition
 
@@ -96,7 +98,7 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         :type targetstore: TargetStore
         """
         log.debug("init SPARQL subjects")
-        self.subjects = self._get_subjects(SPARQL, targetstore)
+        self.subjects = self._get_subjects(SPARQL, rdf_store_access)
         log.debug(self.subjects)
 
     def __call__(self, *args: Any, **kwds: Any) -> list[str]:
@@ -111,9 +113,9 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         """
         return self.subjects
 
-    def _get_subjects(self, SPARQL=str, targetstore=TargetStore):
+    def _get_subjects(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
         log.debug("getting subjects")
-        return targetstore().select_subjects(SPARQL)
+        return rdf_store_access.select_subjects(SPARQL)
 
 
 class AssertPathSet:
@@ -199,9 +201,9 @@ class TravHarvConfig:
     """
     Configuration for the travharv
     This class contains the following:
-        - PrefixSet: a dictionary of prefixes
+        - prefixset: a dictionary of prefixes
         - tasks: a list of tasks
-        - ConfigName: a string
+        - configname: a string
     """
 
     def __init__(self, travharv_config):
@@ -219,28 +221,30 @@ class TravHarvConfig:
         return self.travharv_config
 
     @property
-    def PrefixSet(self):
-        return self.travharv_config["PrefixSet"]
+    def prefixset(self):
+        return self.travharv_config["prefixset"]
 
     @property
     def tasks(self):
         return self.travharv_config["tasks"]
 
     @property
-    def ConfigName(self):
-        return self.travharv_config["ConfigName"]
+    def configname(self):
+        return self.travharv_config["configname"]
 
     def __str__(self):
         return str(self.travharv_config)
 
 
 class TravHarvConfigBuilder:
-    def __init__(self, target_store: TargetStore, configFolder: str = None):
+    def __init__(
+        self, rdf_store_access: RDFStoreAccess, configFolder: str = ""
+    ):
         """
         Initialize the TravHarvConfigBuilder.
 
-        :param target_store: The target store for the TravHarvConfigBuilder.
-        :type target_store: TargetStore
+        :param rdf_store_access: The RDF store access.
+        :type rdf_store_access: RDFStoreAccess
         :param configFolder: The folder containing the config files.
         :type configFolder: str
         :return: A TravHarvConfigBuilder object.
@@ -252,9 +256,7 @@ class TravHarvConfigBuilder:
                 "Config folder is None, using current working directory as config folder"
             )
         self.config_files_folder = configFolder
-        self.target_store = target_store
-        self.lastmodified_admin = target_store().lastmod()
-        log.debug(self.lastmodified_admin)
+        self._rdf_store_access = rdf_store_access
         log.debug("TravHarvConfigBuilder initialized")
 
     def build_from_config(self, config_name):
@@ -327,12 +329,12 @@ class TravHarvConfigBuilder:
             try:
                 return yaml.safe_load(stream)
             except yaml.YAMLError as exc:
-                print(exc)
+                log.exception(exc)
 
     def _makeTravHarvConfigPartFromDict(
-        self, dict_object, name_config="default"
+        self, dict_object, name_config: str = "default"
     ):
-
+        log.debug("Making TravHarvConfig from dict for {}".format(name_config))
         # make it so that the assertions are always checked for lowercase
         dict_object = {k.lower(): v for k, v in dict_object.items()}
         assert (
@@ -342,25 +344,28 @@ class TravHarvConfigBuilder:
         for assert_task in dict_object["assert"]:
             self._assert_subjects(assert_task["subjects"])
         # Add more assertions as needed...
-
-        # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
-        # if it is older then the last modified date of the admin graph then we can continue
-        # if it is not older then the last modified date of the admin graph then we can snooze the config
-        if self._check_snooze(
-            dict_object["snooze-till-graph-age-minutes"],
-            self.lastmodified_admin,
-            name_config,
-        ):
-            log.info(
-                "Snoozing config {} for {} minutes".format(
-                    name_config, dict_object["snooze-till-graph-age-minutes"]
+        try:
+            # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
+            # if it is older then the last modified date of the admin graph then we can continue
+            # if it is not older then the last modified date of the admin graph then we can snooze the config
+            if not self._check_snooze(
+                dict_object["snooze-till-graph-age-minutes"],
+                name_config,
+            ):
+                log.info(
+                    "Snoozing config {} for {} minutes".format(
+                        name_config,
+                        dict_object["snooze-till-graph-age-minutes"],
+                    )
                 )
-            )
-            return
+                return
+        except Exception as e:
+            log.exception(e)
+            log.warning("{}".format(e))
 
         travharvconfig = {
-            "ConfigName": name_config,
-            "PrefixSet": dict_object["prefix"],
+            "configname": name_config,
+            "prefixset": dict_object["prefix"],
             "tasks": [
                 TravHarvTask(
                     {
@@ -371,7 +376,7 @@ class TravHarvConfigBuilder:
                             if "literal" in assert_task["subjects"]
                             else SPARQLSubjectDefinition(
                                 assert_task["subjects"]["SPARQL"],
-                                self.target_store,
+                                self._rdf_store_access,
                             )
                         ),
                         "assert_path_set": AssertPathSet(
@@ -385,19 +390,18 @@ class TravHarvConfigBuilder:
 
         return TravHarvConfig(travharvconfig)
 
-    def _check_snooze(self, snooze_time, lastmodified_admin, name_config):
-        if name_config in lastmodified_admin:
-            lastmodified_admin_time = lastmodified_admin[name_config]
-            log.debug(
-                "lastmodified_admin_time: {}".format(lastmodified_admin_time)
+    def _check_snooze(self, snooze_time, name_config):
+        log.debug(
+            "Checking if config {} is older then {} minutes".format(
+                name_config, snooze_time
             )
-            tosnooze_time = lastmodified_admin_time + timedelta(
-                minutes=snooze_time
+        )
+        log.debug(graph_name_to_uri(name_config))
+        return (
+            False
+            if not self._rdf_store_access
+            else self._rdf_store_access.lastmod_for_context(
+                graph_name_to_uri(name_config)
             )
-
-            log.debug("tosnooze_time: {}".format(tosnooze_time))
-
-            if tosnooze_time > datetime.now():
-                return True
-            else:
-                return False
+            < datetime.now() - timedelta(minutes=snooze_time)
+        )

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pyTravHarv"
+name = "travharv"
 version = "0.1.0"
 description = ""
 authors = ["Decruw Cedric <cedric.decruw@vliz.be>"]
@@ -9,12 +9,12 @@ python = ">=3.9,<4.0.0"
 rdflib = "*"
 pyyaml = "^6.0.1"
 validators = "^0.22.0"
-pysubyt = "^0.0.2"
 sparqlwrapper = "^2.0.0"
 pyrdfj2 = "^0.0.5"
 sphinx-rtd-theme = "^2.0.0"
 recommonmark = "^0.7.1"
 myst-parser = "^2.0.0"
+pyrdfstore = {git = "https://github.com/vliz-be-opsci/py-RDF-store.git", rev = "main"}
 
 [tool.poetry.group.docs]
 optional = true
@@ -42,7 +42,7 @@ python-dotenv = "*"
 pytest-cov = "*"
 
 [tool.poetry.scripts]
-pyTravHarv = "pyTravHarv.__main__:main"
+travharv = "travharv.__main__:main"
 
 [build-system]
 requires = ["setuptools","poetry"]

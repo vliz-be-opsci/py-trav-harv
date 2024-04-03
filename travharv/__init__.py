@@ -1,24 +1,22 @@
-"""pytravharv
+"""travharv
 
-.. module:: pytravharv
+.. module:: travharv
 :platform: Unix, Windows
 :synopsis: A package for traversing and harvesting RDF data by dereferencing URIs and asserting paths.
 
 .. moduleauthor:: Cedric Decruw <cedric.decruw@vliz.be>
-    
 """
 
-from pytravharv.TargetStore import TargetStore
-from pytravharv.TravHarvConfigBuilder import (
-    TravHarvConfigBuilder,
+from travharv.service import TravHarv
+from travharv.store import TargetStoreAccess as RDFStoreAccess
+from travharv.trav_harv_config_builder import (
     TravHarvConfig,
+    TravHarvConfigBuilder,
 )
-from pytravharv.TravHarvExecuter import TravHarvExecutor
-from pytravharv.__main__ import TravHarv
-
+from travharv.trav_harv_executer import TravHarvExecutor
 
 __all__ = [
-    "TargetStore",
+    "RDFStoreAccess",
     "TravHarvConfigBuilder",
     "TravHarvConfig",
     "TravHarvExecutor",

@@ -17,9 +17,9 @@ sys.path.insert(0, os.path.abspath("."))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "pyTravHarv"
-copyright = "2024, Cedric_Decruw"
-author = "Cedric_Decruw"
+project = "travharv"
+copyright = "2024, Flanders Marine Institute, VLIZ vzw"
+author = "Flanders Marine Institute, VLIZ vzw"
 version = "0.1.0"
 
 # -- General configuration ---------------------------------------------------
@@ -40,7 +40,7 @@ templates_path = ["_templates"]
 exclude_patterns = []
 
 # The master toctree document.
-# master_doc = "pyTravHarv/index"
+# master_doc = "travharv/index"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

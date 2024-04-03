@@ -1,4 +1,4 @@
-# pyTravHarv
+# travharv
 
 ## Description
 
@@ -7,13 +7,13 @@ This is a Python module that will allows an end-user to traverse given property-
 ## Installation
 
 ```bash
-pip install pyTravHarv
+pip install travharv
 ```
 
 ## Usage
 
 ```python
-from pyTravHarv import pyTravHarv
+from travharv import service
 ```
 
 ## dev
@@ -41,7 +41,7 @@ pytest
 This is an example of how to run the code where the targetstore is a file / in memory store.
 
 ```bash
-python ./pyTravHarv/**main**.py -cf ./tests/config/ -n base_test.yml -ts ./tests/inputs/63523.ttl -v
+python -m travharv -cf ./tests/config/ -n base_test.yml -m memory -o ./test.ttl -v -c ./tests/inputs/63523.ttl ./test.ttl
 ```
 
 #### example 2
@@ -49,7 +49,7 @@ python ./pyTravHarv/**main**.py -cf ./tests/config/ -n base_test.yml -ts ./tests
 This is an example of how to run the code where the targetstore is a SPARQL endpoint.
 
 ```bash
-python ./pyTravHarv/**main**.py -cf ./tests/config/ -n base_test.yml -ts http://example.com/repo/id -v
+python -m travharv -cf ./tests/config/ -n base_test.yml -m uristore -o ./test.ttl -v -ts http://example.org http://example.org/statements
 ```
 
 The uri is can be a graphdb repository.
