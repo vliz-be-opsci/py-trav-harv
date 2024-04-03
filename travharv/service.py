@@ -67,6 +67,7 @@ class TravHarv:
         )
 
         # if there is context add it to the target store
+        # context in this context is a list of files (triples) that will be added to the target store
         if context is not None:
             graph = Graph()
             for context in self.context:
