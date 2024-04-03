@@ -169,7 +169,9 @@ class mainRunner:
                 self.args.name
             )
             if trav_harv_config is None:
-                return
+                raise AssertionError(
+                    "No configuration found with the given name"
+                )
             log.info("Config object: {}".format(trav_harv_config()))
 
             # from travHarvConfig we need , prefix_set, tasks, config_file
