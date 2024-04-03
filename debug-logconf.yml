@@ -15,7 +15,7 @@ handlers:
     class: logging.FileHandler
     level: DEBUG
     formatter: base
-    filename: pyTravHarv.log
+    filename: trav_harv.log
     mode: "w" # in stead of 'a'
 loggers:
   __main__:
