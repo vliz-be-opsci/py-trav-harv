@@ -2,11 +2,15 @@ import argparse
 import logging
 import logging.config
 import os
-from typing import Optional
 from pathlib import Path
-import yaml
+from typing import Optional
 
-from travharv.store import TargetStore
+import yaml
+from pyrdfstore import create_rdf_store
+from rdflib import Graph
+
+from travharv.common import QUERY_BUILDER, insert_resource_into_graph
+from travharv.store import TargetStoreAccess as RDFStoreAccess
 from travharv.trav_harv_config_builder import (
     TravHarvConfig,
     TravHarvConfigBuilder,
@@ -98,43 +102,26 @@ class mainRunner:
             ) as f:
                 config = yaml.safe_load(f.read())
                 logging.config.dictConfig(config)
-        log.debug("started logging")
 
         log.debug("type target store: {}".format(type(args.target_store)))
         log.debug(args)
 
+        self.target_store = create_rdf_store(*self.args.target_store)
         # targetstore can be a list of paths, a single path to a folder or a list of urls
-        self._setup_targetstore()
+        self.target_store_access = RDFStoreAccess(
+            self.target_store, QUERY_BUILDER
+        )
+
+        if self.args.context is not None:
+            graph = Graph()
+            for context in self.args.context:
+                insert_resource_into_graph(graph, context)
+            self.target_store_access.ingest(graph, "urn:travharv:context")
+
         self.travharv_config_builder = TravHarvConfigBuilder(
-            self.target_store, args.config_folder
+            self.target_store_access, args.config_folder
         )
         self.travharvexecutor = None
-
-    def _setup_targetstore(self):
-        """checks the different arguments to see what setup will be used"""
-
-        # arguments that can influence setup
-        # -m --mode
-        # -ts --target-store
-        # -c --context
-        # -o --output
-
-        # if mode is memory, target store will be a temporary in-memory store memory store => it can be written to an output
-        # if mode is uristore, target store will be a URI store => target store will be a list of urls and must not be empty then
-        # if context is not None, it will be added to the graph when asserting paths
-        # if target store is not None, it will be used as the target store
-
-        if self.args.mode == "uristore":
-            assert (
-                self.args.target_store is not None
-            ), "No target store provided for uristore mode. Exiting."
-        self.target_store = TargetStore(
-            mode=self.args.mode,
-            context=self.args.context,
-            store_info=self.args.target_store,
-            output=self.args.output,
-        )
-        return
 
     def run(self):
         log.debug(self.args)
