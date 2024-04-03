@@ -14,7 +14,8 @@ log = logging.getLogger(__name__)
 
 class SubjPropPathAssertion:
     """
-    A class to represent the assertion of all given property traversal paths for a given subject.
+    A class to represent the assertion of
+    all given property traversal paths for a given subject.
     """
 
     def __init__(
@@ -53,11 +54,10 @@ class SubjPropPathAssertion:
         self.graph_name = graph_name
         self.assert_path()
 
-    def _subject_str_check(
-        self, subject
-    ):  # This whole function is jank, work out a way to offload this in a decent way
+    def _subject_str_check(self, subject):
         """
-        Check if subject is a strict str , if subject is rdflib.term.URIRef , convert to str
+        Check if subject is a strict str
+        , if subject is rdflib.term.URIRef , convert to str
         """
         if type(subject) is str and validators.url(subject):
             log.debug("Subject is a valid URIRef: {}".format(subject))
@@ -122,7 +122,8 @@ class SubjPropPathAssertion:
             _into_graph(self.subject), graph_name_to_uri(self.graph_name)
         )
 
-        # Implement method to assert a property path for a given subject at a given depth
+        # Implement method to assert a property path
+        # for a given subject at a given depth
 
     def _increase_depth(self):
         """
@@ -137,8 +138,10 @@ class SubjPropPathAssertion:
         Harvest the property path and surface back to depth 0.
         """
         log.debug(
-            "Harvesting the property path and backtracking to the previous depth"
+            """Harvesting the property path and
+               backtracking to the previous depth"""
         )
-        # Implement method to harvest the property path and backtrack to the previous depth
+        # Implement method to harvest the property path
+        # and backtrack to the previous depth
         self.previous_bounce_depth = self.current_depth
         self.current_depth = 0

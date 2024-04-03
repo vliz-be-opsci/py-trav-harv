@@ -44,7 +44,8 @@ def get_arg_parser():
         default=str(
             DEFAULT_CONFIG_FOLDER
         ),  # os.path.join(os.getcwd(), "config"),
-        help="Folder containing configuration files, relative to the working directory",
+        help="""Folder containing configuration files
+                relative to the working directory""",
     )
 
     parser.add_argument(
@@ -62,7 +63,8 @@ def get_arg_parser():
         type=str,
         default=None,
         required=False,
-        help="File to write output to, if not specified, output will be written to stdout",
+        help="""File to write output to, if not
+                specified, output will be written to stdout""",
     )
 
     parser.add_argument(
@@ -71,7 +73,10 @@ def get_arg_parser():
         nargs="*",
         required=False,
         default=None,
-        help="Context to add to graph when asserting paths. This will be a list of Paths to either a file containing triples or a folder containing files that can contain triples.",
+        help="""Context to add to graph when asserting paths.
+                This will be a list of Paths to either a file
+                containing triples or a folder containing
+                files that can contain triples.""",
     )
 
     parser.add_argument(
@@ -79,7 +84,9 @@ def get_arg_parser():
         "--target-store",
         nargs=2,
         required=False,
-        help="A pair of URLS for the Targetstore to harvest from. The first is the url to get statments from , the second one is to post statements to.",
+        help="""A pair of URLS for the Targetstore to harvest from.
+                The first is the url to get statments from ,
+                the second one is to post statements to.""",
     )
 
     return parser
@@ -107,7 +114,8 @@ class mainRunner:
         log.debug(args)
 
         self.target_store = create_rdf_store(*self.args.target_store)
-        # targetstore can be a list of paths, a single path to a folder or a list of urls
+        # targetstore can be a list of paths,
+        # a single path to a folder or a list of urls
         self.target_store_access = RDFStoreAccess(
             self.target_store, QUERY_BUILDER
         )

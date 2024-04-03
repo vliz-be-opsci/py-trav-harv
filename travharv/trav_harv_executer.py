@@ -14,7 +14,8 @@ log = logging.getLogger(__name__)
 class TravHarvExecutor:
     """
     A class to represent a TravHarvExecutor.
-    This class will assert all paths for all subjects given for each task per config.
+    This class will assert all paths
+    for all subjects given for each task per config.
 
     :param config_filename: str
     :param prefix_set: dict
@@ -46,7 +47,8 @@ class TravHarvExecutor:
         Assert all paths for all subjects given for each task per config.
         """
         log.debug(
-            "Asserting all paths for all subjects given for each task per config"
+            """Asserting all paths for all
+               subjects given for each task per config"""
         )
         for task in self.tasks:
             log.debug("Task: {}".format(task))

@@ -65,7 +65,7 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
     session = requests.Session()
     retry = Retry(
         total=total_retry,
-        backoff_factor=0.4,  # implemented backoff formula: {backoff factor} * (2 ** ({number of total retries} - 1)) eg. 0.4 * (2 ** (8 - 1)) = 51.2 seconds on total_retry=8
+        backoff_factor=0.4,
         status_forcelist=[500, 502, 503, 504, 429],
     )
     adapter = HTTPAdapter(max_retries=retry)
@@ -98,7 +98,8 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
             )
 
     else:
-        # perform a check in the html to see if there is any link to fair signposting
+        # perform a check in the html to
+        # see if there is any link to fair signposting
         # perform request to uri with accept header text/html
         headers = {"Accept": "text/html"}
         r = session.get(uri, headers=headers)
@@ -144,5 +145,6 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
             parser.close()
             return
         log.warning(
-            f"request for {uri} failed with status code {r.status_code} and content type {r.headers['Content-Type']}"
+            f"""request for {uri} failed with status code {r.status_code}
+            and content type {r.headers['Content-Type']}"""
         )
