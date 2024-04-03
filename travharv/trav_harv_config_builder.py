@@ -9,10 +9,10 @@ from typing import Any
 import yaml
 from rdflib.plugins.sparql.parser import parseQuery
 
-from pytravharv.common import graph_name_to_uri
-from pytravharv.store import TargetStoreAccess as RDFStoreAccess
+from travharv.common import graph_name_to_uri
+from travharv.store import TargetStoreAccess as RDFStoreAccess
 
-# log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 

@@ -7,15 +7,15 @@ import yaml
 from pyrdfstore import create_rdf_store
 from rdflib import Graph
 
-from pytravharv.common import QUERY_BUILDER, insert_resource_into_graph
-from pytravharv.store import TargetStoreAccess as RDFStoreAccess
-from pytravharv.trav_harv_config_builder import (
+from travharv.common import QUERY_BUILDER, insert_resource_into_graph
+from travharv.store import TargetStoreAccess as RDFStoreAccess
+from travharv.trav_harv_config_builder import (
     TravHarvConfig,
     TravHarvConfigBuilder,
 )
-from pytravharv.trav_harv_executer import TravHarvExecutor
+from travharv.trav_harv_executer import TravHarvExecutor
 
-# log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -71,7 +71,7 @@ class TravHarv:
             graph = Graph()
             for context in self.context:
                 insert_resource_into_graph(graph, context)
-            self.target_store_access.ingest(graph, "urn:PYTRAVHARV:context")
+            self.target_store_access.ingest(graph, "urn:travharv:context")
 
         self.travharv_config_builder = TravHarvConfigBuilder(
             self.target_store_access, self.config_folder

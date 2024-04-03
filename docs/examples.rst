@@ -4,17 +4,17 @@ Examples
 Using the CLI
 -------------
 
-You can use the `pytravharv` package from the command line like this:
+You can use the `travharv` package from the command line like this:
 
 .. code-block:: bash
 
-   python -m pytravharv <arguments>
+   python -m travharv <arguments>
 
 For example, if you want to use the `TravHarvExecuter` module, you might do something like this:
 
 .. code-block:: bash
 
-   python -m pytravharv TravHarvExecuter --config <config_file>
+   python -m travharv TravHarvExecuter --config <config_file>
 
 Replace `<config_file>` with the path to your configuration file.
 
@@ -120,12 +120,12 @@ In the second case the paths to be asserted are ``mr:hasGeometry``, ``mr:isPartO
 Using the API
 -------------
 
-You can also use the `pytravharv` package directly in your Python code. Here's an example of how you might use the `TravHarvExecuter` and `TravHarvConfigBuilder` modules:
+You can also use the `travharv` package directly in your Python code. Here's an example of how you might use the `TravHarvExecuter` and `TravHarvConfigBuilder` modules:
 
 .. code-block:: python
 
   import os
-  from pytravharv import TargetStore, TravHarvConfigBuilder, TravHarvExecuter
+  from travharv import TargetStore, TravHarvConfigBuilder, TravHarvExecuter
 
   config_folder = os.path.join(os.path.dirname(__file__), "cf") # path to the configuration folder
 

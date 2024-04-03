@@ -5,7 +5,7 @@ import pytest
 from dotenv import load_dotenv
 from util4tests import run_single_test
 
-from pytravharv import TravHarv
+from travharv import TravHarv
 
 load_dotenv()
 
@@ -13,7 +13,7 @@ read_uri = os.getenv("TEST_SPARQL_READ_URI")
 write_uri = os.getenv("TEST_SPARQL_WRITE_URI")
 
 """
-def test_pytravharv():
+def test_travharv():
     config_folder = Path(__file__).parent / "config"
     name = "config_sparql_uri_string_fail.yml"
     output = Path(__file__).parent / "output" / "output_wrong_uri.ttl"
@@ -50,7 +50,7 @@ def test_pytravharv():
 """
 
 
-def test_pytravharv_fail():
+def test_travharv_fail():
     config_folder = Path(__file__).parent / "config"
     name = " bad_config.yml"
     output = Path(__file__).parent / "output" / "output.ttl"
@@ -70,7 +70,7 @@ def test_pytravharv_fail():
         travharv.process()
 
 
-def test_pytravharv_config_folder_fail():
+def test_travharv_config_folder_fail():
     config_folder = Path(__file__).parent / "config"
     target_store_info = [read_uri, write_uri]
     verbose = True

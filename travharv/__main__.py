@@ -6,14 +6,14 @@ from typing import Optional
 
 import yaml
 
-from pytravharv.store import TargetStore
-from pytravharv.trav_harv_config_builder import (
+from travharv.store import TargetStore
+from travharv.trav_harv_config_builder import (
     TravHarvConfig,
     TravHarvConfigBuilder,
 )
-from pytravharv.trav_harv_executer import TravHarvExecutor
+from travharv.trav_harv_executer import TravHarvExecutor
 
-# log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -22,7 +22,7 @@ def get_arg_parser():
     Get the argument parser for the module
     """
     parser = argparse.ArgumentParser(
-        description="pyTravHarv",
+        description="travharv",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 

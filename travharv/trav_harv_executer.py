@@ -3,11 +3,11 @@ from typing import Optional
 
 from rdflib import Graph
 
-from pytravharv.store import TargetStoreAccess
-from pytravharv.subj_prop_path_assertion import SubjPropPathAssertion
-from pytravharv.trav_harv_config_builder import TravHarvConfig
+from travharv.store import TargetStoreAccess
+from travharv.subj_prop_path_assertion import SubjPropPathAssertion
+from travharv.trav_harv_config_builder import TravHarvConfig
 
-# log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 

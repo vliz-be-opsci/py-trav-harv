@@ -7,7 +7,7 @@ from rdflib import Graph
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-# log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 

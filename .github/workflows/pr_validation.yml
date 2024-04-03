@@ -19,7 +19,7 @@ jobs:
         with:
           filters: |
             package:
-              - 'pytravharv/**'
+              - 'travharv/**'
             tests:
               - 'tests/**'
 

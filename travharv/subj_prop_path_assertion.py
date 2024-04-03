@@ -3,12 +3,12 @@ import logging
 import rdflib
 import validators
 
-from pytravharv.common import graph_name_to_uri
-from pytravharv.store import TargetStoreAccess
-from pytravharv.trav_harv_config_builder import AssertPath
-from pytravharv.web_discovery import fetch as web_access
+from travharv.common import graph_name_to_uri
+from travharv.store import TargetStoreAccess
+from travharv.trav_harv_config_builder import AssertPath
+from travharv.web_discovery import fetch as web_access
 
-# log = logging.getLogger("pyTravHarv")
+# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 

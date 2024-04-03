@@ -1,6 +1,6 @@
 .env
-pyTravHarv.log
-pyTravHarv/__pycache__
+trav_harv.log
+travharv/__pycache__
 tests/__pycache__
 .coverage
 dist/

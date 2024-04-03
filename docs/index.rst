@@ -1,9 +1,9 @@
-.. pytravharv documentation master file, created by
+.. travharv documentation master file, created by
    sphinx-quickstart on Thu Feb  8 21:45:11 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pytravharv's documentation!
+Welcome to travharv's documentation!
 ======================================
 
 .. toctree::
@@ -18,7 +18,7 @@ Welcome to pytravharv's documentation!
    :maxdepth: 4
    :hidden:
 
-   API <pytravharv>
+   API <travharv>
 
 .. toctree::
    :maxdepth: 4
@@ -31,7 +31,7 @@ Welcome to pytravharv's documentation!
    Search <py-search>
 
    Other API documentation
-.. toctree:: pytravharv
+.. toctree:: travharv
    :maxdepth: 4
    :members:
 

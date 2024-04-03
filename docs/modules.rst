@@ -1,7 +1,7 @@
-pytravharv
+travharv
 ==========
 
 .. toctree::
    :maxdepth: 4
 
-   pytravharv
+   travharv
