@@ -54,15 +54,12 @@ class TravHarvExecutor:
             log.debug("Info task: {}".format(task))
             subject_definition = task.subject_definition
             assertion_path_set = task.assert_path_set
-            print("Subject definition: {}".format(subject_definition()))
             log.debug("Subject definition: {}".format(subject_definition))
-            print("Assertion path set: {}".format(assertion_path_set()))
             log.debug("Assertion path set: {}".format(assertion_path_set))
             for subject in subject_definition():
                 log.debug("Subject: {}".format(subject))
                 for assertion_path in assertion_path_set():
                     log.debug("Assertion path: {}".format(str(assertion_path)))
-                    print("Assertion path: {}".format(str(assertion_path)))
                     SubjPropPathAssertion(
                         subject,
                         assertion_path,

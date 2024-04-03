@@ -20,8 +20,6 @@ class TargetStoreAccess:
         result: Result = self._target.select(sparql)
         # if result is (400, 'HTTP Error 400: ', None) then return empty list
         if result == (400, "HTTP Error 400: ", None):
-            print(sparql)
-            print(result)
             return []
 
         # todo convert response into list of subjects
@@ -36,16 +34,13 @@ class TargetStoreAccess:
             property_trajectory=property_path,
             prefixes=prefixes,
         )
-        print(f"sparql: {sparql}")
         result: Result = self._target.select(sparql)
         # result is a tuple of bindings , convert into a list of bindings
 
         if result == (400, "HTTP Error 400: ", None):
-            print(sparql)
             return False
 
         list_of_bindings = [row for row in result]
-        print(f"len list_of_bindings: {len(list_of_bindings)}")
         return bool(len(list_of_bindings) > 0)
 
     def ingest(self, graph: Graph, context: str):

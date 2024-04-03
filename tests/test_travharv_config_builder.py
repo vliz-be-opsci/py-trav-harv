@@ -124,7 +124,6 @@ def test_travharvconfig(target_store_access):
     ).build_from_config("base_test.yml")
 
     assert travharvconfig is not None
-    print(travharvconfig)
 
     # config should contain the following keys
     assert "configname" in travharvconfig()

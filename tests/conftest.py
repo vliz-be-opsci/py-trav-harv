@@ -18,8 +18,6 @@ TEST_INPUT_FOLDER = Path(__file__).parent / "./inputs"
 def target_store():
     read_uri = os.getenv("TEST_SPARQL_READ_URI", None)
     write_uri = os.getenv("TEST_SPARQL_WRITE_URI", None)
-    print(f"read_uri: {read_uri}")
-    print(f"write_uri: {write_uri}")
     return create_rdf_store(None, None)
     return create_rdf_store(read_uri, write_uri)
 

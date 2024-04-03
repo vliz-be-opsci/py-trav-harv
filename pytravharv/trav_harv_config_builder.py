@@ -329,7 +329,7 @@ class TravHarvConfigBuilder:
             try:
                 return yaml.safe_load(stream)
             except yaml.YAMLError as exc:
-                print(exc)
+                log.exception(exc)
 
     def _makeTravHarvConfigPartFromDict(
         self, dict_object, name_config: str = "default"

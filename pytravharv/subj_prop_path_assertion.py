@@ -38,7 +38,6 @@ class SubjPropPathAssertion:
 
         """
         log.debug(subject)
-        print(f"subject: {subject}")
         self.subject = self._subject_str_check(subject)
         if not self.subject:
             log.warning(
@@ -119,9 +118,6 @@ class SubjPropPathAssertion:
         ):
             self._harvest_and_surface()
             return
-        print(f"adding {self.subject} to {self.graph_name}")
-        graph_to_ingest = web_access(self.subject)
-        print(len(graph_to_ingest))
         self.rdf_store_access.ingest(
             web_access(self.subject), graph_name_to_uri(self.graph_name)
         )
