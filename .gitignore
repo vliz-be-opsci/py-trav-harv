@@ -3,7 +3,6 @@ pyTravHarv.log
 pyTravHarv/__pycache__
 tests/__pycache__
 .coverage
-docs/
 dist/
 tests/output/
 .vscode/
