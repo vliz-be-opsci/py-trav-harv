@@ -3,7 +3,7 @@ import logging
 import logging.config
 import os
 from typing import Optional
-
+from pathlib import Path
 import yaml
 
 from travharv.store import TargetStore
@@ -30,12 +30,16 @@ def get_arg_parser():
         "-v", "--verbose", action="store_true", help="Print verbose output"
     )
 
+    DEFAULT_CONFIG_FOLDER = Path(os.getcwd()) / "config"
+
     parser.add_argument(
         "-f",
         "--config-folder",
         nargs="?",
         required=True,
-        default=os.path.join(os.getcwd(), "config"),
+        default=str(
+            DEFAULT_CONFIG_FOLDER
+        ),  # os.path.join(os.getcwd(), "config"),
         help="Folder containing configuration files, relative to the working directory",
     )
 
