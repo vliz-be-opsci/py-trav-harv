@@ -6,7 +6,7 @@ import validators
 from travharv.common import graph_name_to_uri
 from travharv.store import TargetStoreAccess
 from travharv.trav_harv_config_builder import AssertPath
-from travharv.web_discovery import fetch as web_access
+from travharv.web_discovery import _into_graph
 
 # log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
@@ -119,7 +119,7 @@ class SubjPropPathAssertion:
             self._harvest_and_surface()
             return
         self.rdf_store_access.ingest(
-            web_access(self.subject), graph_name_to_uri(self.graph_name)
+            _into_graph(self.subject), graph_name_to_uri(self.graph_name)
         )
 
         # Implement method to assert a property path for a given subject at a given depth

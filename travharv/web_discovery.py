@@ -44,10 +44,10 @@ class MyHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def fetch(url):
-    triplestore = Graph()
-    download_uri_to_store(url, triplestore)
-    return triplestore
+def _into_graph(url) -> Graph:
+    g = Graph()
+    download_uri_to_store(url, g)
+    return g
 
 
 def download_uri_to_store(uri, triplestore, format="json-ld"):

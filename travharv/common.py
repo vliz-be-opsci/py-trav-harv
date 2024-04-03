@@ -6,7 +6,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib import Graph
 
-from travharv.web_discovery import fetch
+from travharv.web_discovery import _into_graph
 
 log = getLogger(__name__)
 
@@ -41,7 +41,7 @@ def insert_resource_into_graph(graph: Graph, resource: str):
     # check if resource is a URI
     if validators.url(resource):
         # get triples from the uri
-        to_insert = fetch(resource)
+        to_insert = _into_graph(resource)
         graph = graph + to_insert
         return graph
 

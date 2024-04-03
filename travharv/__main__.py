@@ -45,21 +45,12 @@ def get_arg_parser():
         type=str,
         required=False,
         default=None,
-        help="Name of the configuration to use",
+        help="File name of the configuration to use",
     )
 
     parser.add_argument(
-        "-m",
-        "--mode",
-        choices=["memory", "uristore"],
-        default="memory",
-        required=True,
-        help="Mode to use, either memory or uristore. Default is memory. If memory is used, the target store will be a temporary in-memory store. If uristore is used, the target store will be a URI store.",
-    )
-
-    parser.add_argument(
-        "-o",
-        "--output",
+        "-d",
+        "--dump",
         type=str,
         default=None,
         required=False,
