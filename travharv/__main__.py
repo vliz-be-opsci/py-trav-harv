@@ -30,31 +30,19 @@ def get_arg_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Print verbose output"
-    )
-
     DEFAULT_CONFIG_FOLDER = Path(os.getcwd()) / "config"
 
     parser.add_argument(
         "-f",
-        "--config-folder",
+        "--config",
         nargs="?",
         required=True,
         default=str(
             DEFAULT_CONFIG_FOLDER
         ),  # os.path.join(os.getcwd(), "config"),
         help="""Folder containing configuration files
-                relative to the working directory""",
-    )
-
-    parser.add_argument(
-        "-n",
-        "--name",
-        type=str,
-        required=False,
-        default=None,
-        help="File name of the configuration to use",
+                relative to the working directory or
+                the path to a single configuration file""",
     )
 
     parser.add_argument(
@@ -102,13 +90,10 @@ class mainRunner:
     def __init__(self, args):
         self.args = args
 
-        if self.args.verbose:
-            file_location = os.path.dirname(os.path.realpath(__file__))
-            with open(
-                os.path.join(file_location, "debug-logconf.yml"), "r"
-            ) as f:
-                config = yaml.safe_load(f.read())
-                logging.config.dictConfig(config)
+        file_location = os.path.dirname(os.path.realpath(__file__))
+        with open(os.path.join(file_location, "debug-logconf.yml"), "r") as f:
+            config = yaml.safe_load(f.read())
+            logging.config.dictConfig(config)
 
         log.debug("type target store: {}".format(type(args.target_store)))
         log.debug(args)
@@ -126,15 +111,21 @@ class mainRunner:
                 insert_resource_into_graph(graph, context)
             self.target_store_access.ingest(graph, "urn:travharv:context")
 
-        self.travharv_config_builder = TravHarvConfigBuilder(
-            self.target_store_access, args.config_folder
-        )
+        if os.path.isdir(self.args.config):
+            self.travharv_config_builder = TravHarvConfigBuilder(
+                self.target_store_access, args.config
+            )
+        else:
+            config_folder = os.path.dirname(self.args.config)
+            self.travharv_config_builder = TravHarvConfigBuilder(
+                self.target_store_access, config_folder
+            )
         self.travharvexecutor = None
 
     def run(self):
         log.debug(self.args)
         trav_harv_config: Optional[TravHarvConfig] = None
-        if self.args.name is None:
+        if os.path.isdir(self.args.config):
             self.travHarvConfigList = (
                 self.travharv_config_builder.build_from_folder()
             )
@@ -152,11 +143,13 @@ class mainRunner:
                     config_name, prefix_set, tasks, self.target_store
                 )
 
-                self.travharvexecutor.assert_all_paths()
+                graph_to_write = self.travharvexecutor.assert_all_paths()
+                if self.args.dump is not None:
+                    graph_to_write.serialize(self.args.dump, format="turtle")
 
         else:
             trav_harv_config = self.travharv_config_builder.build_from_config(
-                self.args.name
+                self.args.config
             )
             if trav_harv_config is None:
                 raise AssertionError(
@@ -173,7 +166,9 @@ class mainRunner:
                 config_name, prefix_set, tasks, self.target_store
             )
 
-            self.travharvexecutor.assert_all_paths()
+            graph_to_write = self.travharvexecutor.assert_all_paths()
+            if self.args.dump is not None:
+                graph_to_write.serialize(self.args.dump, format="turtle")
 
 
 def main():

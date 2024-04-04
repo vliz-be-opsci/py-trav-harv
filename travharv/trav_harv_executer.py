@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from rdflib import Graph
 
@@ -30,13 +29,11 @@ class TravHarvExecutor:
         prefix_set: TravHarvConfig.prefixset,
         tasks: list,
         rdf_store_access: TargetStoreAccess,
-        output: Optional[str] = None,
     ):
         self.config_filename = config_filename
         self.prefix_set = prefix_set
         self.tasks = tasks
         self.rdf_store_access = rdf_store_access
-        self.output = output
         log.debug("TravHarvExecutor initialized")
         log.debug("Config filename: {}".format(self.config_filename))
         log.debug("Prefix set: {}".format(self.prefix_set))
@@ -50,6 +47,7 @@ class TravHarvExecutor:
             """Asserting all paths for all
                subjects given for each task per config"""
         )
+        output_graph = Graph()
         for task in self.tasks:
             log.debug("Task: {}".format(task))
             # check if subject is a URI or a SPARQL query
@@ -70,16 +68,10 @@ class TravHarvExecutor:
                         self.config_filename,
                     )
             log.debug("All paths asserted for task: {}".format(task))
-            if self.output:
-                log.debug("Output to file: {}".format(self.output))
-                # write graph to file
-                full_graph = self.rdf_store_access.full_graph()
-                # log.debug("Full graph: {}".format(full_graph))
-                # go from list of tuples to graph
-                output_graph = Graph()
-                if full_graph:
-                    for triple in full_graph:
-                        output_graph.add(triple)
-                    output_graph.serialize(self.output, format="turtle")
-            else:
-                log.debug("No output file specified")
+            full_graph = self.rdf_store_access.full_graph()
+            if full_graph:
+                for triple in full_graph:
+                    output_graph.add(triple)
+
+        log.debug("All paths asserted for all tasks")
+        return output_graph
