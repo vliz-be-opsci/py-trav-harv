@@ -2,7 +2,8 @@
 
 .. module:: travharv
 :platform: Unix, Windows
-:synopsis: A package for traversing and harvesting RDF data by dereferencing URIs and asserting paths.
+:synopsis: A package for traversing and harvesting RDF data
+by dereferencing URIs and asserting paths.
 
 .. moduleauthor:: Cedric Decruw <cedric.decruw@vliz.be>
 """

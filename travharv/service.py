@@ -21,7 +21,8 @@ log = logging.getLogger(__name__)
 
 class TravHarv:
     """Assert all paths for given subjects.
-    Given a configuration file, assert all paths for all subjects in the configuration file.
+    Given a configuration file, assert all paths
+    for all subjects in the configuration file.
     :param config_folder: str
     :param name: str
     :param output: str
@@ -40,12 +41,19 @@ class TravHarv:
         verbose: bool = True,
     ):
         """Assert all paths for given subjects.
-        Given a configuration file, assert all paths for all subjects in the configuration file.
-        :param config_folder: str - The path to the configuration folder
-        :param name: str - The name of the configuration file. If None, all configuration files in the folder will be run.
-        :param output: str - The path to the output file. This will be a ttl file.
-        :param context: list[str] - A list of context files to be added to the target store.
-        :param target_store: list[str] - The target store information. If None, a memory store will be used.
+        Given a configuration file, assert all paths
+        for all subjects in the configuration file.
+        :param config_folder: str
+        - The path to the configuration folder
+        :param name: str
+        - The name of the configuration file.
+        If None, all configuration files in the folder will be run.
+        :param output: str
+        - The path to the output file. This will be a ttl file.
+        :param context: list[str]
+        - A list of context files to be added to the target store.
+        :param target_store: list[str]
+        - The target store information. If None, a memory store will be used.
         :param verbose: bool - If True, the log level will be set to debug.
         """
         self.config_folder = config_folder
@@ -67,7 +75,8 @@ class TravHarv:
         )
 
         # if there is context add it to the target store
-        # context in this context is a list of files (triples) that will be added to the target store
+        # context in this context is a list of files (triples)
+        # that will be added to the target store
         if context is not None:
             graph = Graph()
             for context in self.context:

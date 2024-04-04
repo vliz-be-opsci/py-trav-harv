@@ -1,4 +1,3 @@
-# from rdflib.plugins.sparql.parser import parseQuery #this line is commented out because pytest has an issue with this import specifically
 import logging
 import os
 import re
@@ -253,7 +252,8 @@ class TravHarvConfigBuilder:
         if configFolder is None:
             configFolder = os.path.join(os.getcwd(), "config")
             log.warning(
-                "Config folder is None, using current working directory as config folder"
+                """Config folder is None,
+                using current working directory as config folder"""
             )
         self.config_files_folder = configFolder
         self._rdf_store_access = rdf_store_access
@@ -345,9 +345,12 @@ class TravHarvConfigBuilder:
             self._assert_subjects(assert_task["subjects"])
         # Add more assertions as needed...
         try:
-            # function here to check if the snooze-till-graph-age-minutes i older then the last modified date of the admin graph
-            # if it is older then the last modified date of the admin graph then we can continue
-            # if it is not older then the last modified date of the admin graph then we can snooze the config
+            # function here to check if the snooze-till-graph-age-minutes
+            # i older then the last modified date of the admin graph
+            # if it is older then the last modified date
+            # of the admin graph then we can continue
+            # if it is not older then the last modified date
+            # of the admin graph then we can snooze the config
             if not self._check_snooze(
                 dict_object["snooze-till-graph-age-minutes"],
                 name_config,
