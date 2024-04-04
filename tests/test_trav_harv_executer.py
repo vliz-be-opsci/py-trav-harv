@@ -5,8 +5,8 @@ import pytest
 from dotenv import load_dotenv
 from util4tests import run_single_test
 
-from travharv.trav_harv_executer import TravHarvExecutor
 from travharv.trav_harv_config_builder import TravHarvConfigBuilder
+from travharv.trav_harv_executer import TravHarvExecutor
 
 load_dotenv()
 
