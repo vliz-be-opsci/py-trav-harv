@@ -27,9 +27,6 @@ Command Line Arguments
    * - Short Form
      - Long Form
      - Description
-   * - ``-v``
-     - ``--verbose``
-     - Enable verbose output.
    * - ``-cf <path>``
      - ``--config-folder <path>``
      - Specify the folder containing configuration files. The path can be relative to the folder or file this was called from. By default, this is the `config` folder in the current working directory.
