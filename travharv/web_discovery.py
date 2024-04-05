@@ -62,13 +62,15 @@ def get_description_into_graph(
     subject_url: str, *, graph: Graph = None, format="json-ld"
 ):
     """
-    Discover triples describing the subject (assumed at subject_url) and add them to the graph
+    Discover triples describing the subject (assumed at subject_url)
+    and add them to the graph
 
-    :param subject_url: url (originally assumed from <uri>) pointing to the subject to be discovered
+    :param subject_url: url (originally assumed from <uri>)
+    pointing to the subject to be discovered
     :type subject_url: str
     :param g: graph to be filled
     :type g: rdflib.Graph
-    :param format: indicating what kind of format should be retrieved json-ld, turtle, ...
+    :param format: indicating what format should be retrieved json-ld, turtle
     :type form: str
     :returns: the graph whith added discovered triples
     :rtype: rdflib.Graph
@@ -79,7 +81,8 @@ def get_description_into_graph(
 
     # sleep for 1 second to avoid overloading any servers
     # TODO make this configurable and add a warning + smart retry
-    # @cedricdcc <-- does this todo still hold? this retry/back-off seems to handle that?
+    # @cedricdcc <-- does this todo still hold?
+    #            this retry/back-off below seems to handle that?
     total_retry = 8
     session = requests.Session()
     retry = Retry(
@@ -91,7 +94,7 @@ def get_description_into_graph(
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
-    # TODO actually use the format parameter to select types and load them _all_
+    # TODO actually use the format arg to select types and load them _all_
     #      (not just the server pick as below) see --> issue #31
     headers = {"Accept": "application/ld+json, text/turtle"}
     r = session.get(subject_url, headers=headers)
@@ -115,7 +118,7 @@ def get_description_into_graph(
             log.info(f"content of {subject_url} added to the triplestore")
         except Exception as e:
             log.warning(
-                f"failed to parse {subject_url} with format {format} with error {e}"
+                f"failed to parse {subject_url} in {format=} error: {e}"
             )
 
     else:
@@ -142,7 +145,7 @@ def get_description_into_graph(
                 else:
                     # Resolve the relative URL to an absolute URL
                     alt_abs_url = urljoin(subject_url, alt_url)
-                # use this linked uri as the alternative pointer for this subect
+                # use this linked uri as the alternative for this subect
                 get_description_into_graph(alt_abs_url, graph=graph)
             for script in parser.scripts:
                 # parse the script and check if it is json-ld or turtle
@@ -160,7 +163,8 @@ def get_description_into_graph(
             parser.close()
             return
         log.warning(
-            f"""request for {subject_url} failed with status code {r.status_code}
-            and content type {r.headers['Content-Type']}"""
+            f"request for {subject_url} failed "
+            f"with status code {r.status_code} "
+            f"and content type {r.headers['Content-Type']}"
         )
     return graph
