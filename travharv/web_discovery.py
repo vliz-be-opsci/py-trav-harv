@@ -25,6 +25,7 @@ class LODAwareHTMLParser(HTMLParser):
     """
     HTMLParser that knows about LOD embedding and linking techniques.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.links = []
@@ -57,7 +58,9 @@ class LODAwareHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def get_description_into_graph(subject_url: str, *, graph: Graph = None, format="json-ld"):
+def get_description_into_graph(
+    subject_url: str, *, graph: Graph = None, format="json-ld"
+):
     """
     Discover triples describing the subject (assumed at subject_url) and add them to the graph
 
@@ -72,7 +75,7 @@ def get_description_into_graph(subject_url: str, *, graph: Graph = None, format=
     """
 
     if graph is None:
-        graph = Graph()   # create a fresh graph if you don't have it yet
+        graph = Graph()  # create a fresh graph if you don't have it yet
 
     # sleep for 1 second to avoid overloading any servers
     # TODO make this configurable and add a warning + smart retry
@@ -149,9 +152,11 @@ def get_description_into_graph(subject_url: str, *, graph: Graph = None, format=
                 for ctype, content in script.items():
                     cformat: str = ctype_to_rdf_format(ctype)
                     if format is None:  # ctype is not known as rdf-format
-                        continue        # skip
+                        continue  # skip
                     log.info(f"found script with rdf {ctype=}, {cformat=}")
-                    graph.parse(data=content, format=cformat, publicID=subject_url)
+                    graph.parse(
+                        data=content, format=cformat, publicID=subject_url
+                    )
             parser.close()
             return
         log.warning(

@@ -2,9 +2,9 @@ import logging
 
 from rdflib import Graph
 
-from travharv.store import TargetStoreAccess
-from travharv.path_assertion import SubjPropPathAssertion
 from travharv.config_build import TravHarvConfig
+from travharv.path_assertion import SubjPropPathAssertion
+from travharv.store import TargetStoreAccess
 
 # log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)

@@ -4,8 +4,8 @@ import rdflib
 import validators
 
 from travharv.common import graph_name_to_uri
-from travharv.store import TargetStoreAccess
 from travharv.config_build import AssertPath
+from travharv.store import TargetStoreAccess
 from travharv.web_discovery import get_description_into_graph
 
 # log = logging.getLogger("travharv")
@@ -119,7 +119,8 @@ class SubjPropPathAssertion:
             self._harvest_and_surface()
             return
         self.rdf_store_access.ingest(
-            get_description_into_graph(self.subject), graph_name_to_uri(self.graph_name)
+            get_description_into_graph(self.subject),
+            graph_name_to_uri(self.graph_name),
         )
 
         # Implement method to assert a property path

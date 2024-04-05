@@ -10,12 +10,9 @@ from pyrdfstore import create_rdf_store
 from rdflib import Graph
 
 from travharv.common import QUERY_BUILDER, insert_resource_into_graph
-from travharv.store import TargetStoreAccess as RDFStoreAccess
-from travharv.config_build import (
-    TravHarvConfig,
-    TravHarvConfigBuilder,
-)
+from travharv.config_build import TravHarvConfig, TravHarvConfigBuilder
 from travharv.executor import TravHarvExecutor
+from travharv.store import TargetStoreAccess as RDFStoreAccess
 
 # log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
