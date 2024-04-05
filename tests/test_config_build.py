@@ -4,7 +4,7 @@ import pytest
 from rdflib import Graph
 from util4tests import run_single_test
 
-from travharv.trav_harv_config_builder import (
+from travharv.config_build import (
     AssertPath,
     LiteralSubjectDefinition,
     SPARQLSubjectDefinition,

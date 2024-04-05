@@ -5,7 +5,7 @@ import validators
 
 from travharv.common import graph_name_to_uri
 from travharv.store import TargetStoreAccess
-from travharv.trav_harv_config_builder import AssertPath
+from travharv.config_build import AssertPath
 from travharv.web_discovery import _into_graph
 
 # log = logging.getLogger("travharv")

@@ -8,11 +8,11 @@ from pyrdfstore import create_rdf_store
 
 from travharv.common import QUERY_BUILDER
 from travharv.store import TargetStoreAccess as RDFStoreAccess
-from travharv.trav_harv_config_builder import (
+from travharv.config_build import (
     TravHarvConfig,
     TravHarvConfigBuilder,
 )
-from travharv.trav_harv_executer import TravHarvExecutor
+from travharv.executor import TravHarvExecutor
 
 # log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)

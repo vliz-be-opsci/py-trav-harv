@@ -3,8 +3,8 @@ from rdflib import URIRef
 from rdflib.query import ResultRow
 from util4tests import run_single_test
 
-import travharv.subj_prop_path_assertion as subj
-from travharv.trav_harv_config_builder import AssertPath
+import travharv.path_assertion as subj
+from travharv.config_build import AssertPath
 
 
 @pytest.mark.usefixtures("target_store_access")
