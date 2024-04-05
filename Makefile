@@ -7,6 +7,11 @@ AUTHOR = "Flanders Marine Institute, VLIZ vzw"
 .PHONY: help clean startup install init init-dev init-docs docs docs-build test test-quick test-with-graphdb test-coverage test-coverage test-coverage-with-graphdb check lint-fix update
 .DEFAULT_GOAL := help
 
+
+help:  ## Shows this list of available targets and their effect.
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+
 clean:
 	@find . -name '*.pyc' -exec rm --force {} +
 	@find . -name '*.pyo' -exec rm --force {} +
@@ -28,9 +33,6 @@ init: startup install
 
 init-dev: startup
 	poetry install --with 'tests' --with 'dev' --with 'docs'
-
-init-docs: startup
-	poetry install --with 'docs'
 
 init-docs: startup  ## initial prepare of the environment for local execution and reading the docs
 	@poetry install --with 'docs'
