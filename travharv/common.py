@@ -17,7 +17,8 @@ QUERY_BUILDER = J2RDFSyntaxBuilder(
 )
 
 
-# TODO reconsider this common.py (as none of this seems/ feels common across travharv parts) --> issue #32
+# TODO reconsider this common.py
+# (as none of this seems/ feels common across travharv parts) --> issue #32
 
 
 def graph_name_to_uri(graph_name: str) -> str:
