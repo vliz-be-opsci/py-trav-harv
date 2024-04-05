@@ -6,7 +6,7 @@ import validators
 from pyrdfj2 import J2RDFSyntaxBuilder
 from rdflib import Graph
 
-from travharv.web_discovery import _into_graph
+from travharv.web_discovery import get_description_into_graph
 
 log = getLogger(__name__)
 
@@ -16,6 +16,8 @@ QUERY_BUILDER = J2RDFSyntaxBuilder(
     )
 )
 
+
+# TODO reconsider this common.py (as none of this seems/ feels common across travharv parts) --> issue #32
 
 def graph_name_to_uri(graph_name: str) -> str:
     """
@@ -41,7 +43,7 @@ def insert_resource_into_graph(graph: Graph, resource: str):
     # check if resource is a URI
     if validators.url(resource):
         # get triples from the uri
-        to_insert = _into_graph(resource)
+        to_insert = get_description_into_graph(resource)
         graph = graph + to_insert
         return graph
 

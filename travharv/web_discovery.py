@@ -11,7 +11,20 @@ from requests.packages.urllib3.util.retry import Retry
 log = logging.getLogger(__name__)
 
 
-class MyHTMLParser(HTMLParser):
+RDF_MIME_TO_FORMAT = {
+    "application/ld+json": "json-ld",
+    "text/turtle": "turtle",
+}
+
+
+def ctype_to_rdf_format(ctype: str) -> str:
+    return RDF_MIME_TO_FORMAT.get(ctype, None)
+
+
+class LODAwareHTMLParser(HTMLParser):
+    """
+    HTMLParser that knows about LOD embedding and linking techniques.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.links = []
@@ -44,23 +57,26 @@ class MyHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def _into_graph(url) -> Graph:
-    g = Graph()
-    download_uri_to_store(url, g)
-    return g
-
-
-def download_uri_to_store(uri, triplestore, format="json-ld"):
+def get_description_into_graph(subject_url: str, *, graph: Graph = None, format="json-ld"):
     """
-    Download the uri to the triplestore
+    Discover triples describing the subject (assumed at subject_url) and add them to the graph
 
-    :param uri: str
-    :param triplestore: rdflib.Graph
-    :param format: str
+    :param subject_url: url (originally assumed from <uri>) pointing to the subject to be discovered
+    :type subject_url: str
+    :param g: graph to be filled
+    :type g: rdflib.Graph
+    :param format: indicating what kind of format should be retrieved json-ld, turtle, ...
+    :type form: str
+    :returns: the graph whith added discovered triples
+    :rtype: rdflib.Graph
     """
 
-    # sleep for 1 second to avoid overloading any servers => TODO make this
-    # configurable and add a warning + smart retry
+    if graph is None:
+        graph = Graph()   # create a fresh graph if you don't have it yet
+
+    # sleep for 1 second to avoid overloading any servers
+    # TODO make this configurable and add a warning + smart retry
+    # @cedricdcc <-- does this todo still hold? this retry/back-off seems to handle that?
     total_retry = 8
     session = requests.Session()
     retry = Retry(
@@ -72,8 +88,10 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
+    # TODO actually use the format parameter to select types and load them _all_
+    #      (not just the server pick as below) see --> issue #31
     headers = {"Accept": "application/ld+json, text/turtle"}
-    r = session.get(uri, headers=headers)
+    r = session.get(subject_url, headers=headers)
 
     # check if the request was successful and it returned a json-ld or ttl file
     if r.status_code == 200 and (
@@ -90,11 +108,11 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
         elif "text/turtle" in r.headers["Content-Type"]:
             format = "turtle"
         try:
-            triplestore.parse(data=r.text, format=format, publicID=uri)
-            log.info(f"content of {uri} added to the triplestore")
+            graph.parse(data=r.text, format=format, publicID=subject_url)
+            log.info(f"content of {subject_url} added to the triplestore")
         except Exception as e:
             log.warning(
-                f"failed to parse {uri} with format {format} with error {e}"
+                f"failed to parse {subject_url} with format {format} with error {e}"
             )
 
     else:
@@ -102,49 +120,42 @@ def download_uri_to_store(uri, triplestore, format="json-ld"):
         # see if there is any link to fair signposting
         # perform request to uri with accept header text/html
         headers = {"Accept": "text/html"}
-        r = session.get(uri, headers=headers)
+        r = session.get(subject_url, headers=headers)
         if r.status_code == 200 and "text/html" in r.headers["Content-Type"]:
             # parse the html and check if there is any link to fair signposting
             # if there is then download it to the triplestore
-            log.info(f"content of {uri} is html")
+            log.info(f"content of {subject_url} is html")
             # go over the html file and find all the links in the head section
             # and check if there is any links with rel="describedby" anf if so
             # then follow it and download it to the triplestore
 
-            parser = MyHTMLParser()
+            parser = LODAwareHTMLParser()
             parser.feed(r.text)
             log.info(f"found {len(parser.links)} links in the html file")
-            for link in parser.links:
+            for alt_url in parser.links:
                 # check first if the link is absolute or relative
-                if link.startswith("http"):
-                    absolute_url = link
+                if alt_url.startswith("http"):
+                    alt_abs_url = alt_url
                 else:
                     # Resolve the relative URL to an absolute URL
-                    absolute_url = urljoin(uri, link)
-                # download the uri to the triplestore
-                download_uri_to_store(absolute_url, triplestore)
+                    alt_abs_url = urljoin(subject_url, alt_url)
+                # use this linked uri as the alternative pointer for this subect
+                get_description_into_graph(alt_abs_url, graph=graph)
             for script in parser.scripts:
                 # parse the script and check if it is json-ld or turtle
                 # if so then add it to the triplestore
                 log.info(f"script: {script}")
                 # { 'application/ld+json': '...'} | {'text/turtle': '...'}
-                if "application/ld+json" in script:
-                    log.info("found script with type application/ld+json")
-                    triplestore.parse(
-                        data=script["application/ld+json"],
-                        format="json-ld",
-                        publicID=uri,
-                    )
-                elif "text/turtle" in script:
-                    log.info("found script with type text/turtle")
-                    triplestore.parse(
-                        data=script["text/turtle"],
-                        format="turtle",
-                        publicID=uri,
-                    )
+                for ctype, content in script.items():
+                    cformat: str = ctype_to_rdf_format(ctype)
+                    if format is None:  # ctype is not known as rdf-format
+                        continue        # skip
+                    log.info(f"found script with rdf {ctype=}, {cformat=}")
+                    graph.parse(data=content, format=cformat, publicID=subject_url)
             parser.close()
             return
         log.warning(
-            f"""request for {uri} failed with status code {r.status_code}
+            f"""request for {subject_url} failed with status code {r.status_code}
             and content type {r.headers['Content-Type']}"""
         )
+    return graph
