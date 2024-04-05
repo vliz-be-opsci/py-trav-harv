@@ -3,7 +3,6 @@ import logging.config
 import os
 from typing import List, Optional
 
-import yaml
 from pyrdfstore import create_rdf_store
 
 from travharv.common import QUERY_BUILDER
@@ -19,33 +18,26 @@ class TravHarv:
     """Assert all paths for given subjects.
     Given a configuration file, assert all paths
     for all subjects in the configuration file.
-    :param name: str
-    :param target_store_info: Optional[list[str]]
     """
 
     def __init__(
         self,
-        config: str = None,
+        config: str,
         target_store_info: Optional[List[str]] = None,
     ):
         """Assert all paths for given subjects.
         Given a configuration file, assert all paths
         for all subjects in the configuration file.
-        :param config: str
-        - The name of the configuration file.
+        :param config: The path/name to the configuration file.
         this can be a path to a folder containing multiple configuration files.
         or a path to a single configuration file.
-        If None, all configuration files in the folder will be run.
-        :param target_store: list[str]
-        - The target store information. If None, a memory store will be used.
+        :type config: str
+        :param target_store_info: (optional) The target store information.
+         - If None, a memory store will be used.
+        :type target_store_info: List[str]
         """
 
         self.config = config
-
-        file_location = os.path.dirname(os.path.realpath(__file__))
-        with open(os.path.join(file_location, "debug-logconf.yml"), "r") as f:
-            config = yaml.safe_load(f.read())
-            logging.config.dictConfig(config)
 
         self.target_store = create_rdf_store(*target_store_info)
         self.target_store_access = RDFStoreAccess(
