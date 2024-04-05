@@ -10,7 +10,6 @@ from travharv.config_build import TravHarvConfig, TravHarvConfigBuilder
 from travharv.executor import TravHarvExecutor
 from travharv.store import TargetStoreAccess as RDFStoreAccess
 
-
 log = logging.getLogger(__name__)
 
 

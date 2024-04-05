@@ -8,7 +8,6 @@ from travharv.config_build import AssertPath
 from travharv.store import TargetStoreAccess
 from travharv.web_discovery import get_description_into_graph
 
-# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
