@@ -11,7 +11,7 @@ by dereferencing URIs and asserting paths.
 from travharv.config_build import TravHarvConfig, TravHarvConfigBuilder
 from travharv.executor import TravHarvExecutor
 from travharv.service import TravHarv
-from travharv.store import TargetStoreAccess as RDFStoreAccess
+from travharv.store import RDFStoreAccess
 
 __all__ = [
     "RDFStoreAccess",

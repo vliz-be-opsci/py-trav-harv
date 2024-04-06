@@ -3,9 +3,8 @@ import logging.config
 import os
 from typing import List, Optional
 
-from pyrdfstore import create_rdf_store
+from pyrdfstore import create_rdf_store, RDFStore
 
-from travharv.common import QUERY_BUILDER
 from travharv.config_build import TravHarvConfig, TravHarvConfigBuilder
 from travharv.executor import TravHarvExecutor
 from travharv.store import TargetStoreAccess as RDFStoreAccess
@@ -40,20 +39,18 @@ class TravHarv:
         self.config = config
 
         log.debug(f"creating core store with {target_store_info=}")
-        self.target_store = create_rdf_store(*target_store_info)
-        self.target_store_access = RDFStoreAccess(
-            self.target_store, QUERY_BUILDER
-        )
+        core_store: RDFStore = create_rdf_store(*target_store_info)
+        self.target_store = RDFStoreAccess(core_store)
 
         if os.path.isdir(self.config):
             self.travharv_config_builder = TravHarvConfigBuilder(
-                self.target_store_access, self.config
+                self.target_store, self.config
             )
         else:
             # take the parent of the config file as the config folder
             self.config_folder = os.path.dirname(self.config)
             self.travharv_config_builder = TravHarvConfigBuilder(
-                self.target_store_access, self.config_folder
+                self.target_store, self.config_folder
             )
         self.travharvexecutor = None
 
@@ -81,7 +78,7 @@ class TravHarv:
                         trav_harv_config.configname,
                         trav_harv_config.prefixset,
                         trav_harv_config.tasks,
-                        self.target_store_access,
+                        self.target_store,
                     )
                     self.travharvexecutor.assert_all_paths()
             else:
@@ -100,7 +97,7 @@ class TravHarv:
                     trav_harv_config.configname,
                     trav_harv_config.prefixset,
                     trav_harv_config.tasks,
-                    self.target_store_access,
+                    self.target_store,
                 )
                 self.travharvexecutor.assert_all_paths()
         except Exception as e:
