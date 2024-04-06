@@ -1,17 +1,33 @@
 import os
+import shutil
 from pathlib import Path
 
 import pytest
-from dotenv import load_dotenv
 from pyrdfstore import create_rdf_store
 from rdflib import Graph
+from util4tests import enable_test_logging
 
 from travharv.common import QUERY_BUILDER
 from travharv.store import TargetStoreAccess
 
-load_dotenv()
+TEST_FOLDER = Path(__file__).parent
+TEST_CONFIG_FOLDER = TEST_FOLDER / "config"
+TEST_INPUT_FOLDER = TEST_FOLDER / "inputs"
+TEST_OUTPUT_FOLDER = TEST_FOLDER / "output"
 
-TEST_INPUT_FOLDER = Path(__file__).parent / "./inputs"
+
+# enables logging for all test
+# also includes load_dotenv for all
+enable_test_logging()
+
+
+@pytest.fixture()
+def outpath() -> Path:
+    # note we clean the folder at the start
+    # and keeping it at the end -- so the folder can be expected after test
+    shutil.rmtree(str(TEST_OUTPUT_FOLDER), ignore_errors=True)  # always clean
+    TEST_OUTPUT_FOLDER.mkdir(exist_ok=True, parents=True)  # and recreate
+    return TEST_OUTPUT_FOLDER
 
 
 @pytest.fixture()

@@ -1,11 +1,13 @@
+#!/usr/bin/env python
 import pytest
 from rdflib import Graph
+from util4tests import run_single_test
 
 from travharv.web_discovery import get_description_into_graph
 
 
 @pytest.mark.usefixtures("target_store_access")
-def test_download_uri_to_graph(target_store_access):
+def test_discovery_to_graph(target_store_access):
     uri = "https://www.w3.org/People/Berners-Lee/card.ttl"
     graph = Graph()
     get_description_into_graph(uri, graph=graph)
@@ -44,3 +46,7 @@ def test_download_uri_cases():
         assert len(graph) > 0
         assert len(graph) == case["length"]
         # Add more assertions as needed
+
+
+if __name__ == "__main__":
+    run_single_test(__file__)

@@ -1,14 +1,13 @@
+#!/usr/bin/env python
 import os
 from pathlib import Path
 
 import pytest
-from dotenv import load_dotenv
 from util4tests import run_single_test
 
 from travharv import TravHarv
 
-load_dotenv()
-
+# TODO seems better to move these to conftest.py
 read_uri = os.getenv("TEST_SPARQL_READ_URI")
 write_uri = os.getenv("TEST_SPARQL_WRITE_URI")
 

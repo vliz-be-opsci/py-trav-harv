@@ -36,8 +36,10 @@ class TravHarv:
         :type target_store_info: List[str]
         """
 
+        log.debug(f"config for travharv service set to {config=}")
         self.config = config
 
+        log.debug(f"creating core store with {target_store_info=}")
         self.target_store = create_rdf_store(*target_store_info)
         self.target_store_access = RDFStoreAccess(
             self.target_store, QUERY_BUILDER

@@ -1,6 +1,6 @@
-import pathlib
-
+#!/usr/bin/env python
 import pytest
+from conftest import TEST_CONFIG_FOLDER, TEST_INPUT_FOLDER
 from rdflib import Graph
 from util4tests import run_single_test
 
@@ -11,29 +11,18 @@ from travharv.config_build import (
     TravHarvConfigBuilder,
 )
 
-CONFIG_FOLDER = pathlib.Path(__file__).parent / "config"
-INPUT_FOLDER = pathlib.Path(__file__).parent / "inputs"
-OUTPUT_FOLDER = pathlib.Path(__file__).parent / "output"
-
-if not OUTPUT_FOLDER.exists():
-    OUTPUT_FOLDER.mkdir()
-
-# clean up the output folder
-for file in OUTPUT_FOLDER.glob("*"):
-    file.unlink()
-
 
 @pytest.mark.usefixtures("target_store_access")
 def test_good_config_builder(target_store_access):
     # first populate the memory store with some data
     graph = Graph()
-    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
+    graph.parse(str(TEST_INPUT_FOLDER / "3293.jsonld"), format="json-ld")
     target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # travharvconfigbuilder
     travharvconfigbuilder = TravHarvConfigBuilder(
         target_store_access,
-        str(CONFIG_FOLDER / "good_folder"),
+        str(TEST_CONFIG_FOLDER / "good_folder"),
     )
 
     travharvconfigbuilder.build_from_config("base_test.yml")
@@ -46,13 +35,13 @@ def test_good_config_builder(target_store_access):
 def test_bad_config_builder(target_store_access):
     # first populate the memory store with some data
     graph = Graph()
-    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
+    graph.parse(str(TEST_INPUT_FOLDER / "3293.jsonld"), format="json-ld")
     target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # travharvconfigbuilder
     travharvconfigbuilder = TravHarvConfigBuilder(
         target_store_access,
-        str(CONFIG_FOLDER),
+        str(TEST_CONFIG_FOLDER),
     )
     # the following command should raise an exception
     with pytest.raises(Exception):
@@ -76,7 +65,7 @@ def test_literal_subject_definition():
 @pytest.mark.usefixtures("target_store_access")
 def test_sparql_subject_definition(target_store_access):
     graph = Graph()
-    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
+    graph.parse(str(TEST_INPUT_FOLDER / "3293.jsonld"), format="json-ld")
     target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # sparql subject definition
@@ -114,13 +103,13 @@ def test_assert_path():
 @pytest.mark.usefixtures("target_store_access")
 def test_travharvconfig(target_store_access):
     graph = Graph()
-    graph.parse(str(INPUT_FOLDER / "3293.jsonld"), format="json-ld")
+    graph.parse(str(TEST_INPUT_FOLDER / "3293.jsonld"), format="json-ld")
     target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
 
     # travharvconfig
     travharvconfig = TravHarvConfigBuilder(
         target_store_access,
-        str(CONFIG_FOLDER / "good_folder"),
+        str(TEST_CONFIG_FOLDER / "good_folder"),
     ).build_from_config("base_test.yml")
 
     assert travharvconfig is not None
@@ -139,7 +128,7 @@ def test_travharvconfig(target_store_access):
 def test_travharv_config_builder_from_folder(target_store_access):
     travharvconfigbuilder = TravHarvConfigBuilder(
         target_store_access,
-        str(CONFIG_FOLDER / "good_folder"),
+        str(TEST_CONFIG_FOLDER / "good_folder"),
     )
 
     travharvconfiglist = travharvconfigbuilder.build_from_folder()
@@ -151,7 +140,7 @@ def test_travharv_config_builder_from_folder(target_store_access):
 def test_travharv_config_builder_from_folder_bad(target_store_access):
     travharvconfigbuilder = TravHarvConfigBuilder(
         target_store_access,
-        str(CONFIG_FOLDER / "bad_folder"),
+        str(TEST_CONFIG_FOLDER / "bad_folder"),
     )
 
     with pytest.raises(Exception):

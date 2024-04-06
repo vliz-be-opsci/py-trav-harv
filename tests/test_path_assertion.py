@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pytest
 from rdflib import URIRef
 from rdflib.query import ResultRow
