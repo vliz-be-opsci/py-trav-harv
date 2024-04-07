@@ -7,36 +7,33 @@ from util4tests import run_single_test
 
 from travharv import TravHarv
 
-# TODO seems better to move these to conftest.py
-read_uri = os.getenv("TEST_SPARQL_READ_URI")
-write_uri = os.getenv("TEST_SPARQL_WRITE_URI")
 
-
-def test_travharv_fail():
+@pytest.mark.usefixtures("store_info_sets")
+def test_travharv_fail(store_info_sets):
     config = Path(__file__).parent / "config" / "bad_config.yml"
 
-    target_store_info = [read_uri, write_uri]
+    for store_info in store_info_sets:
+        travharv = TravHarv(
+            config,
+            store_info,
+        )
 
-    travharv = TravHarv(
-        config,
-        target_store_info,
-    )
-
-    with pytest.raises(Exception):
-        travharv.process()
+        with pytest.raises(Exception):
+            travharv.process()
 
 
-def test_travharv_config_folder_fail():
+@pytest.mark.usefixtures("store_info_sets")
+def test_travharv_config_folder_fail(store_info_sets):
     config_folder = Path(__file__).parent / "config"
-    target_store_info = [read_uri, write_uri]
+    for store_info in store_info_sets:
 
-    travharv = TravHarv(
-        config_folder,
-        target_store_info,
-    )
+        travharv = TravHarv(
+            config_folder,
+            store_info,
+        )
 
-    with pytest.raises(Exception):
-        travharv.process()
+        with pytest.raises(Exception):
+            travharv.process()
 
 
 if __name__ == "__main__":
