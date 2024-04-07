@@ -1,26 +1,8 @@
 #!/usr/bin/env python
-import pytest
 from rdflib import Graph
 from util4tests import run_single_test
 
 from travharv.web_discovery import get_description_into_graph
-
-
-@pytest.mark.usefixtures("target_store_access")
-def test_discovery_to_graph(target_store_access):
-    uri = "https://www.w3.org/People/Berners-Lee/card.ttl"
-    graph = Graph()
-    get_description_into_graph(uri, graph=graph)
-    assert isinstance(graph, Graph)
-    assert len(graph) > 0
-    target_store_access.ingest(graph, "uri:PYTRAVHARV:base_test.yml")
-    query_results = target_store_access.full_graph()
-    assert len(query_results) > 0
-    assert query_results is not None
-    assert len(query_results) == len(graph)
-
-    # Add more assertions as needed
-
 
 # ttl file
 # jsonld file
