@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-
 import pytest
 from conftest import TEST_CONFIG_FOLDER
 from util4tests import run_single_test
@@ -18,7 +16,9 @@ def test_travharv_executor(decorated_rdf_stores):
             str(TEST_CONFIG_FOLDER / "good_folder"),
         )
 
-        travharvobject = travharvconfigbuilder.build_from_config("base_test.yml")
+        travharvobject = travharvconfigbuilder.build_from_config(
+            "base_test.yml"
+        )
 
         # extract values from travharvobject and pass them to travharvexecutor
         TravHarvExecutor(

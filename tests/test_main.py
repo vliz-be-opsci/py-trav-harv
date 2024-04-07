@@ -22,7 +22,7 @@ def test_main(outpath: Path, store_info_sets: tuple):
         argsline: str = (
             f"--config {conf_path} --init {init_path} --dump {dump_path}"
         )
-        store_part = ' '.join(store_info)
+        store_part = " ".join(store_info)
         if (len(store_part)) > 0:
             argsline += f"--store {store_part}"
 

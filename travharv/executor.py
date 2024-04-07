@@ -1,7 +1,5 @@
 import logging
 
-from rdflib import Graph
-
 from travharv.config_build import TravHarvConfig
 from travharv.path_assertion import SubjPropPathAssertion
 from travharv.store import RDFStoreAccess
@@ -15,6 +13,7 @@ class TravHarvExecutor:
     This class will assert all paths
     for all subjects given for each task per config.
     """
+
     def __init__(
         self,
         config_filename: str,
@@ -22,7 +21,7 @@ class TravHarvExecutor:
         tasks: list,
         rdf_store_access: RDFStoreAccess,
     ):
-        """ constructor
+        """constructor
 
         :param config_filename: str
         :param prefix_set: dict
