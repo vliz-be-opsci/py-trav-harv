@@ -8,28 +8,25 @@ from util4tests import run_single_test
 from travharv.config_build import TravHarvConfigBuilder
 from travharv.executor import TravHarvExecutor
 
-# TODO seems better to move these to conftest.py
-read_uri = os.getenv("TEST_SPARQL_READ_URI")
-write_uri = os.getenv("TEST_SPARQL_WRITE_URI")
 
+@pytest.mark.usefixtures("decorated_rdf_stores")
+def test_travharv_executor(decorated_rdf_stores):
+    for rdf_store in decorated_rdf_stores:
+        # first make travharv_config_builder
+        travharvconfigbuilder = TravHarvConfigBuilder(
+            rdf_store,
+            str(TEST_CONFIG_FOLDER / "good_folder"),
+        )
 
-@pytest.mark.usefixtures("target_store_access")
-def test_travharv_executor(target_store_access):
-    # first make travharv_config_builder
-    travharvconfigbuilder = TravHarvConfigBuilder(
-        target_store_access,
-        str(TEST_CONFIG_FOLDER / "good_folder"),
-    )
+        travharvobject = travharvconfigbuilder.build_from_config("base_test.yml")
 
-    travharvobject = travharvconfigbuilder.build_from_config("base_test.yml")
-
-    # extract values from travharvobject and pass them to travharvexecutor
-    TravHarvExecutor(
-        travharvobject.configname,
-        travharvobject.prefixset,
-        travharvobject.tasks,
-        target_store_access,
-    ).assert_all_paths()
+        # extract values from travharvobject and pass them to travharvexecutor
+        TravHarvExecutor(
+            travharvobject.configname,
+            travharvobject.prefixset,
+            travharvobject.tasks,
+            rdf_store,
+        ).assert_all_paths()
 
 
 if __name__ == "__main__":
