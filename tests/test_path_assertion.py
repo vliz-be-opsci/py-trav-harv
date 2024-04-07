@@ -4,8 +4,8 @@ from rdflib import URIRef
 from rdflib.query import ResultRow
 from util4tests import run_single_test
 
-from travharv.path_assertion import SubjPropPathAssertion
 from travharv.config_build import AssertPath
+from travharv.path_assertion import SubjPropPathAssertion
 
 
 @pytest.mark.usefixtures("decorated_rdf_stores")
@@ -56,7 +56,9 @@ def test_subject_str_check(decorated_rdf_stores):
 
         assert (
             subj_prop_path_assertion._subject_str_check(
-                ResultRow({"subject": "http://example.org/subject"}, ["subject"])
+                ResultRow(
+                    {"subject": "http://example.org/subject"}, ["subject"]
+                )
             )
             == "http://example.org/subject"
         )

@@ -9,8 +9,7 @@ import validators
 from rdflib import Graph
 
 from travharv import TravHarv
-from travharv.store import RDFStore
-from travharv.store import RDFStoreAccess
+from travharv.store import RDFStore, RDFStoreAccess
 from travharv.web_discovery import get_description_into_graph
 
 log = logging.getLogger(__name__)
