@@ -7,8 +7,8 @@ from pyrdfstore import create_rdf_store
 from rdflib import Graph
 from util4tests import enable_test_logging
 
-from travharv.common import QUERY_BUILDER
-from travharv.store import TargetStoreAccess
+from travharv.store import RDFStoreAccess
+
 
 TEST_FOLDER = Path(__file__).parent
 TEST_CONFIG_FOLDER = TEST_FOLDER / "config"
@@ -30,22 +30,49 @@ def outpath() -> Path:
     return TEST_OUTPUT_FOLDER
 
 
-@pytest.fixture()
-def target_store():
-    read_uri = os.getenv("TEST_SPARQL_READ_URI", None)
-    write_uri = os.getenv("TEST_SPARQL_WRITE_URI", None)
-    return create_rdf_store(None, None)
-    return create_rdf_store(read_uri, write_uri)
+@pytest.fixture(scope="session")
+def _mem_store_info():
+    return ()
 
 
-@pytest.fixture()
-def prepopulated_target_store(target_store):
+@pytest.fixture(scope="session")
+def _uri_store_info():
+    read_uri: str = os.getenv("TEST_SPARQL_READ_URI", None)
+    write_uri: str = os.getenv("TEST_SPARQL_WRITE_URI", read_uri)
+    if read_uri is None or write_uri is None:
+        return None
+    # else
+    return (read_uri, write_uri)
+
+
+@pytest.fixture(scope="session")
+def store_info_sets(_mem_store_info, _uri_store_info):
+    return tuple(
+        storeinfo
+        for storeinfo in (_mem_store_info, _uri_store_info)
+        if storeinfo is not None
+    )
+
+
+@pytest.fixture(scope="session")
+def rdf_stores(store_info_sets):
+    return (create_rdf_store(*storeinfo) for storeinfo in store_info_sets)
+
+
+@pytest.fixture(scope="session")
+def decorated_rdf_stores(rdf_stores):
+    return (RDFStoreAccess(rdf_store) for rdf_store in rdf_stores)
+
+
+def loadfilegraph(fname, format="json-ld"):
     graph = Graph()
-    graph.parse("tests/inputs/3293.jsonld", format="json-ld")
-    target_store.insert(graph)
-    return target_store
+    graph.parse(fname, format=format)
+    return graph
 
 
 @pytest.fixture()
-def target_store_access(target_store):
-    return TargetStoreAccess(target_store, QUERY_BUILDER)
+def sample_file_graph():
+    """graph loaded from specific input file
+    in casu: tests/input/3293.jsonld
+    """
+    return loadfilegraph(str(TEST_INPUT_FOLDER / "3293.jsonld"))

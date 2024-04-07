@@ -4,7 +4,7 @@ from rdflib import Graph
 
 from travharv.config_build import TravHarvConfig
 from travharv.path_assertion import SubjPropPathAssertion
-from travharv.store import TargetStoreAccess
+from travharv.store import RDFStoreAccess
 
 # log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
@@ -28,7 +28,7 @@ class TravHarvExecutor:
         config_filename: str,
         prefix_set: TravHarvConfig.prefixset,
         tasks: list,
-        rdf_store_access: TargetStoreAccess,
+        rdf_store_access: RDFStoreAccess,
     ):
         self.config_filename = config_filename
         self.prefix_set = prefix_set
