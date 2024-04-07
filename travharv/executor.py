@@ -6,7 +6,6 @@ from travharv.config_build import TravHarvConfig
 from travharv.path_assertion import SubjPropPathAssertion
 from travharv.store import RDFStoreAccess
 
-# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -15,14 +14,7 @@ class TravHarvExecutor:
     A class to represent a TravHarvExecutor.
     This class will assert all paths
     for all subjects given for each task per config.
-
-    :param config_filename: str
-    :param prefix_set: dict
-    :param tasks: list
-    :param rdf_store_access: RDFStoreAccess
-
     """
-
     def __init__(
         self,
         config_filename: str,
@@ -30,6 +22,13 @@ class TravHarvExecutor:
         tasks: list,
         rdf_store_access: RDFStoreAccess,
     ):
+        """ constructor
+
+        :param config_filename: str
+        :param prefix_set: dict
+        :param tasks: list
+        :param rdf_store_access: RDFStoreAccess
+        """
         self.config_filename = config_filename
         self.prefix_set = prefix_set
         self.tasks = tasks
@@ -47,7 +46,6 @@ class TravHarvExecutor:
             """Asserting all paths for all
                subjects given for each task per config"""
         )
-        output_graph = Graph()
         for task in self.tasks:
             log.debug("Task: {}".format(task))
             # check if subject is a URI or a SPARQL query
@@ -68,10 +66,5 @@ class TravHarvExecutor:
                         self.config_filename,
                     )
             log.debug("All paths asserted for task: {}".format(task))
-            full_graph = self.rdf_store_access.full_graph()
-            if full_graph:
-                for triple in full_graph:
-                    output_graph.add(triple)
 
         log.debug("All paths asserted for all tasks")
-        return output_graph

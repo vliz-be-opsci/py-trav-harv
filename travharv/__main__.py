@@ -184,7 +184,7 @@ def final_dump(args: argparse.Namespace, store: RDFStoreAccess):
     # else
     format = "turtle"
     outgraph = Graph()
-    alltriples = store.full_graph()  # TODO rename: returns triples, not Graph
+    alltriples = store.all_triples()  # TODO rename: returns triples, not Graph
     # NOTE alternatively pass Graph() as arg
     if not alltriples:
         log.debug("nothing to dump")
@@ -219,7 +219,7 @@ def main(*cli_args):
     # do what needs to be done
     service.process()
     # dump the output
-    final_dump(args, service.target_store_access)
+    final_dump(args, service.target_store)
 
 
 if __name__ == "__main__":

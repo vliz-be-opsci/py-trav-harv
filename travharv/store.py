@@ -100,7 +100,7 @@ class RDFStoreAccess(RDFStoreDecorator):
             property_trajectory=property_path,
             prefixes=prefixes,
         )
-        result: Result = self._target.select(sparql)
+        result: Result = self.select(sparql)
 
         list_of_bindings = [row for row in result]
         return bool(len(list_of_bindings) > 0)
