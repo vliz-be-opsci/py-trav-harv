@@ -19,7 +19,8 @@ def test_good_config_builder(decorated_rdf_stores, sample_file_graph):
 
         # travharvconfigbuilder
         travharvconfigbuilder = TravHarvConfigBuilder(
-            rdf_store, str(TEST_CONFIG_FOLDER / "good_folder"),
+            rdf_store,
+            str(TEST_CONFIG_FOLDER / "good_folder"),
         )
 
         assert travharvconfigbuilder is not None
@@ -38,7 +39,8 @@ def test_bad_config_builder(decorated_rdf_stores, sample_file_graph):
 
         # travharvconfigbuilder
         travharvconfigbuilder = TravHarvConfigBuilder(
-            rdf_store, str(TEST_CONFIG_FOLDER),
+            rdf_store,
+            str(TEST_CONFIG_FOLDER),
         )
         # the following command should raise an exception
         with pytest.raises(Exception):
@@ -68,9 +70,7 @@ def test_sparql_subject_definition(decorated_rdf_stores, sample_file_graph):
         rdf_store.insert(sample_file_graph, "urn:test:subject-definition:base")
 
         # sparql subject definition
-        sparql_subject_definition = SPARQLSubjectDefinition(
-            sparql, rdf_store
-        )
+        sparql_subject_definition = SPARQLSubjectDefinition(sparql, rdf_store)
 
         assert sparql_subject_definition is not None
         assert len(sparql_subject_definition()) > 0
@@ -123,10 +123,14 @@ def test_travharvconfig(decorated_rdf_stores, sample_file_graph):
 
 
 @pytest.mark.usefixtures("decorated_rdf_stores", "sample_file_graph")
-def test_travharv_config_builder_from_folder(decorated_rdf_stores, sample_file_graph):
+def test_travharv_config_builder_from_folder(
+    decorated_rdf_stores, sample_file_graph
+):
     for rdf_store in decorated_rdf_stores:
         # first populate the memory store with some data
-        rdf_store.insert(sample_file_graph, "urn:test:travharv-config-build-folder:base")
+        rdf_store.insert(
+            sample_file_graph, "urn:test:travharv-config-build-folder:base"
+        )
 
         travharvconfigbuilder = TravHarvConfigBuilder(
             rdf_store,
@@ -139,10 +143,14 @@ def test_travharv_config_builder_from_folder(decorated_rdf_stores, sample_file_g
 
 
 @pytest.mark.usefixtures("decorated_rdf_stores", "sample_file_graph")
-def test_travharv_config_builder_from_folder_bad(decorated_rdf_stores, sample_file_graph):
+def test_travharv_config_builder_from_folder_bad(
+    decorated_rdf_stores, sample_file_graph
+):
     for rdf_store in decorated_rdf_stores:
         # first populate the memory store with some data
-        rdf_store.insert(sample_file_graph, "urn:test:travharv-config-build-folder-bad:base")
+        rdf_store.insert(
+            sample_file_graph, "urn:test:travharv-config-build-folder-bad:base"
+        )
 
         travharvconfigbuilder = TravHarvConfigBuilder(
             rdf_store,

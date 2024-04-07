@@ -9,7 +9,6 @@ from util4tests import enable_test_logging
 
 from travharv.store import RDFStoreAccess
 
-
 TEST_FOLDER = Path(__file__).parent
 TEST_CONFIG_FOLDER = TEST_FOLDER / "config"
 TEST_INPUT_FOLDER = TEST_FOLDER / "inputs"

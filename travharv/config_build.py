@@ -329,12 +329,14 @@ class TravHarvConfigBuilder:
                 log.exception(exc)
 
     def _makeTravHarvConfigPartFromDict(
-        self, dict_object, name_config: str = "default"
+        self,
+        dict_object,
+        name_config: str = "default",
         # TODO reconsider this "default" for name_config - not self-explaining
     ):
         log.debug("Making TravHarvConfig from dict for {}".format(name_config))
         # make it so that the assertions are always checked for lowercase
-        # TODO - consider applying this as a general rule on the level of the yml load
+        # TODO - apply this as a general rule on the level of the yml load
         #  thus ensuring that it applies across the board
         #  and that users know the yml keys are in fact ignoring case
         dict_object = {k.lower(): v for k, v in dict_object.items()}

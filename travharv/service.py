@@ -3,7 +3,7 @@ import logging.config
 import os
 from typing import List, Optional
 
-from pyrdfstore import create_rdf_store, RDFStore
+from pyrdfstore import RDFStore, create_rdf_store
 
 from travharv.config_build import TravHarvConfig, TravHarvConfigBuilder
 from travharv.executor import TravHarvExecutor

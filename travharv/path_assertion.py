@@ -116,9 +116,9 @@ class SubjPropPathAssertion:
         ):
             self._harvest_and_surface()
             return
-        self.rdf_store_access.ingest(
+        self.rdf_store_access.insert_for_config(
             get_description_into_graph(self.subject),
-            graph_name_to_uri(self.config_name),
+            self.config_name,
         )
 
         # Implement method to assert a property path

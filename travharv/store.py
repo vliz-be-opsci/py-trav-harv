@@ -1,12 +1,12 @@
 import logging
 from pathlib import Path
 from typing import Iterable, List
-from rdflib import Graph
 from urllib.parse import quote, unquote
 
 from pyrdfj2 import J2RDFSyntaxBuilder
 from pyrdfstore import RDFStore
 from pyrdfstore.store import RDFStoreDecorator
+from rdflib import Graph
 from rdflib.plugins.sparql.processor import Result
 
 log = logging.getLogger(__name__)
@@ -76,7 +76,11 @@ class GraphConfigNameMapper:
 class RDFStoreAccess(RDFStoreDecorator):
     """Decorator class adding some trav-harv specific features"""
 
-    def __init__(self, core: RDFStore, name_mapper: GraphConfigNameMapper = GraphConfigNameMapper()):
+    def __init__(
+        self,
+        core: RDFStore,
+        name_mapper: GraphConfigNameMapper = GraphConfigNameMapper(),
+    ):
         super().__init__(core)
         self._qryBuilder = QUERY_BUILDER
         self._nmapper = name_mapper
@@ -105,26 +109,31 @@ class RDFStoreAccess(RDFStoreDecorator):
         return self.select("SELECT ?s ?p ?o WHERE { ?s ?p ?o }")
 
     def insert_for_config(self, graph: Graph, name_config: str) -> None:
-        """inserts the triples from the passed graph into a graph tied to this name_config
+        """inserts the triples from the passed graph
+        into a graph tied to this name_config
 
         :param graph: the graph of triples to insert
         :type graph: Graph
         :param name_config: the name of the config
-        :type named_config: str
+        :type name_config: str
         :rtype: None
         """
         ng: str = self._nmapper.cfgname_to_ng(name_config)
         return self.insert(graph, ng)
 
-    def verify_max_age_of_config(self, name_config: str, age_minutes: int) -> bool:
-        """verifies that a certain graph is not aged older than a certain amount of minutes
+    def verify_max_age_of_config(
+        self, name_config: str, age_minutes: int
+    ) -> bool:
+        """verifies that a certain graph is not aged older
+        than a certain amount of minutes
 
         :param name_config: the name of the config to check
         :type name_config: str
         :param age_minutes: the max acceptable age in minutes
         :type age_minutes: int
-        :return: True if the contents of the store associated tho the config has aged less 
-        than the passed number of minutes in the argument, else False
+        :return: True if the contents of the store associated
+        to the config has aged less than the passed number of
+        minutes in the argument, else False
         :rtype: bool
         """
         ng: str = self._nmapper.cfgname_to_ng(name_config)
@@ -134,14 +143,14 @@ class RDFStoreAccess(RDFStoreDecorator):
     def name_configs(self) -> Iterable[str]:
         """returns the known & managed name-configs in the store
 
-        :return: the list of name-configs, known and managed 
+        :return: the list of name-configs, known and managed
         (but possibly already deleted, but not forgotten) in this store
         :rtype: List[str]
         """
         return self._nmapper.get_cfgnames_in_store(self)
 
     def drop_graph_for_config(self, name_config: str) -> None:
-        """drops the content in rdf_store associated to specified name_config 
+        """drops the content in rdf_store associated to specified name_config
         (and all its contents)
 
         :param name_config: the uri describing the named_graph to drop
@@ -154,7 +163,8 @@ class RDFStoreAccess(RDFStoreDecorator):
     def forget_graph_for_config(self, name_config: str) -> None:
         """forgets about the name_config being under control
         This functions independent of the drop_graph method.
-        So any client of this service is expected to decide when (or not) to combine both
+        So any client of this service is expected to decide when
+        (or not) to combine both
 
         :param name_config: the uri describing the named_graph to drop
         :type name_config: str
