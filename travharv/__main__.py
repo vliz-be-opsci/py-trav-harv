@@ -71,7 +71,7 @@ def get_arg_parser():
 
     parser.add_argument(
         "-s",
-        "--target-store",
+        "--store",
         nargs=2,
         action="store",
         required=False,
@@ -162,9 +162,11 @@ def init_load(args: argparse.Namespace, store: RDFStore):
 
 
 def make_service(args) -> TravHarv:
-    store_info = args.target_store or []
+    store_info: list = args.store or []
+    log.debug(f"make service for target store {store_info}")
     config = args.config[0]
     service: TravHarv = TravHarv(config, store_info)
+    log.debug(f"target store of service has core type {type(service.target_store._core).__name__}")
     return service
 
 

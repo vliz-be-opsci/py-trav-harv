@@ -22,7 +22,7 @@ def test_main(outpath: Path, store_info_sets: tuple):
         )
         store_part = " ".join(store_info)
         if (len(store_part)) > 0:
-            argsline += f"--store {store_part}"
+            argsline += f" --store {store_part}"
 
         log.debug(f"testing equivalent of python -mtravharv {argsline}")
         main(*argsline.split(" "))  # pass as individual arguments
