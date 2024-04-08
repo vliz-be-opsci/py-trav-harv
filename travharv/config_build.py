@@ -402,4 +402,4 @@ class TravHarvConfigBuilder:
                 name_config, snooze_time
             )
         )
-        return self._rdf_store_access.verify_max_age_of_config(name_config)
+        return not self._rdf_store_access.verify_max_age_of_config(name_config, snooze_time)
