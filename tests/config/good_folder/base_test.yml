@@ -2,29 +2,29 @@ snooze-till-graph-age-minutes: 0 # why-what-concequence-unit # configs is subfol
 prefix:
   ex: <https://example.org/whatever/>
   mr: <http://marineregions.org/ns/ontology#>
+  mrgid: <http://marineregions.org/mrgid/>
   gsp: <http://www.opengis.net/ont/geosparql#>
+  schema: <https://schema.org/>
 assert:
   - subjects:
       literal:
-        - http://marineregions.org/mrgid/63523
-        - http://marineregions.org/mrgid/3293
-        - http://marineregions.org/mrgid/12548
+        - mrgid:63523
+        - mrgid:3293
+        - mrgid:12548
     paths:
       - "mr:hasGeometry"
-      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
+      - "mr:isPartOf / schema:geo / schema:latitude"
   - subjects:
       SPARQL: >
-        PREFIX mr: <http://marineregions.org/ns/ontology#>
         SELECT ?s
         WHERE {
           [] mr:isPartOf ?s .
           ?s a mr:GeoObject .
         }
     paths:
-      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
+      - "mr:isPartOf / schema:geo / schema:latitude"
   - subjects:
       SPARQL: >
-        PREFIX mr: <http://marineregions.org/ns/ontology#>
         SELECT ?s
         WHERE {
             ?s a mr:MRGeoObject .
