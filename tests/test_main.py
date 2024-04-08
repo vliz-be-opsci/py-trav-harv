@@ -10,8 +10,6 @@ from travharv.__main__ import main
 
 @pytest.mark.usefixtures("outpath", "store_info_sets")
 def test_main(outpath: Path, store_info_sets: tuple):
-    # TODO make this run for uri_store too after conftests enables that
-    # that will allow testing the -s , --store as well
     conf_path = TEST_CONFIG_FOLDER / "good_folder"
     init_path = TEST_INPUT_FOLDER / "3293.jsonld"
 

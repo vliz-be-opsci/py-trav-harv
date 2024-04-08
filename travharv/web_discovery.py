@@ -7,7 +7,6 @@ from rdflib import Graph
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -79,10 +78,6 @@ def get_description_into_graph(
     if graph is None:
         graph = Graph()  # create a fresh graph if you don't have it yet
 
-    # sleep for 1 second to avoid overloading any servers
-    # TODO make this configurable and add a warning + smart retry
-    # @cedricdcc <-- does this todo still hold?
-    #            this retry/back-off below seems to handle that?
     total_retry = 8
     session = requests.Session()
     retry = Retry(

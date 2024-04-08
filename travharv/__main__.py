@@ -184,7 +184,7 @@ def final_dump(args: argparse.Namespace, store: RDFStoreAccess):
     # else
     format = "turtle"
     outgraph = Graph()
-    alltriples = store.all_triples()  # TODO rename: returns triples, not Graph
+    alltriples = store.all_triples()
     # NOTE alternatively pass Graph() as arg
     if not alltriples:
         log.debug("nothing to dump")
