@@ -84,17 +84,17 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     A subject definition that is a SPARQL query
     """
 
-    def __init__(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
+    def __init__(self, sparql=str, rdf_store_access=RDFStoreAccess):
         """
         Initialise the SPARQL subject definition
 
-        :param SPARQL: The SPARQL query.
-        :type SPARQL: str
+        :param sparql: The SPARQL query.
+        :type sparql: str
         :param targetstore: The target store.
         :type targetstore: TargetStore
         """
         log.debug("init SPARQL subjects")
-        self.subjects = self._get_subjects(SPARQL, rdf_store_access)
+        self.subjects = self._get_subjects(sparql, rdf_store_access)
         log.debug(self.subjects)
 
     def __call__(self, *args: Any, **kwds: Any) -> list[str]:
@@ -109,9 +109,9 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         """
         return self.subjects
 
-    def _get_subjects(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
+    def _get_subjects(self, sparql=str, rdf_store_access=RDFStoreAccess):
         log.debug("getting subjects")
-        return rdf_store_access.select_subjects(SPARQL)
+        return rdf_store_access.select_subjects(sparql)
 
 
 class AssertPathSet:
