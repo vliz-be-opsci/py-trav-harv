@@ -86,11 +86,12 @@ class RDFStoreAccess(RDFStoreDecorator):
         self._nmapper = name_mapper
 
     def select_subjects(self, sparql) -> List[str]:
+        log.debug(f"select of subjects with {sparql=}")
         result: Result = self.select(sparql)
 
         # todo convert response into list of subjects
         list_of_subjects = [row[0] for row in result]
-        log.debug(f"length list_of_subjects: {len(list_of_subjects)}")
+        log.debug(f"found list_of_subjects has len={len(list_of_subjects)}")
         return list_of_subjects
 
     def verify_path(self, subject, property_path, prefixes=None):
