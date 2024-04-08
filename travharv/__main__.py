@@ -166,7 +166,9 @@ def make_service(args) -> TravHarv:
     log.debug(f"make service for target store {store_info}")
     config = args.config[0]
     service: TravHarv = TravHarv(config, store_info)
-    log.debug(f"target store of service has core type {type(service.target_store._core).__name__}")
+    log.debug(
+        f"target store core type {type(service.target_store._core).__name__}"
+    )
     return service
 
 
