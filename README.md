@@ -38,10 +38,10 @@ pytest
 
 #### example 1
 
-This is an example of how to run the code where the targetstore is a file / in memory store.
+This is an example of how to run the code where the targetstore is kept in memory and dumped to a file
 
 ```bash
-python -m travharv -cf ./tests/config/ -n base_test.yml -m memory -o ./test.ttl -v -c ./tests/inputs/63523.ttl ./test.ttl
+python -m travharv -c ./tests/config/base_test.yml -d ./test.ttl -i ./tests/inputs/63523.ttl -o ./test.ttl
 ```
 
 #### example 2
@@ -49,7 +49,5 @@ python -m travharv -cf ./tests/config/ -n base_test.yml -m memory -o ./test.ttl 
 This is an example of how to run the code where the targetstore is a SPARQL endpoint.
 
 ```bash
-python -m travharv -cf ./tests/config/ -n base_test.yml -m uristore -o ./test.ttl -v -ts http://example.org http://example.org/statements
+python -m travharv -c ./tests/config/base_test.yml -s http://example.org http://example.org/statements
 ```
-
-The uri is can be a graphdb repository.

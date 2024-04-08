@@ -2,22 +2,16 @@ import argparse
 import logging
 import logging.config
 import os
+import sys
 from pathlib import Path
-from typing import Optional
 
-import yaml
-from pyrdfstore import create_rdf_store
+import validators
 from rdflib import Graph
 
-from travharv.common import QUERY_BUILDER, insert_resource_into_graph
-from travharv.store import TargetStoreAccess as RDFStoreAccess
-from travharv.trav_harv_config_builder import (
-    TravHarvConfig,
-    TravHarvConfigBuilder,
-)
-from travharv.trav_harv_executer import TravHarvExecutor
+from travharv import TravHarv
+from travharv.store import RDFStore, RDFStoreAccess
+from travharv.web_discovery import get_description_into_graph
 
-# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -33,16 +27,19 @@ def get_arg_parser():
     DEFAULT_CONFIG_FOLDER = Path(os.getcwd()) / "config"
 
     parser.add_argument(
-        "-f",
+        "-c",
         "--config",
-        nargs="?",
-        required=True,
-        default=str(
-            DEFAULT_CONFIG_FOLDER
-        ),  # os.path.join(os.getcwd(), "config"),
-        help="""Folder containing configuration files
-                relative to the working directory or
-                the path to a single configuration file""",
+        nargs=1,
+        action="store",
+        type=str,
+        required=False,
+        default=str(DEFAULT_CONFIG_FOLDER),
+        help=(
+            "Path to folder containing configuration files "
+            "or to a single configuration path "
+            "in both cases relative to the working directory. "
+            "Defaults to ./config "
+        ),
     )
 
     parser.add_argument(
@@ -50,132 +47,186 @@ def get_arg_parser():
         "--dump",
         type=str,
         default=None,
+        action="store",
+        nargs=1,
         required=False,
-        help="""File to write output to, if not
-                specified, output will be written to stdout""",
+        help=(
+            "Path of file to dump the harvested resulting graph to "
+            "use '-' to have output to stdout"
+        ),
     )
 
     parser.add_argument(
-        "-c",
-        "--context",
-        nargs="*",
+        "-i",
+        "--init",
+        nargs="+",
+        action="store",
         required=False,
         default=None,
-        help="""Context to add to graph when asserting paths.
-                This will be a list of Paths to either a file
-                containing triples or a folder containing
-                files that can contain triples.""",
+        help=(
+            "List of paths to files or folders (containing files) "
+            "that will be loaded into the store at the start."
+        ),
     )
 
     parser.add_argument(
         "-s",
-        "--target-store",
+        "--store",
         nargs=2,
+        action="store",
         required=False,
-        help="""A pair of URLS for the Targetstore to harvest from.
-                The first is the url to get statments from ,
-                the second one is to post statements to.""",
+        help=(
+            "Pair of read_uri and write_uri describing the "
+            "SPARQL endpoint to use as store. "
+        ),
+    )
+
+    parser.add_argument(
+        "-l",
+        "--logconf",
+        nargs=1,
+        required=False,
+        action="store",
+        help=("Location of yml formatted logconfig file to apply."),
     )
 
     return parser
 
 
-class mainRunner:
-    """
-    A class to represent the main class.
+def enable_logging(args: argparse.Namespace):
+    if args.logconf is None:
+        return
+    # conditional dependency -- we only need this (for now)
+    #   when logconf needs to be read
+    import yaml
 
-    :param args: argparse.Namespace
-    """
-
-    def __init__(self, args):
-        self.args = args
-
-        file_location = os.path.dirname(os.path.realpath(__file__))
-        with open(os.path.join(file_location, "debug-logconf.yml"), "r") as f:
-            config = yaml.safe_load(f.read())
-            logging.config.dictConfig(config)
-
-        log.debug("type target store: {}".format(type(args.target_store)))
-        log.debug(args)
-
-        self.target_store = create_rdf_store(*self.args.target_store)
-        # targetstore can be a list of paths,
-        # a single path to a folder or a list of urls
-        self.target_store_access = RDFStoreAccess(
-            self.target_store, QUERY_BUILDER
+    with open(args.logconf, "r") as yml_logconf:
+        logging.config.dictConfig(
+            yaml.load(yml_logconf, Loader=yaml.SafeLoader)
         )
-
-        if self.args.context is not None:
-            graph = Graph()
-            for context in self.args.context:
-                insert_resource_into_graph(graph, context)
-            self.target_store_access.ingest(graph, "urn:travharv:context")
-
-        if os.path.isdir(self.args.config):
-            self.travharv_config_builder = TravHarvConfigBuilder(
-                self.target_store_access, args.config
-            )
-        else:
-            config_folder = os.path.dirname(self.args.config)
-            self.travharv_config_builder = TravHarvConfigBuilder(
-                self.target_store_access, config_folder
-            )
-        self.travharvexecutor = None
-
-    def run(self):
-        log.debug(self.args)
-        trav_harv_config: Optional[TravHarvConfig] = None
-        if os.path.isdir(self.args.config):
-            self.travHarvConfigList = (
-                self.travharv_config_builder.build_from_folder()
-            )
-
-            for trav_harv_config in self.travHarvConfigList:
-                if trav_harv_config is None:
-                    continue
-                log.info("Config object: {}".format(trav_harv_config()))
-                # from travHarvConfig we need , prefix_set, tasks, config_file
-                prefix_set = trav_harv_config.prefixset
-                config_name = trav_harv_config.configname
-                tasks = trav_harv_config.tasks
-
-                self.travharvexecutor = TravHarvExecutor(
-                    config_name, prefix_set, tasks, self.target_store
-                )
-
-                graph_to_write = self.travharvexecutor.assert_all_paths()
-                if self.args.dump is not None:
-                    graph_to_write.serialize(self.args.dump, format="turtle")
-
-        else:
-            trav_harv_config = self.travharv_config_builder.build_from_config(
-                self.args.config
-            )
-            if trav_harv_config is None:
-                raise AssertionError(
-                    "No configuration found with the given name"
-                )
-            log.info("Config object: {}".format(trav_harv_config()))
-
-            # from travHarvConfig we need , prefix_set, tasks, config_file
-            prefix_set = trav_harv_config.prefixset
-            config_name = trav_harv_config.configname
-            tasks = trav_harv_config.tasks
-
-            self.travharvexecutor = TravHarvExecutor(
-                config_name, prefix_set, tasks, self.target_store
-            )
-
-            graph_to_write = self.travharvexecutor.assert_all_paths()
-            if self.args.dump is not None:
-                graph_to_write.serialize(self.args.dump, format="turtle")
+    log.info(f"Logging enabled according to config in {args.logconf}")
 
 
-def main():
-    args = get_arg_parser().parse_args()
-    main_class = mainRunner(args)
-    main_class.run()
+def load_resource_into_graph(graph: Graph, resource: str):
+    """
+    Insert a resource into a graph.
+    """
+    # resource can be a path or a URI
+
+    # check if resource is a URI
+    if validators.url(resource):
+        # get triples from the uri and add them
+        return graph + get_description_into_graph(resource)
+
+    # else
+    resource_path: Path = Path(resource)
+
+    # check if resource is a file
+    if resource_path.is_file():
+        # get triples from the file
+        # determine the format of the file and use the correct parser
+        ext = resource_path.suffix
+        format = SUFFIX_TO_FORMAT.get(ext, "turtle")
+        graph.parse(resource, format=format)
+        return graph
+
+    # else
+    # check if resource is a folder
+    if resource_path.is_dir():
+        for sub in resource_path.glob("**/*"):
+            if sub.is_dir():
+                continue  # no recursion on folders, glob **/* does already
+            # else
+            load_resource_into_graph(graph, sub)
+        return graph
+
+    # if resource is neither a URI nor a file then raise an error
+    raise ValueError(
+        "Resource is not a valid URI or file path: {}".format(resource)
+    )
+
+
+def init_load(args: argparse.Namespace, store: RDFStore):
+    """
+    loads the suggested input into the store prior to execution
+    """
+    if args.init is None:
+        log.debug("no initial context to load")
+        return  # nothing to do
+    # else
+    log.debug(f"loading initial context from {len(args.init)=} files")
+    graph: Graph = Graph()
+    for inputfile in args.init:
+        load_resource_into_graph(graph, inputfile)
+    store.insert(graph, "urn:travharv:context")
+
+
+def make_service(args) -> TravHarv:
+    store_info: list = args.store or []
+    log.debug(f"make service for target store {store_info}")
+    config = args.config[0]
+    service: TravHarv = TravHarv(config, store_info)
+    log.debug(
+        f"target store core type {type(service.target_store._core).__name__}"
+    )
+    return service
+
+
+SUFFIX_TO_FORMAT = {
+    ".ttl": "turtle",
+    ".turtle": "turtle",
+    ".jsonld": "json-ld",
+    ".json-ld": "json-ld",
+    ".json": "json-ld",
+}
+
+
+def final_dump(args: argparse.Namespace, store: RDFStoreAccess):
+    if args.dump is None:
+        log.debug("no dump expected")
+        return  # nothing to do
+    # else
+    format = "turtle"
+    outgraph = Graph()
+    alltriples = store.all_triples()
+    # NOTE alternatively pass Graph() as arg
+    if not alltriples:
+        log.debug("nothing to dump")
+        return
+    # else
+    for triple in alltriples:
+        outgraph.add(triple)
+
+    if args.dump == "-":
+        log.debug("dump to stdout")
+        ser: str = outgraph.serialize(format=format)
+        print(ser)
+    else:
+        # derive format from file extension
+        log.debug(f"dump to file {args.dump}")
+        dest = Path(args.dump[0])
+        format = SUFFIX_TO_FORMAT.get(dest.suffix, format)
+        # then save there
+        outgraph.serialize(destination=dest, format=format)
+
+
+def main(*cli_args):
+    # parse cli args
+    args: argparse.Namespace = get_arg_parser().parse_args(cli_args)
+    log.debug(f"cli called with {args=}")
+    # enable logging
+    enable_logging(args)
+    # build the core service
+    service: TravHarv = make_service(args)
+    # load the store initially
+    init_load(args, service.target_store)
+    # do what needs to be done
+    service.process()
+    # dump the output
+    final_dump(args, service.target_store)
 
 
 if __name__ == "__main__":
-    main()
+    # getting the cli_args here and passing them to main
+    # this make the main() testable without shell subprocess
+    main(sys.argv[1:])

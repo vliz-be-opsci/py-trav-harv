@@ -2,16 +2,13 @@ import logging
 import os
 import re
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta
 from typing import Any
 
 import yaml
 from rdflib.plugins.sparql.parser import parseQuery
 
-from travharv.common import graph_name_to_uri
-from travharv.store import TargetStoreAccess as RDFStoreAccess
+from travharv.store import RDFStoreAccess
 
-# log = logging.getLogger("travharv")
 log = logging.getLogger(__name__)
 
 
@@ -332,10 +329,16 @@ class TravHarvConfigBuilder:
                 log.exception(exc)
 
     def _makeTravHarvConfigPartFromDict(
-        self, dict_object, name_config: str = "default"
+        self,
+        dict_object,
+        name_config: str = "default",
+        # TODO reconsider this "default" for name_config - not self-explaining
     ):
         log.debug("Making TravHarvConfig from dict for {}".format(name_config))
         # make it so that the assertions are always checked for lowercase
+        # TODO - apply this as a general rule on the level of the yml load
+        #  thus ensuring that it applies across the board
+        #  and that users know the yml keys are in fact ignoring case
         dict_object = {k.lower(): v for k, v in dict_object.items()}
         assert (
             "snooze-till-graph-age-minutes" in dict_object
@@ -346,7 +349,7 @@ class TravHarvConfigBuilder:
         # Add more assertions as needed...
         try:
             # function here to check if the snooze-till-graph-age-minutes
-            # i older then the last modified date of the admin graph
+            # if older then the last modified date of the admin graph
             # if it is older then the last modified date
             # of the admin graph then we can continue
             # if it is not older then the last modified date
@@ -399,12 +402,6 @@ class TravHarvConfigBuilder:
                 name_config, snooze_time
             )
         )
-        log.debug(graph_name_to_uri(name_config))
-        return (
-            False
-            if not self._rdf_store_access
-            else self._rdf_store_access.lastmod_for_context(
-                graph_name_to_uri(name_config)
-            )
-            < datetime.now() - timedelta(minutes=snooze_time)
+        return not self._rdf_store_access.verify_max_age_of_config(
+            name_config, snooze_time
         )
