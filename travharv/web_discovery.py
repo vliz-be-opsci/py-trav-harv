@@ -58,7 +58,7 @@ class LODAwareHTMLParser(HTMLParser):
 
 
 def get_description_into_graph(
-    subject_url: str, *, graph: Graph = None, format="json-ld"
+    subject_url: str, *, graph: Graph = None, format="turtle"
 ):
     """
     Discover triples describing the subject (assumed at subject_url)
@@ -111,7 +111,9 @@ def get_description_into_graph(
 
         try:
             graph.parse(data=r.text, format=format, publicID=subject_url)
-            log.info(f"content of {subject_url} added to the triplestore")
+            log.info(
+                f"content of {subject_url} added to triplestore in {format=}"
+            )
         except Exception as e:
             log.warning(
                 f"failed to parse {subject_url} in {format=} error: {e}"
