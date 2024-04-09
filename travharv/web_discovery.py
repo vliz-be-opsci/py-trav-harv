@@ -101,13 +101,14 @@ def get_description_into_graph(
         or "application/json" in r.headers["Content-Type"]
     ):
         # parse the content directly into the triplestore
-        if (
+        if "text/turtle" in r.headers["Content-Type"]:
+            format = "turtle"
+        elif (
             "application/ld+json" in r.headers["Content-Type"]
             or "application/json" in r.headers["Content-Type"]
         ):
             format = "json-ld"
-        elif "text/turtle" in r.headers["Content-Type"]:
-            format = "turtle"
+
         try:
             graph.parse(data=r.text, format=format, publicID=subject_url)
             log.info(f"content of {subject_url} added to the triplestore")
