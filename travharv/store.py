@@ -119,6 +119,12 @@ class RDFStoreAccess(RDFStoreDecorator):
         :rtype: None
         """
         ng: str = self._nmapper.cfgname_to_ng(name_config)
+        # chekc if graph is not Nonetype or empty
+        if graph is None or len(graph) == 0:
+            log.warning(
+                f"Graph for {name_config} is empty. Nothing to insert."
+            )
+            return
         return self.insert(graph, ng)
 
     def verify_max_age_of_config(

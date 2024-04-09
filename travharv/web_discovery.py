@@ -91,7 +91,7 @@ def get_description_into_graph(
 
     # TODO actually use the format arg to select types and load them _all_
     #      (not just the server pick as below) see --> issue #31
-    headers = {"Accept": "application/ld+json, text/turtle"}
+    headers = {"Accept": "text/turtle ,application/ld+json"}
     r = session.get(subject_url, headers=headers)
 
     # check if the request was successful and it returned a json-ld or ttl file
