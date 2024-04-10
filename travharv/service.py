@@ -104,4 +104,3 @@ class TravHarv:
             log.error(e)
             log.exception(e)
             log.error("Error running dereference tasks")
-            raise e
