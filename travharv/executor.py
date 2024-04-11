@@ -46,20 +46,18 @@ class TravHarvExecutor:
                subjects given for each task per config"""
         )
         for task in self.tasks:
-            try:
-                log.debug("Task: {}".format(task))
-                # check if subject is a URI or a SPARQL query
-                log.debug("Info task: {}".format(task))
-                subject_definition = task.subject_definition
-                assertion_path_set = task.assert_path_set
-                log.debug("Subject definition: {}".format(subject_definition))
-                log.debug("Assertion path set: {}".format(assertion_path_set))
-                for subject in subject_definition():
-                    log.debug("Subject: {}".format(subject))
-                    for assertion_path in assertion_path_set():
-                        log.debug(
-                            "Assertion path: {}".format(str(assertion_path))
-                        )
+            log.debug("Task: {}".format(task))
+            # check if subject is a URI or a SPARQL query
+            log.debug("Info task: {}".format(task))
+            subject_definition = task.subject_definition
+            assertion_path_set = task.assert_path_set
+            log.debug("Subject definition: {}".format(subject_definition))
+            log.debug("Assertion path set: {}".format(assertion_path_set))
+            for subject in subject_definition():
+                log.debug("Subject: {}".format(subject))
+                for assertion_path in assertion_path_set():
+                    log.debug("Assertion path: {}".format(str(assertion_path)))
+                    try:
                         SubjPropPathAssertion(
                             subject,
                             assertion_path,
@@ -67,12 +65,12 @@ class TravHarvExecutor:
                             self.prefix_set,
                             self.config_filename,
                         )
-                log.debug("All paths asserted for task: {}".format(task))
-            except Exception as e:
-                log.error(
-                    "Error asserting all paths for task: {} - {}".format(
-                        task, e
-                    )
-                )
+                    except:
+                        log.error(
+                            "Error asserting path for subject: {}".format(
+                                subject
+                            )
+                        )
+            log.debug("All paths asserted for task: {}".format(task))
 
         log.debug("All paths asserted for all tasks")
