@@ -100,7 +100,10 @@ def enable_logging(args: argparse.Namespace):
     #   when logconf needs to be read
     import yaml
 
-    with open(args.logconf, "r") as yml_logconf:
+    print(f"args.logconf = {args.logconf}")
+    logconf_location = os.path.join(os.getcwd(), *args.logconf)
+
+    with open(logconf_location, "r") as yml_logconf:
         logging.config.dictConfig(
             yaml.load(yml_logconf, Loader=yaml.SafeLoader)
         )
@@ -165,6 +168,7 @@ def make_service(args) -> TravHarv:
     store_info: list = args.store or []
     log.debug(f"make service for target store {store_info}")
     config = args.config[0]
+    config = os.path.join(os.getcwd(), config)
     service: TravHarv = TravHarv(config, store_info)
     log.debug(
         f"target store core type {type(service.target_store._core).__name__}"
@@ -204,15 +208,17 @@ def final_dump(args: argparse.Namespace, store: RDFStoreAccess):
     else:
         # derive format from file extension
         log.debug(f"dump to file {args.dump}")
-        dest = Path(args.dump[0])
-        format = SUFFIX_TO_FORMAT.get(dest.suffix, format)
+        dest = args.dump[0]
+        output_path = os.path.join(os.getcwd(), dest)
+        format = SUFFIX_TO_FORMAT.get(dest.split(".")[-1], format)
         # then save there
-        outgraph.serialize(destination=dest, format=format)
+        outgraph.serialize(destination=output_path, format=format)
 
 
 def main(*cli_args):
     # parse cli args
-    args: argparse.Namespace = get_arg_parser().parse_args(cli_args)
+    print(f"cli_args = {cli_args}")
+    args: argparse.Namespace = get_arg_parser().parse_args(*cli_args)
     log.debug(f"cli called with {args=}")
     # enable logging
     enable_logging(args)

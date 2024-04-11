@@ -397,11 +397,15 @@ class TravHarvConfigBuilder:
         return TravHarvConfig(travharvconfig)
 
     def _check_snooze(self, snooze_time, name_config):
-        log.debug(
-            "Checking if config {} is older then {} minutes".format(
+        try:
+            log.debug(
+                "Checking if config {} is older then {} minutes".format(
+                    name_config, snooze_time
+                )
+            )
+            return not self._rdf_store_access.verify_max_age_of_config(
                 name_config, snooze_time
             )
-        )
-        return not self._rdf_store_access.verify_max_age_of_config(
-            name_config, snooze_time
-        )
+        except Exception as e:
+            log.exception(e)
+            return True
