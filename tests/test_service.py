@@ -25,7 +25,6 @@ def test_travharv_fail(store_info_sets):
 def test_travharv_config_folder_fail(store_info_sets):
     config_folder = Path(__file__).parent / "config"
     for store_info in store_info_sets:
-
         travharv = TravHarv(
             config_folder,
             store_info,
