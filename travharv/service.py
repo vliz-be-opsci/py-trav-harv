@@ -1,6 +1,5 @@
 import logging
 import logging.config
-from pathlib import Path
 from typing import List, Optional
 
 from pyrdfstore import RDFStore, create_rdf_store

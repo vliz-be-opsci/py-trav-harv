@@ -253,7 +253,7 @@ class TravHarvConfigBuilder:
                 """Config folder is None,
                 using current working directory as config folder"""
             )
-        self.config_files_folder = config_folder
+        self.config_files_folder = Path(config_folder)
         self._rdf_store_access = rdf_store_access
         log.debug("TravHarvConfigBuilder initialized")
 
@@ -266,7 +266,7 @@ class TravHarvConfigBuilder:
         :return: A TravHarvConfig object.
         :rtype: TravHarvConfig
         """
-        config_file = Path.cwd() / self.config_files_folder / config_name
+        config_file = str(Path.cwd() / self.config_files_folder / config_name)
         dict_object = self._load_yml_to_dict(config_file)
         return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
 
@@ -285,7 +285,9 @@ class TravHarvConfigBuilder:
             )
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
-                self._makeTravHarvConfigPartFromDict(dict_object, config_file)
+                self._makeTravHarvConfigPartFromDict(
+                    dict_object, str(config_file)
+                )
             )
         return configs
 

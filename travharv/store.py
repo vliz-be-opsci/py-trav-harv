@@ -118,7 +118,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         :type name_config: str
         :rtype: None
         """
-        ng: str = self._nmapper.cfgname_to_ng(str(name_config))
+        ng: str = self._nmapper.cfgname_to_ng(name_config)
         # chekc if graph is not Nonetype or empty
         if graph is None or len(graph) == 0:
             log.warning(
@@ -128,7 +128,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         return self.insert(graph, ng)
 
     def last_modified_date(self, name_config: str):
-        ng: str = self._nmapper.cfgname_to_ng(str(name_config))
+        ng: str = self._nmapper.cfgname_to_ng(name_config)
         return self._core.lastmod_ts(ng)
 
     def verify_max_age_of_config(
@@ -146,7 +146,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         minutes in the argument, else False
         :rtype: bool
         """
-        ng: str = self._nmapper.cfgname_to_ng(str(name_config))
+        ng: str = self._nmapper.cfgname_to_ng(name_config)
         return self.verify_max_age(ng, age_minutes)
 
     @property
@@ -167,7 +167,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         :type name_config: str
         :rtype: None
         """
-        ng: str = self._nmapper.cfgname_to_ng(str(name_config))
+        ng: str = self._nmapper.cfgname_to_ng(name_config)
         return self.drop_graph(ng)
 
     def forget_graph_for_config(self, name_config: str) -> None:
@@ -180,5 +180,5 @@ class RDFStoreAccess(RDFStoreDecorator):
         :type name_config: str
         :rtype: None
         """
-        ng: str = self._nmapper.cfgname_to_ng(str(name_config))
+        ng: str = self._nmapper.cfgname_to_ng(name_config)
         return self.forget_graph(ng)
