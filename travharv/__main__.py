@@ -217,7 +217,7 @@ def final_dump(args: argparse.Namespace, store: RDFStoreAccess):
 def main(*cli_args):
     # parse cli args
     print(f"cli_args = {cli_args}")
-    args: argparse.Namespace = get_arg_parser().parse_args(*cli_args)
+    args: argparse.Namespace = get_arg_parser().parse_args(cli_args)
     log.debug(f"cli called with {args=}")
     # enable logging
     enable_logging(args)

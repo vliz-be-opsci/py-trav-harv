@@ -1,4 +1,4 @@
-snooze-till-graph-age-minutes: 1000000 # why-what-concequence-unit # configs is subfolder named travharv
+snooze-till-graph-age-minutes: 1000000
 prefix:
   ex: <https://example.org/whatever/>
   mr: <http://marineregions.org/ns/ontology#>
