@@ -122,7 +122,7 @@ class SubjPropPathAssertion:
         )
         self.rdf_store_access.insert_for_config(
             get_description_into_graph(self.subject),
-            str(self.config_name),
+            self.config_name,
         )
 
         # Implement method to assert a property path

@@ -256,7 +256,7 @@ class TravHarvConfigBuilder:
         self._rdf_store_access = rdf_store_access
         log.debug("TravHarvConfigBuilder initialized")
 
-    def build_from_config(self, config_name):
+    def build_from_config(self, config_name=str):
         """
         Build a TravHarvConfig from a given config file.
 
@@ -417,8 +417,11 @@ class TravHarvConfigBuilder:
                 if lastmod_file > lastmod_config.timestamp():
                     log.debug(
                         """Config file is newer then the last modified
-                        of the config in the admin graph"""
+                        of the config in the admin graph. Bypassing snooze."""
                     )
+                    # if the config file is newer then the last modified
+                    # of the config in the admin graph then we can bypass
+                    # the snooze and continue
                     return True
 
             log.debug(
