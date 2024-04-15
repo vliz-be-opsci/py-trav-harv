@@ -1,7 +1,6 @@
 import argparse
 import logging
 import logging.config
-import os
 import sys
 from pathlib import Path
 
@@ -24,7 +23,7 @@ def get_arg_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
-    DEFAULT_CONFIG_FOLDER = Path(os.getcwd()) / "config"
+    DEFAULT_CONFIG_FOLDER = Path.cwd() / "config"
 
     parser.add_argument(
         "-c",
@@ -101,7 +100,7 @@ def enable_logging(args: argparse.Namespace):
     import yaml
 
     print(f"args.logconf = {args.logconf}")
-    logconf_location = os.path.join(os.getcwd(), *args.logconf)
+    logconf_location = Path.cwd() / args.logconf[0]
 
     with open(logconf_location, "r") as yml_logconf:
         logging.config.dictConfig(
@@ -168,7 +167,7 @@ def make_service(args) -> TravHarv:
     store_info: list = args.store or []
     log.debug(f"make service for target store {store_info}")
     config = args.config[0]
-    config = os.path.join(os.getcwd(), config)
+    config = Path.cwd() / config
     service: TravHarv = TravHarv(config, store_info)
     log.debug(
         f"target store core type {type(service.target_store._core).__name__}"
@@ -209,7 +208,7 @@ def final_dump(args: argparse.Namespace, store: RDFStoreAccess):
         # derive format from file extension
         log.debug(f"dump to file {args.dump}")
         dest = args.dump[0]
-        output_path = os.path.join(os.getcwd(), dest)
+        output_path = Path.cwd() / dest
         format = SUFFIX_TO_FORMAT.get(dest.split(".")[-1], format)
         # then save there
         outgraph.serialize(destination=output_path, format=format)

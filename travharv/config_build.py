@@ -1,8 +1,8 @@
 import logging
-import os
 import pathlib
 import re
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -248,7 +248,7 @@ class TravHarvConfigBuilder:
         :rtype: TravHarvConfigBuilder
         """
         if configFolder is None:
-            configFolder = os.path.join(os.getcwd(), "config")
+            configFolder = Path.cwd() / "config"
             log.warning(
                 """Config folder is None,
                 using current working directory as config folder"""
@@ -266,7 +266,7 @@ class TravHarvConfigBuilder:
         :return: A TravHarvConfig object.
         :rtype: TravHarvConfig
         """
-        config_file = os.path.join(self.config_files_folder, config_name)
+        config_file = Path.cwd() / self.config_files_folder / config_name
         dict_object = self._load_yml_to_dict(config_file)
         return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
 
@@ -280,8 +280,8 @@ class TravHarvConfigBuilder:
         config_files = self._files_folder()
         configs = []
         for config_file in config_files:
-            path_config_file = os.path.join(
-                self.config_files_folder, config_file
+            path_config_file = (
+                Path.cwd() / self.config_files_folder / config_file
             )
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
@@ -317,9 +317,9 @@ class TravHarvConfigBuilder:
 
     def _files_folder(self):
         return [
-            f
-            for f in os.listdir(self.config_files_folder)
-            if f.endswith((".yml", ".yaml"))
+            f.name
+            for f in Path(self.config_files_folder).iterdir()
+            if f.name.endswith((".yml", ".yaml")) and f.is_file()
         ]
 
     def _load_yml_to_dict(self, file):
