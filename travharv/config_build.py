@@ -416,9 +416,9 @@ class TravHarvConfigBuilder:
 
             lastmod_config = self._rdf_store_access.lastmod_ts_for_config(
                 name_config
-            ).timestamp()
-            if lastmod_config is not None:
-                if lastmod_file > lastmod_config:
+            )
+            if lastmod_config.timestamp() is not None:
+                if lastmod_file > lastmod_config.timestamp():
                     log.debug(
                         """Config file is newer then the last modified
                         of the config in the admin graph"""
