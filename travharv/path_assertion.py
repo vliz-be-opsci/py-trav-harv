@@ -116,9 +116,13 @@ class SubjPropPathAssertion:
         ):
             self._harvest_and_surface()
             return
+        log.debug(
+            f"""TODO check config_name to be str now is:
+            {type(self.config_name).__name__}."""
+        )
         self.rdf_store_access.insert_for_config(
             get_description_into_graph(self.subject),
-            self.config_name,
+            str(self.config_name),
         )
 
         # Implement method to assert a property path

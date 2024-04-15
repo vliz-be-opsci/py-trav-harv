@@ -1,5 +1,6 @@
 import logging
 import os
+import pathlib
 import re
 from abc import ABC, abstractmethod
 from typing import Any
@@ -398,6 +399,36 @@ class TravHarvConfigBuilder:
 
     def _check_snooze(self, snooze_time, name_config):
         try:
+
+            # First get the lastmod_ts of the named graph
+            # if there is one and check if that one is older
+            # then the lastmod of the config file
+            config_lastmod_file = (
+                pathlib.Path(self.config_files_folder) / name_config
+            )
+            lastmod_file = config_lastmod_file.stat().st_mtime
+
+            log.debug(
+                f"""Last modified date of config file:
+                    {name_config}: {lastmod_file}
+                """
+            )
+
+            lastmod_config = self._rdf_store_access.last_modified_date(
+                name_config
+            ).timestamp()
+            if lastmod_config is not None:
+                if lastmod_file > lastmod_config:
+                    log.debug(
+                        """Config file is newer then the last modified
+                        of the config in the admin graph"""
+                    )
+                    return True
+
+            log.debug(
+                f"""Last modified of config in admin graph:
+                {name_config}: {lastmod_config}"""
+            )
             log.debug(
                 "Checking if config {} is older then {} minutes".format(
                     name_config, snooze_time
