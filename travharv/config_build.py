@@ -1,8 +1,8 @@
 import logging
-import os
 import pathlib
 import re
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -235,25 +235,25 @@ class TravHarvConfig:
 
 class TravHarvConfigBuilder:
     def __init__(
-        self, rdf_store_access: RDFStoreAccess, configFolder: str = ""
+        self, rdf_store_access: RDFStoreAccess, config_folder: str = ""
     ):
         """
         Initialize the TravHarvConfigBuilder.
 
         :param rdf_store_access: The RDF store access.
         :type rdf_store_access: RDFStoreAccess
-        :param configFolder: The folder containing the config files.
-        :type configFolder: str
+        :param config_folder: The folder containing the config files.
+        :type config_folder: str
         :return: A TravHarvConfigBuilder object.
         :rtype: TravHarvConfigBuilder
         """
-        if configFolder is None:
-            configFolder = os.path.join(os.getcwd(), "config")
+        if config_folder is None:
+            config_folder = Path.cwd() / "config"
             log.warning(
                 """Config folder is None,
                 using current working directory as config folder"""
             )
-        self.config_files_folder = configFolder
+        self.config_files_folder = Path(config_folder)
         self._rdf_store_access = rdf_store_access
         log.debug("TravHarvConfigBuilder initialized")
 
@@ -266,7 +266,7 @@ class TravHarvConfigBuilder:
         :return: A TravHarvConfig object.
         :rtype: TravHarvConfig
         """
-        config_file = os.path.join(self.config_files_folder, config_name)
+        config_file = str(Path.cwd() / self.config_files_folder / config_name)
         dict_object = self._load_yml_to_dict(config_file)
         return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
 
@@ -280,12 +280,14 @@ class TravHarvConfigBuilder:
         config_files = self._files_folder()
         configs = []
         for config_file in config_files:
-            path_config_file = os.path.join(
-                self.config_files_folder, config_file
+            path_config_file = (
+                Path.cwd() / self.config_files_folder / config_file
             )
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
-                self._makeTravHarvConfigPartFromDict(dict_object, config_file)
+                self._makeTravHarvConfigPartFromDict(
+                    dict_object, str(config_file)
+                )
             )
         return configs
 
@@ -317,9 +319,9 @@ class TravHarvConfigBuilder:
 
     def _files_folder(self):
         return [
-            f
-            for f in os.listdir(self.config_files_folder)
-            if f.endswith((".yml", ".yaml"))
+            f.name
+            for f in Path(self.config_files_folder).rglob("*")
+            if f.is_file() and f.name.endswith((".yml", ".yaml"))
         ]
 
     def _load_yml_to_dict(self, file):
@@ -399,7 +401,6 @@ class TravHarvConfigBuilder:
 
     def _check_snooze(self, snooze_time, name_config):
         try:
-
             # First get the lastmod_ts of the named graph
             # if there is one and check if that one is older
             # then the lastmod of the config file
