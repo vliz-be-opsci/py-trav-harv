@@ -1,5 +1,4 @@
 import logging
-import pathlib
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -285,9 +284,7 @@ class TravHarvConfigBuilder:
             )
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
-                self._makeTravHarvConfigPartFromDict(
-                    dict_object, str(config_file)
-                )
+                self._makeTravHarvConfigPartFromDict(dict_object, config_file)
             )
         return configs
 
@@ -404,9 +401,7 @@ class TravHarvConfigBuilder:
             # First get the lastmod_ts of the named graph
             # if there is one and check if that one is older
             # then the lastmod of the config file
-            config_lastmod_file = (
-                pathlib.Path(self.config_files_folder) / name_config
-            )
+            config_lastmod_file = Path(self.config_files_folder) / name_config
             lastmod_file = config_lastmod_file.stat().st_mtime
 
             log.debug(
