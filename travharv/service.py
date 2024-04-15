@@ -36,7 +36,7 @@ class TravHarv:
         """
 
         log.debug(f"config for travharv service set to {config=}")
-        self.config = Path(config)
+        self.config = config
 
         log.debug(f"creating core store with {target_store_info=}")
         core_store: RDFStore = create_rdf_store(*target_store_info)
