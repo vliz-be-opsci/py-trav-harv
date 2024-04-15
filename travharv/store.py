@@ -1,4 +1,5 @@
 import logging
+from datetime import timezone
 from pathlib import Path
 from typing import Iterable, List
 from urllib.parse import quote, unquote
@@ -11,6 +12,7 @@ from rdflib.plugins.sparql.processor import Result
 
 log = logging.getLogger(__name__)
 
+UTC_tz = timezone.utc
 
 # The syntax-builder for travharv
 QUERY_BUILDER: J2RDFSyntaxBuilder = J2RDFSyntaxBuilder(
@@ -127,9 +129,11 @@ class RDFStoreAccess(RDFStoreDecorator):
             return
         return self.insert(graph, ng)
 
-    def last_modified_date(self, name_config: str):
+
+    def lastmod_ts_for_config(self, name_config: str):
         ng: str = self._nmapper.cfgname_to_ng(name_config)
-        return self._core.lastmod_ts(ng)
+        return self.lastmod_ts(ng).astimezone(UTC_tz)
+
 
     def verify_max_age_of_config(
         self, name_config: str, age_minutes: int
