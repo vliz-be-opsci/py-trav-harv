@@ -127,9 +127,9 @@ class RDFStoreAccess(RDFStoreDecorator):
             return
         return self.insert(graph, ng)
 
-    def last_modified_date(self, name_config: str):
+    def lastmod_ts_for_config(self, name_config: str):
         ng: str = self._nmapper.cfgname_to_ng(str(name_config))
-        return self._core.lastmod_ts(ng)
+        return self.lastmod_ts(ng)
 
     def verify_max_age_of_config(
         self, name_config: str, age_minutes: int

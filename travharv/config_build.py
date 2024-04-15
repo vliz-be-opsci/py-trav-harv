@@ -414,7 +414,7 @@ class TravHarvConfigBuilder:
                 """
             )
 
-            lastmod_config = self._rdf_store_access.last_modified_date(
+            lastmod_config = self._rdf_store_access.lastmod_ts_for_config(
                 name_config
             ).timestamp()
             if lastmod_config is not None:
