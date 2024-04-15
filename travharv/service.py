@@ -53,6 +53,7 @@ class TravHarv:
                 self.target_store, self.config_folder
             )
         self.travharvexecutor = None
+        self.error_occurred = False
 
     def process(self):
         try:
@@ -104,3 +105,4 @@ class TravHarv:
             log.error(e)
             log.exception(e)
             log.error("Error running dereference tasks")
+            self.error_occurred = True
