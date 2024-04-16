@@ -1,5 +1,6 @@
 import logging
 import logging.config
+from pathlib import Path
 from typing import List, Optional
 
 from pyrdfstore import RDFStore, create_rdf_store
@@ -41,7 +42,7 @@ class TravHarv:
         core_store: RDFStore = create_rdf_store(*target_store_info)
         self.target_store = RDFStoreAccess(core_store)
 
-        if self.config.is_dir():
+        if Path(self.config).is_dir():
             self.travharv_config_builder = TravHarvConfigBuilder(
                 self.target_store, self.config
             )
@@ -60,7 +61,7 @@ class TravHarv:
             trav_harv_config: Optional[TravHarvConfig] = None
             # if self.config is a path to a folder then
             # we will run all configurations in the folder
-            if self.config.is_dir():
+            if Path(self.config).is_dir():
                 log.debug("running all configurations")
                 self.travHarvConfigList = (
                     self.travharv_config_builder.build_from_folder()
