@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import os
 from typing import List, Optional
 
 from pyrdfstore import RDFStore, create_rdf_store
@@ -42,17 +41,18 @@ class TravHarv:
         core_store: RDFStore = create_rdf_store(*target_store_info)
         self.target_store = RDFStoreAccess(core_store)
 
-        if os.path.isdir(self.config):
+        if self.config.is_dir():
             self.travharv_config_builder = TravHarvConfigBuilder(
                 self.target_store, self.config
             )
         else:
             # take the parent of the config file as the config folder
-            self.config_folder = os.path.dirname(self.config)
+            self.config_folder = self.config.parent
             self.travharv_config_builder = TravHarvConfigBuilder(
                 self.target_store, self.config_folder
             )
         self.travharvexecutor = None
+        self.error_occurred = False
 
     def process(self):
         try:
@@ -60,7 +60,7 @@ class TravHarv:
             trav_harv_config: Optional[TravHarvConfig] = None
             # if self.config is a path to a folder then
             # we will run all configurations in the folder
-            if os.path.isdir(self.config):
+            if self.config.is_dir():
                 log.debug("running all configurations")
                 self.travHarvConfigList = (
                     self.travharv_config_builder.build_from_folder()
@@ -104,3 +104,4 @@ class TravHarv:
             log.error(e)
             log.exception(e)
             log.error("Error running dereference tasks")
+            self.error_occurred = True
