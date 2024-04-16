@@ -1,5 +1,4 @@
 import logging
-from datetime import timezone
 from pathlib import Path
 from typing import Iterable, List
 from urllib.parse import quote, unquote
@@ -12,7 +11,6 @@ from rdflib.plugins.sparql.processor import Result
 
 log = logging.getLogger(__name__)
 
-UTC_tz = timezone.utc
 
 # The syntax-builder for travharv
 QUERY_BUILDER: J2RDFSyntaxBuilder = J2RDFSyntaxBuilder(

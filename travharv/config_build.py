@@ -247,7 +247,7 @@ class TravHarvConfigBuilder:
         :rtype: TravHarvConfigBuilder
         """
         if config_folder is None:
-            config_folder = Path.cwd() / "config"
+            config_folder = Path("config")
             log.warning(
                 """Config folder is None,
                 using current working directory as config folder"""
@@ -413,7 +413,7 @@ class TravHarvConfigBuilder:
             lastmod_config = self._rdf_store_access.lastmod_ts_for_config(
                 name_config
             )
-            if lastmod_config.timestamp() is not None:
+            if lastmod_config is not None:
                 if lastmod_file > lastmod_config.timestamp():
                     log.debug(
                         """Config file is newer then the last modified
