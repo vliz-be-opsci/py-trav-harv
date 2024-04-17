@@ -1,11 +1,12 @@
 import logging
 
-import rdflib
-import validators
-
 from travharv.config_build import AssertPath
 from travharv.store import RDFStoreAccess
 from travharv.web_discovery import get_description_into_graph
+
+# import rdflib
+# import validators
+
 
 log = logging.getLogger(__name__)
 
@@ -36,8 +37,10 @@ class SubjPropPathAssertion:
         :param config_name: str
 
         """
-        log.debug(subject)
-        self.subject = self._subject_str_check(subject)
+        log.debug(f"Subject to assert path for: {subject}")
+        log.debug(f"type of subject: {type(subject).__name__}")
+        # self.subject = self._subject_str_check(subject)
+        self.subject = subject
         if not self.subject:
             log.warning(
                 "Subject is not a valid URIRef or str: {}".format(subject)
@@ -52,11 +55,8 @@ class SubjPropPathAssertion:
         self.config_name = config_name
         self.assert_path()
 
+    """
     def _subject_str_check(self, subject):
-        """
-        Check if subject is a strict str
-        , if subject is rdflib.term.URIRef , convert to str
-        """
         if type(subject) is str and validators.url(subject):
             log.debug("Subject is a valid URIRef: {}".format(subject))
             return subject
@@ -84,6 +84,7 @@ class SubjPropPathAssertion:
         if not validators.url(str(subject)):
             log.warning("Subject is not a URIRef or a str: {}".format(subject))
             return None
+    """
 
     def assert_path(self):
         """
