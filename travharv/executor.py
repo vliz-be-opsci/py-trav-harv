@@ -50,8 +50,15 @@ class TravHarvExecutor:
             # check if subject is a URI or a SPARQL query
             log.debug(f"Info task: {task}")
             subject_definition = task.subject_definition
+            # if type of subject_definition is str, then it is a SPARQL query
+            if isinstance(subject_definition.subjects, str):
+                subject_definition.subjects = (
+                    self.rdf_store_access.select_subjects(
+                        subject_definition.subjects
+                    )
+                )
             assertion_path_set = task.assert_path_set
-            log.debug(f"Subject definition: {subject_definition}")
+            log.debug(f"Subject definition: {subject_definition.subjects}")
             log.debug(f"Assertion path set: {assertion_path_set}")
             for subject in subject_definition():
                 log.debug(f"Subject: {subject}")

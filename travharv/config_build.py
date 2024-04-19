@@ -2,7 +2,7 @@ import logging
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Union
 
 import yaml
 from rdflib.plugins.sparql.parser import parseQuery
@@ -43,11 +43,11 @@ class TravHarvTask:
 
 class SubjectDefinition(ABC):
     @abstractmethod
-    def listSubjects(self) -> list[str]:
+    def listSubjects(self) -> Union[List[str], str]:
         pass
 
     @abstractmethod
-    def __call__(self, *args: Any, **kwds: Any) -> list[str]:
+    def __call__(self, *args: Any, **kwds: Any) -> Union[List[str], str]:
         pass
 
 
@@ -84,7 +84,7 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     A subject definition that is a SPARQL query
     """
 
-    def __init__(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
+    def __init__(self, SPARQL=str):
         """
         Initialise the SPARQL subject definition
 
@@ -94,13 +94,13 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         :type targetstore: TargetStore
         """
         log.debug("init SPARQL subjects")
-        self.subjects = self._get_subjects(SPARQL, rdf_store_access)
+        self.subjects = SPARQL
         log.debug(self.subjects)
 
-    def __call__(self, *args: Any, **kwds: Any) -> list[str]:
+    def __call__(self, *args: Any, **kwds: Any) -> str:
         return self.subjects
 
-    def listSubjects(self) -> list[str]:
+    def listSubjects(self) -> str:
         """
         Get the subjects
 
@@ -108,10 +108,6 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         :rtype: list[str]
         """
         return self.subjects
-
-    def _get_subjects(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
-        log.debug("getting subjects")
-        return rdf_store_access.select_subjects(SPARQL)
 
 
 class AssertPathSet:
@@ -381,8 +377,7 @@ class TravHarvConfigBuilder:
                             )
                             if "literal" in assert_task["subjects"]
                             else SPARQLSubjectDefinition(
-                                assert_task["subjects"]["SPARQL"],
-                                self._rdf_store_access,
+                                assert_task["subjects"]["SPARQL"]
                             )
                         ),
                         "assert_path_set": AssertPathSet(
