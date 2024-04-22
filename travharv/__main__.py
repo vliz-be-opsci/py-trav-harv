@@ -234,4 +234,4 @@ def main(*cli_args):
 if __name__ == "__main__":
     # getting the cli_args here and passing them to main
     # this make the main() testable without shell subprocess
-    main(sys.argv[1:])
+    main(*sys.argv[1:])
