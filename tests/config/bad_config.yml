@@ -9,7 +9,6 @@ assert:
       - "mr:isPartOf"
   - subjects:
       SPARQL: >
-        PREFIX mr: <http://marineregions.org/ns/ontology#>
         SELECT ?s
         WHERE {
           [] mr:isPartOf ?s .

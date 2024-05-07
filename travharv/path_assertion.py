@@ -2,6 +2,7 @@ import logging
 
 import rdflib
 import validators
+from rdflib.namespace import NamespaceManager
 
 from travharv.config_build import AssertPath
 from travharv.store import RDFStoreAccess
@@ -21,7 +22,7 @@ class SubjPropPathAssertion:
         subject: str,
         assertion_path: AssertPath,
         rdf_store_access: RDFStoreAccess,
-        prefix_set,
+        NSM: NamespaceManager,
         config_name: str,
     ):
         """
@@ -32,7 +33,7 @@ class SubjPropPathAssertion:
         :param subject: str
         :param assertion_path: AssertPath
         :param rdf_store_access: RDFStoreAccess
-        :param prefix_set: dict
+        :param NSM: dict
         :param config_name: str
 
         """
@@ -48,7 +49,7 @@ class SubjPropPathAssertion:
         self.rdf_store_access = rdf_store_access
         self.previous_bounce_depth = 0
         self.max_depth = self.assertion_path.get_max_size()
-        self.prefix_set = prefix_set
+        self.NSM = NSM
         self.config_name = config_name
         self.assert_path()
 
@@ -112,7 +113,7 @@ class SubjPropPathAssertion:
             self.assertion_path.get_path_for_depth(
                 self.max_depth - self.current_depth
             ),
-            self.prefix_set,
+            self.NSM,
         ):
             self._harvest_and_surface()
             return

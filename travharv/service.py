@@ -77,7 +77,7 @@ class TravHarv:
 
                     self.travharvexecutor = TravHarvExecutor(
                         trav_harv_config.configname,
-                        trav_harv_config.prefixset,
+                        trav_harv_config.NSM,
                         trav_harv_config.tasks,
                         self.target_store,
                     )
@@ -96,7 +96,7 @@ class TravHarv:
                     return
                 self.travharvexecutor = TravHarvExecutor(
                     trav_harv_config.configname,
-                    trav_harv_config.prefixset,
+                    trav_harv_config.NSM,
                     trav_harv_config.tasks,
                     self.target_store,
                 )
