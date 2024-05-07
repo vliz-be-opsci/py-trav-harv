@@ -105,7 +105,7 @@ def get_description_into_graph(
             try:
                 graph.parse(data=r.text, format=format, publicID=subject_url)
                 log.info(
-                    f"content of {subject_url} added to triplestore in {format=}"
+                    f"content of{subject_url} added to triplestore in{format=}"
                 )
             except Exception as e:
                 log.warning(

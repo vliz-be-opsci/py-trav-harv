@@ -1,14 +1,14 @@
 import logging
 from pathlib import Path
 from typing import Iterable, List
-from urllib.parse import quote, unquote
-from travharv.helper import resolve_sparql
 
 from pyrdfj2 import J2RDFSyntaxBuilder
-from pyrdfstore import RDFStore, GraphNameMapper
+from pyrdfstore import GraphNameMapper, RDFStore
 from pyrdfstore.store import RDFStoreDecorator
 from rdflib import Graph
 from rdflib.plugins.sparql.processor import Result
+
+from travharv.helper import resolve_sparql
 
 log = logging.getLogger(__name__)
 
