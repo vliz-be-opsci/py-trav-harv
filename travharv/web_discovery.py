@@ -89,37 +89,30 @@ def get_description_into_graph(
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
-    # TODO actually use the format arg to select types and load them _all_
-    #      (not just the server pick as below) see --> issue #31
-    headers = {"Accept": "text/turtle ,application/ld+json"}
-    r = session.get(subject_url, headers=headers)
+    formats = ["text/turtle", "application/ld+json"]
+    triples_found = False
 
-    # check if the request was successful and it returned a json-ld or ttl file
-    if r.status_code == 200 and (
-        "application/ld+json" in r.headers["Content-Type"]
-        or "text/turtle" in r.headers["Content-Type"]
-        or "application/json" in r.headers["Content-Type"]
-    ):
-        # parse the content directly into the triplestore
-        if "text/turtle" in r.headers["Content-Type"]:
-            format = "turtle"
-        elif (
+    for format in formats:
+        headers = {"Accept": format}
+        log.debug(f"requesting {subject_url} with {headers=}")
+        r = session.get(subject_url, headers=headers)
+        if r.status_code == 200 and (
             "application/ld+json" in r.headers["Content-Type"]
+            or "text/turtle" in r.headers["Content-Type"]
             or "application/json" in r.headers["Content-Type"]
         ):
-            format = "json-ld"
+            triples_found = True
+            try:
+                graph.parse(data=r.text, format=format, publicID=subject_url)
+                log.info(
+                    f"content of {subject_url} added to triplestore in {format=}"
+                )
+            except Exception as e:
+                log.warning(
+                    f"failed to parse {subject_url} in {format=} error: {e}"
+                )
 
-        try:
-            graph.parse(data=r.text, format=format, publicID=subject_url)
-            log.info(
-                f"content of {subject_url} added to triplestore in {format=}"
-            )
-        except Exception as e:
-            log.warning(
-                f"failed to parse {subject_url} in {format=} error: {e}"
-            )
-
-    else:
+    if not triples_found:
         # perform a check in the html to
         # see if there is any link to fair signposting
         # perform request to uri with accept header text/html
