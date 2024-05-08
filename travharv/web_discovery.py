@@ -1,3 +1,4 @@
+import cgi
 import logging
 from html.parser import HTMLParser
 from urllib.parse import urljoin
@@ -90,17 +91,20 @@ def get_description_into_graph(
     session.mount("https://", adapter)
 
     formats = ["text/turtle", "application/ld+json"]
+    ACCEPTABLE_MIMETYPES = {
+        "application/ld+json",
+        "text/turtle",
+        "application/json",
+    }
     triples_found = False
 
     for format in formats:
         headers = {"Accept": format}
         log.debug(f"requesting {subject_url} with {headers=}")
         r = session.get(subject_url, headers=headers)
-        if r.status_code == 200 and (
-            "application/ld+json" in r.headers["Content-Type"]
-            or "text/turtle" in r.headers["Content-Type"]
-            or "application/json" in r.headers["Content-Type"]
-        ):
+        mime_type, options = cgi.parse_header(r.headers["Content-Type"])
+
+        if r.status_code == 200 and bool(mime_type in ACCEPTABLE_MIMETYPES):
             triples_found = True
             try:
                 graph.parse(data=r.text, format=format, publicID=subject_url)
