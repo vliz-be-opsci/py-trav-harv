@@ -3,6 +3,7 @@ import logging
 from travharv.config_build import TravHarvConfig
 from travharv.path_assertion import SubjPropPathAssertion
 from travharv.store import RDFStoreAccess
+from travharv.execution_report import ExecutionReport, TaskExecutionReport
 
 log = logging.getLogger(__name__)
 
@@ -32,6 +33,9 @@ class TravHarvExecutor:
         self.NSM = NSM
         self.tasks = tasks
         self.rdf_store_access = rdf_store_access
+        self.execution_report = ExecutionReport(
+            rdf_store_access, config_filename
+        )
         log.debug("TravHarvExecutor initialized")
         log.debug(f"Config filename: {self.config_filename}")
         log.debug(f"NSM set: {self.NSM}")
@@ -46,6 +50,10 @@ class TravHarvExecutor:
                subjects given for each task per config"""
         )
         for task in self.tasks:
+            task_execution_report = TaskExecutionReport(
+                self.execution_report.rdf_store_access
+            )
+            self.execution_report.report_to_store(task_execution_report)
             log.debug(f"Task: {task}")
             # check if subject is a URI or a SPARQL query
             log.debug(f"Info task: {task}")
@@ -66,6 +74,10 @@ class TravHarvExecutor:
                             self.rdf_store_access,
                             self.NSM,
                             self.config_filename,
+                            task_execution_report,
+                        )
+                        self.execution_report.report_to_store(
+                            task_execution_report
                         )
                     except Exception as e:
                         log.error(
@@ -75,6 +87,9 @@ class TravHarvExecutor:
                             """
                         )
                         log.exception(e)
+                        self.execution_report.report_to_store(
+                            task_execution_report
+                        )
             log.debug(f"All paths asserted for task: {task}")
 
         log.debug("All paths asserted for all tasks")

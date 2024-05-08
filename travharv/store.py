@@ -42,6 +42,16 @@ class RDFStoreAccess(RDFStoreDecorator):
         log.debug(f"length list_of_subjects: {len(list_of_subjects)}")
         return list_of_subjects
 
+    def select_subjects_for_ppath(self, subject, property_path, NSM):
+        pre_sparql = self._qryBuilder.build_syntax(
+            "trajectory.sparql",
+            subject=subject,
+            property_trajectory=property_path,
+        )
+        sparql = resolve_sparql(pre_sparql, NSM)
+        log.debug(f"{sparql=}")
+        return self.select_subjects(sparql)
+
     def verify_path(self, subject, property_path, NSM):
         pre_sparql = self._qryBuilder.build_syntax(
             "trajectory.sparql",

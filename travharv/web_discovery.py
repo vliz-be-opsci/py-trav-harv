@@ -5,8 +5,12 @@ from urllib.parse import urljoin
 
 import requests
 from rdflib import Graph
+from datetime import datetime
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+
+from travharv.store import RDFStoreAccess
+from travharv.execution_report import AssertionReport, TaskExecutionReport
 
 log = logging.getLogger(__name__)
 
@@ -59,7 +63,13 @@ class LODAwareHTMLParser(HTMLParser):
 
 
 def get_description_into_graph(
-    subject_url: str, *, graph: Graph = None, format="turtle"
+    subject_url: str,
+    store: RDFStoreAccess,
+    config_file: str,
+    assertion_report_info: dict,
+    task_execution_report: TaskExecutionReport,
+    format="turtle",
+    graph: Graph = None,
 ):
     """
     Discover triples describing the subject (assumed at subject_url)
@@ -73,7 +83,7 @@ def get_description_into_graph(
     :param format: indicating what format should be retrieved json-ld, turtle
     :type form: str
     :returns: the graph whith added discovered triples
-    :rtype: rdflib.Graph
+    :rtype: rdflib.Graph, dict
     """
 
     if graph is None:
@@ -111,10 +121,38 @@ def get_description_into_graph(
                 log.info(
                     f"content of{subject_url} added to triplestore in{format=}"
                 )
+                assertion_report_info["assertion_result"] = True
+                assertion_report_info["assertion_time"] = datetime.now()
+                assertion_report_info["triple_count"] = len(graph)
+                assertion_report_info["document_type"] = format
+                assertion_report_info["download_url"] = subject_url
             except Exception as e:
                 log.warning(
                     f"failed to parse {subject_url} in {format=} error: {e}"
                 )
+                assertion_report_info["assertion_result"] = False
+                assertion_report_info["assertion_time"] = datetime.now()
+                assertion_report_info["triple_count"] = 0
+                assertion_report_info["document_type"] = format
+                assertion_report_info["download_url"] = subject_url
+            finally:
+                # report the assertion execution report to the store
+                assertion_report = AssertionReport(
+                    subject_uri=subject_url,
+                    assertion_path=assertion_report_info["assertion_path"],
+                    assertion_result=assertion_report_info["assertion_result"],
+                    assertion_time=assertion_report_info["assertion_time"],
+                    id=assertion_report_info["id"],
+                    download_url=assertion_report_info["download_url"],
+                    rdf_store_access=store,
+                    triple_count=assertion_report_info["triple_count"],
+                    document_type=assertion_report_info["document_type"],
+                )
+                assertion_report.report_to_store()
+                task_execution_report.report_to_store(assertion_report)
+
+                # put graph into the store
+                store.insert_for_config(graph, config_file)
 
     if not triples_found:
         # perform a check in the html to
@@ -143,6 +181,7 @@ def get_description_into_graph(
                 # use this linked uri as the alternative for this subect
                 get_description_into_graph(alt_abs_url, graph=graph)
             for script in parser.scripts:
+                graph = Graph()
                 # parse the script and check if it is json-ld or turtle
                 # if so then add it to the triplestore
                 log.info(f"script: {script}")
@@ -155,6 +194,32 @@ def get_description_into_graph(
                     graph.parse(
                         data=content, format=cformat, publicID=subject_url
                     )
+
+                    store.insert_for_config(graph, config_file)
+
+                    assertion_report_info["assertion_result"] = True
+                    assertion_report_info["assertion_time"] = datetime.now()
+                    assertion_report_info["triple_count"] = len(graph)
+                    assertion_report_info["document_type"] = cformat
+                    assertion_report_info["download_url"] = subject_url
+
+                    assertion_report = AssertionReport(
+                        subject_uri=subject_url,
+                        assertion_path=assertion_report_info["assertion_path"],
+                        assertion_result=assertion_report_info[
+                            "assertion_result"
+                        ],
+                        assertion_time=assertion_report_info["assertion_time"],
+                        id=assertion_report_info["id"],
+                        download_url=assertion_report_info["download_url"],
+                        rdf_store_access=store,
+                        triple_count=assertion_report_info["triple_count"],
+                        document_type=assertion_report_info["document_type"],
+                    )
+
+                    assertion_report.report_to_store()
+                    task_execution_report.report_to_store(assertion_report)
+
             parser.close()
             return
         log.warning(
@@ -162,4 +227,25 @@ def get_description_into_graph(
             f"with status code {r.status_code} "
             f"and content type {r.headers['Content-Type']}"
         )
-    return graph
+        assertion_report_info["assertion_result"] = False
+        assertion_report_info["assertion_time"] = datetime.now()
+        assertion_report_info["triple_count"] = 0
+        assertion_report_info["document_type"] = None
+        assertion_report_info["download_url"] = subject_url
+
+        assertion_report = AssertionReport(
+            subject_uri=subject_url,
+            assertion_path=assertion_report_info["assertion_path"],
+            assertion_result=assertion_report_info["assertion_result"],
+            assertion_time=assertion_report_info["assertion_time"],
+            id=assertion_report_info["id"],
+            download_url=assertion_report_info["download_url"],
+            rdf_store_access=store,
+            triple_count=assertion_report_info["triple_count"],
+            document_type=assertion_report_info["document_type"],
+        )
+
+        assertion_report.report_to_store()
+        task_execution_report.report_to_store(assertion_report)
+
+    return
