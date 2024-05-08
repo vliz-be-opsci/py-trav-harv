@@ -1,3 +1,4 @@
+import cgi
 import logging
 from html.parser import HTMLParser
 from urllib.parse import urljoin
@@ -89,37 +90,33 @@ def get_description_into_graph(
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
-    # TODO actually use the format arg to select types and load them _all_
-    #      (not just the server pick as below) see --> issue #31
-    headers = {"Accept": "text/turtle ,application/ld+json"}
-    r = session.get(subject_url, headers=headers)
+    formats = ["text/turtle", "application/ld+json"]
+    ACCEPTABLE_MIMETYPES = {
+        "application/ld+json",
+        "text/turtle",
+        "application/json",
+    }
+    triples_found = False
 
-    # check if the request was successful and it returned a json-ld or ttl file
-    if r.status_code == 200 and (
-        "application/ld+json" in r.headers["Content-Type"]
-        or "text/turtle" in r.headers["Content-Type"]
-        or "application/json" in r.headers["Content-Type"]
-    ):
-        # parse the content directly into the triplestore
-        if "text/turtle" in r.headers["Content-Type"]:
-            format = "turtle"
-        elif (
-            "application/ld+json" in r.headers["Content-Type"]
-            or "application/json" in r.headers["Content-Type"]
-        ):
-            format = "json-ld"
+    for format in formats:
+        headers = {"Accept": format}
+        log.debug(f"requesting {subject_url} with {headers=}")
+        r = session.get(subject_url, headers=headers)
+        mime_type, options = cgi.parse_header(r.headers["Content-Type"])
 
-        try:
-            graph.parse(data=r.text, format=format, publicID=subject_url)
-            log.info(
-                f"content of {subject_url} added to triplestore in {format=}"
-            )
-        except Exception as e:
-            log.warning(
-                f"failed to parse {subject_url} in {format=} error: {e}"
-            )
+        if r.status_code == 200 and bool(mime_type in ACCEPTABLE_MIMETYPES):
+            triples_found = True
+            try:
+                graph.parse(data=r.text, format=format, publicID=subject_url)
+                log.info(
+                    f"content of{subject_url} added to triplestore in{format=}"
+                )
+            except Exception as e:
+                log.warning(
+                    f"failed to parse {subject_url} in {format=} error: {e}"
+                )
 
-    else:
+    if not triples_found:
         # perform a check in the html to
         # see if there is any link to fair signposting
         # perform request to uri with accept header text/html

@@ -2,7 +2,7 @@
 import pytest
 from conftest import TEST_CONFIG_FOLDER
 from util4tests import run_single_test
-from typing import Dict, List
+
 from travharv.config_build import (
     AssertPath,
     LiteralSubjectDefinition,

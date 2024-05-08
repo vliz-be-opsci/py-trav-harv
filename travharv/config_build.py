@@ -3,19 +3,12 @@ import re
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
-from travharv.helper import (
-    makeNSM,
-    resolve_uri,
-    resolve_literals,
-    resolve_sparql,
-    resolve_ppaths,
-)
-
-from rdflib.namespace import NamespaceManager
 
 import yaml
+from rdflib.namespace import NamespaceManager
 from rdflib.plugins.sparql.parser import parseQuery
 
+from travharv.helper import makeNSM, resolve_ppaths, resolve_sparql
 from travharv.store import RDFStoreAccess
 
 log = logging.getLogger(__name__)

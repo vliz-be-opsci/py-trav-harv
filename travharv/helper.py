@@ -1,8 +1,8 @@
-from typing import Dict, List
-import validators
 import re
-from re import Match
-from rdflib import Namespace, Graph, URIRef
+from typing import Dict, List
+
+from pyrdfstore.clean import check_valid_uri
+from rdflib import Graph, Namespace, URIRef
 from rdflib.namespace import NamespaceManager
 
 
@@ -18,10 +18,7 @@ def makeNSM(pfx_declarations: Dict[str, str]) -> Dict[str, Namespace]:
 
 
 def resolve_uri(uri: str, nsm: NamespaceManager) -> URIRef:
-    # TODO look into python library that can resolve URN's (urnparse was not good)
-    if uri.startswith("urn:"):
-        uri = uri.replace("urn:", "http://make.safe/")
-    return URIRef(uri) if validators.url(uri) else nsm.expand_curie(uri)
+    return URIRef(uri) if check_valid_uri(uri) else nsm.expand_curie(uri)
 
 
 def resolve_literals(
