@@ -1,9 +1,9 @@
 import logging
 
 from travharv.config_build import TravHarvConfig
+from travharv.execution_report import ExecutionReport, TaskExecutionReport
 from travharv.path_assertion import SubjPropPathAssertion
 from travharv.store import RDFStoreAccess
-from travharv.execution_report import ExecutionReport, TaskExecutionReport
 
 log = logging.getLogger(__name__)
 

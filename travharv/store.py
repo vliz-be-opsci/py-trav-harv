@@ -40,6 +40,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         # todo convert response into list of subjects
         list_of_subjects = [row[0] for row in result]
         log.debug(f"length list_of_subjects: {len(list_of_subjects)}")
+        log.debug(f"list_of_subjects: {list_of_subjects}")
         return list_of_subjects
 
     def select_subjects_for_ppath(self, subject, property_path, NSM):

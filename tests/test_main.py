@@ -10,7 +10,7 @@ from travharv.__main__ import main
 
 @pytest.mark.usefixtures("outpath", "store_info_sets")
 def test_main(outpath: Path, store_info_sets: tuple):
-    conf_path = TEST_CONFIG_FOLDER / "good_folder"
+    conf_path = TEST_CONFIG_FOLDER / "bad_folder"
     init_path = TEST_INPUT_FOLDER / "3293.jsonld"
 
     for n, store_info in enumerate(store_info_sets):

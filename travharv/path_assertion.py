@@ -1,18 +1,19 @@
 import logging
+from datetime import datetime
+from uuid import uuid4
 
 import rdflib
 import validators
 from rdflib.namespace import NamespaceManager
-from datetime import datetime
-from uuid import uuid4
 
 from travharv.config_build import AssertPath
-from travharv.store import RDFStoreAccess
-from travharv.web_discovery import get_description_into_graph
 from travharv.execution_report import (
-    TaskExecutionReport,
     AssertionReport,
+    GraphReport,
+    TaskExecutionReport,
 )
+from travharv.store import RDFStoreAccess
+from travharv.web_discovery import get_graph_for_format
 
 log = logging.getLogger(__name__)
 
@@ -58,13 +59,39 @@ class SubjPropPathAssertion:
         self.max_depth = self.assertion_path.get_max_size()
         self.NSM = NSM
         self.config_name = config_name
+        self.succesful_assertion_depth = 0
         self.task_execution_report = task_execution_report
         self.assertion_report_info = {
             "subject_uri": self.subject,
             "id": uuid4(),
         }
         self.bounced = False
+        self.graph_reports = []
         self.assert_path()
+
+        # based on the self.successfull assertion depth determine
+        # the property path that was successfull asserted
+        pp_for_report = self.assertion_path.get_path_for_depth(
+            self.max_depth - self.succesful_assertion_depth
+        )
+        assertion_result = False
+        message = f"Assertion failed, last path: {pp_for_report}"
+        if self.succesful_assertion_depth == self.max_depth:
+            assertion_result = True
+            message = "Assertion successful"
+
+        self.task_execution_report.report_to_store(
+            AssertionReport(
+                subject_uri=self.subject,
+                assertion_path=pp_for_report,
+                assertion_result=assertion_result,
+                assertion_time=datetime.now(),
+                id=self.assertion_report_info["id"],
+                rdf_store_access=self.rdf_store_access,
+                message=message,
+                graph_reports=self.graph_reports,
+            )
+        )
 
     def _subject_str_check(self, subject):
         """
@@ -107,39 +134,17 @@ class SubjPropPathAssertion:
         log.debug("Asserting a property path for a given subject")
         log.debug("Subject: {}".format(self.subject))
         # Implement method to assert a property path for a given subject
-        while self.current_depth < self.max_depth:
+        while self.current_depth <= self.max_depth:
             if (
-                self.current_depth > self.previous_bounce_depth
-                and self.previous_bounce_depth != 0
+                self.current_depth
+                >= (self.max_depth - self.previous_bounce_depth)
+                and self.bounced is True
             ):
-                self.assertion_report_info["assertion_path"] = (
-                    self.assertion_path.get_path_for_depth(
-                        self.max_depth - self.current_depth
-                    )
-                )
-                self.assertion_report_info["assertion_time"] = datetime.now()
-                self.assertion_report_info["assertion_result"] = False
-                assertion_report = AssertionReport(
-                    subject_uri=self.subject,
-                    assertion_path=self.assertion_report_info[
-                        "assertion_path"
-                    ],
-                    assertion_result=self.assertion_report_info[
-                        "assertion_result"
-                    ],
-                    assertion_time=self.assertion_report_info[
-                        "assertion_time"
-                    ],
-                    id=self.assertion_report_info["id"],
-                    download_url=None,
-                    rdf_store_access=self.rdf_store_access,
-                    triple_count=None,
-                    document_type=None,
-                )
-                self.task_execution_report.report_to_store(assertion_report)
-                assertion_report.report_to_store()
                 return
-
+            if self.current_depth == self.max_depth:
+                self._harvest_uri(self.subject)
+                self._surface()
+                return
             self._assert_at_depth()
             self._increase_depth()
 
@@ -166,44 +171,67 @@ class SubjPropPathAssertion:
             self.NSM,
         ):
             self._harvest_and_surface()
+            self.succesful_assertion_depth = self.current_depth
             return
 
-        log.debug(
-            f"""TODO check config_name to be str now is:
-            {type(self.config_name).__name__}."""
-        )
-        self.assertion_report_info["assertion_path"] = (
-            self.assertion_path.get_path_for_depth(
-                self.max_depth - self.current_depth
-            )
-        )
+    def _harvest_uri(self, uri):
+        """
+        Harvest a given uri
 
-        # if bounced then the download url should change to the subject so it can be harvested
-        if self.bounced:
-            log.debug(f"bounced_subject: {self.bounced_subject}")
-            self.bounced_subject = (
-                self.subject
-            )  # TODO this is not the correct bounced subject redo this logic so that this is the correct subject
-            # TODO find a way to check if all can be covered to until a full PP is dereferenced
+        :param uri: str
+        """
+        ACCEPTABLE_MIMETYPES = {
+            "application/ld+json",
+            "text/turtle",
+            "application/json",
+        }
+        # doubting if this is really needed
+        # here as a mimetype to get
 
-        get_description_into_graph(
-            subject_url=self.bounced_subject if self.bounced else self.subject,
-            store=self.rdf_store_access,
-            config_file=self.config_name,
-            assertion_report_info=self.assertion_report_info,
-            task_execution_report=self.task_execution_report,
-        )
+        log.debug("Beginning harvesting of URI: {}".format(uri))
 
-        # Implement method to assert a property path
-        # for a given subject at a given depth
+        for mimetype in ACCEPTABLE_MIMETYPES:
+            # do a get of the uri with the mimetype
+            graph = get_graph_for_format(uri, mimetype)
+            log.debug("Graph: {}".format(graph))
+            if graph is not None:
+                self.rdf_store_access.insert_for_config(
+                    graph, self.config_name
+                )
+
+                self.graph_reports.append(
+                    GraphReport(
+                        download_url=uri,
+                        document_type=mimetype,
+                        triple_count=len(graph),
+                        rdf_store_access=self.rdf_store_access,
+                    )
+                )
+
+            else:
+                log.debug(
+                    "{} for mimetype: {} did not return graph".format(
+                        uri, mimetype
+                    )
+                )
+                return
+        return
 
     def _increase_depth(self):
         """
         Increase the depth of the property path assertion.
         """
         log.debug("Increasing the depth of the property path assertion")
-        # Implement method to increase the depth of the property path assertion
         self.current_depth += 1
+
+    def _surface(self):
+        """
+        Surface back to depth 0.
+        """
+        log.debug("Surfacing back to depth 0")
+        self.previous_bounce_depth = self.current_depth
+        self.current_depth = 0
+        self.bounced = True
 
     def _harvest_and_surface(self):
         """
@@ -214,8 +242,16 @@ class SubjPropPathAssertion:
                backtracking to the previous depth"""
         )
 
-        # Implement method to harvest the property path
-        # and backtrack to the previous depth
-        self.previous_bounce_depth = self.current_depth
-        self.current_depth = 0
-        self.bounced = True
+        # get the uri to harvest by getting
+        # the first element of the path trajectory
+        uri = self.rdf_store_access.select_subjects_for_ppath(
+            self.subject,
+            self.assertion_path.get_path_for_depth(
+                self.max_depth - self.current_depth
+            ),
+            self.NSM,
+        )[0]
+
+        log.debug(f"uri: {self._subject_str_check(uri)}")
+        self._harvest_uri(self._subject_str_check(uri))
+        self._surface()

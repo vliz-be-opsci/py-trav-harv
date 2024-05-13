@@ -9,7 +9,7 @@ from rdflib import Graph
 
 from travharv import TravHarv
 from travharv.store import RDFStore, RDFStoreAccess
-from travharv.web_discovery import get_description_into_graph
+from travharv.web_discovery import get_graph_for_format
 
 log = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ def enable_logging(args: argparse.Namespace):
     log.info(f"Logging enabled according to config in {args.logconf}")
 
 
-def load_resource_into_graph(graph: Graph, resource: str):
+def load_resource_into_graph(graph: Graph, resource: str, format: str):
     """
     Insert a resource into a graph.
     """
@@ -118,7 +118,7 @@ def load_resource_into_graph(graph: Graph, resource: str):
     # check if resource is a URI
     if validators.url(resource):
         # get triples from the uri and add them
-        return graph + get_description_into_graph(resource)
+        return graph + get_graph_for_format(resource, format="text/turtle")
 
     # else
     resource_path: Path = Path(resource)
@@ -139,7 +139,8 @@ def load_resource_into_graph(graph: Graph, resource: str):
             if sub.is_dir():
                 continue  # no recursion on folders, glob **/* does already
             # else
-            load_resource_into_graph(graph, sub)
+            format = SUFFIX_TO_FORMAT.get(sub.suffix, "text/turtle")
+            load_resource_into_graph(graph, sub, format)
         return graph
 
     # if resource is neither a URI nor a file then raise an error
@@ -159,7 +160,7 @@ def init_load(args: argparse.Namespace, store: RDFStore):
     log.debug(f"loading initial context from {len(args.init)=} files")
     graph: Graph = Graph()
     for inputfile in args.init:
-        load_resource_into_graph(graph, inputfile)
+        load_resource_into_graph(graph, inputfile, format="text/turtle")
     store.insert(graph, "urn:travharv:context")
 
 
