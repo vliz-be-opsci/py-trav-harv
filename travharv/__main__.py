@@ -118,7 +118,8 @@ def load_resource_into_graph(graph: Graph, resource: str, format: str):
     # check if resource is a URI
     if validators.url(resource):
         # get triples from the uri and add them
-        return graph + get_graph_for_format(resource, format="text/turtle")
+        formats = ["text/turtle", "application/ld+json"]
+        return graph + get_graph_for_format(resource, formats=formats)
 
     # else
     resource_path: Path = Path(resource)

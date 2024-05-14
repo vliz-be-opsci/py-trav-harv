@@ -50,10 +50,7 @@ class TravHarvExecutor:
                subjects given for each task per config"""
         )
         for task in self.tasks:
-            task_execution_report = TaskExecutionReport(
-                self.execution_report.rdf_store_access
-            )
-            self.execution_report.report_to_store(task_execution_report)
+            task_execution_report = TaskExecutionReport()
             log.debug(f"Task: {task}")
             # check if subject is a URI or a SPARQL query
             log.debug(f"Info task: {task}")
@@ -76,9 +73,6 @@ class TravHarvExecutor:
                             self.config_filename,
                             task_execution_report,
                         )
-                        self.execution_report.report_to_store(
-                            task_execution_report
-                        )
                     except Exception as e:
                         log.error(
                             f"""
@@ -87,9 +81,7 @@ class TravHarvExecutor:
                             """
                         )
                         log.exception(e)
-                        self.execution_report.report_to_store(
-                            task_execution_report
-                        )
+            self.execution_report.add_task_report(task_execution_report)
             log.debug(f"All paths asserted for task: {task}")
 
         log.debug("All paths asserted for all tasks")

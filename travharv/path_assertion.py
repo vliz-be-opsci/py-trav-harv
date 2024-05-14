@@ -8,8 +8,8 @@ from rdflib.namespace import NamespaceManager
 
 from travharv.config_build import AssertPath
 from travharv.execution_report import (
-    AssertionReport,
-    GraphReport,
+    GraphAdditionReport,
+    PathAssertionReport,
     TaskExecutionReport,
 )
 from travharv.store import RDFStoreAccess
@@ -80,14 +80,13 @@ class SubjPropPathAssertion:
             assertion_result = True
             message = "Assertion successful"
 
-        self.task_execution_report.report_to_store(
-            AssertionReport(
+        self.task_execution_report.add_path_assertion_report(
+            PathAssertionReport(
                 subject_uri=self.subject,
                 assertion_path=pp_for_report,
                 assertion_result=assertion_result,
                 assertion_time=datetime.now(),
                 id=self.assertion_report_info["id"],
-                rdf_store_access=self.rdf_store_access,
                 message=message,
                 graph_reports=self.graph_reports,
             )
@@ -180,6 +179,7 @@ class SubjPropPathAssertion:
 
         :param uri: str
         """
+        # TODO in a next update this will be config driven
         ACCEPTABLE_MIMETYPES = {
             "application/ld+json",
             "text/turtle",
@@ -192,7 +192,7 @@ class SubjPropPathAssertion:
 
         for mimetype in ACCEPTABLE_MIMETYPES:
             # do a get of the uri with the mimetype
-            graph = get_graph_for_format(uri, mimetype)
+            graph = get_graph_for_format(uri, [mimetype])
             log.debug("Graph: {}".format(graph))
             if graph is not None:
                 self.rdf_store_access.insert_for_config(
@@ -200,11 +200,10 @@ class SubjPropPathAssertion:
                 )
 
                 self.graph_reports.append(
-                    GraphReport(
+                    GraphAdditionReport(
                         download_url=uri,
                         document_type=mimetype,
                         triple_count=len(graph),
-                        rdf_store_access=self.rdf_store_access,
                     )
                 )
 

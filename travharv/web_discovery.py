@@ -58,10 +58,7 @@ class LODAwareHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def get_graph_for_format(
-    subject_url: str,
-    format: str,
-):
+def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
     """
     Discover triples describing the subject (assumed at subject_url)
     and add them to the graph
@@ -74,10 +71,10 @@ def get_graph_for_format(
     :param format: indicating what format should be retrieved json-ld, turtle
     :type form: str
     :returns: the graph whith added discovered triples
-    :rtype: rdflib.Graph, dict
+    :rtype: rdflib.Graph
     """
-
-    graph = Graph()  # create a fresh graph if you don't have it yet
+    if graph is None:
+        graph = Graph()  # create a fresh graph if you don't have it yet
 
     total_retry = 8
     session = requests.Session()
@@ -92,22 +89,35 @@ def get_graph_for_format(
 
     triples_found = False
 
-    headers = {"Accept": format}
-    log.debug(f"requesting {subject_url} with {headers=}")
-    r = session.get(subject_url, headers=headers)
-    mime_type, options = cgi.parse_header(r.headers["Content-Type"])
+    ACCEPTABLE_MIMETYPES = {
+        "application/ld+json",
+        "text/turtle",
+        "application/json",
+    }
 
-    if r.status_code == 200 and bool(mime_type == format):
-        triples_found = True
-        try:
-            graph.parse(data=r.text, format=format, publicID=subject_url)
-        except Exception as e:
-            log.warning(
-                f"failed to parse {subject_url} in {format=} error: {e}"
-            )
+    for format in formats:
+        headers = {"Accept": format}
+        log.debug(f"requesting {subject_url} with {headers=}")
+        r = session.get(subject_url, headers=headers)
+        mime_type, options = cgi.parse_header(r.headers["Content-Type"])
+        if r.status_code == 200 and bool(mime_type in ACCEPTABLE_MIMETYPES):
+            triples_found = True
+            try:
+                # if mimetype is application/json use application/ls+json
+                # this because otherwise error for rdflib.parser
+                if mime_type == "application/json":
+                    mime_type = "application/ld+json"
+                graph.parse(
+                    data=r.text, format=mime_type, publicID=subject_url
+                )
 
-        finally:
-            return graph
+            except Exception as e:
+                log.warning(
+                    f"failed to parse {subject_url} in {format=} error: {e}"
+                )
+
+            finally:
+                return graph
 
     if not triples_found:
         # perform a check in the html to
@@ -138,7 +148,12 @@ def get_graph_for_format(
                 # determine the format of the file and use the correct parser
                 try:
                     graph = graph + get_graph_for_format(
-                        alt_abs_url, format=format
+                        alt_abs_url,
+                        formats=[
+                            "text/turtle",
+                            "application/ld+json",
+                            "application/json",
+                        ],
                     )
 
                 except Exception as e:
@@ -147,7 +162,6 @@ def get_graph_for_format(
                     )
 
             for script in parser.scripts:
-
                 # parse the script and check if it is json-ld or turtle
                 # if so then add it to the triplestore
                 log.info(f"script: {script}")

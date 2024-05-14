@@ -8,9 +8,9 @@ from travharv.store import RDFStoreAccess
 log = logging.getLogger(__name__)
 
 
-class GraphReport:
+class GraphAdditionReport:
     """
-    A class to represent a GraphReport.
+    A class to represent a GraphAdditionReport.
     This class will report the results of the assertions.
     Contents of this report are :
     - the download url of the document
@@ -24,7 +24,6 @@ class GraphReport:
         download_url: str,
         document_type: str,
         triple_count: int,
-        rdf_store_access: RDFStoreAccess,
     ):
         """constructor
 
@@ -36,24 +35,11 @@ class GraphReport:
         self.download_url = download_url
         self.document_type = document_type
         self.triple_count = triple_count
-        self.rdf_store_access = rdf_store_access
         self.id = uuid4()
-        log.debug("GraphReport initialized")
-
-    def report_to_store(self):
-        """
-        Report the results of the assertions to the store.
-        """
-        log.debug("Reporting the results of the graph report to the store")
-        log.debug(f"Download URL: {self.download_url}")
-        log.debug(f"Document Type: {self.document_type}")
-        log.debug(f"Triple Count: {self.triple_count}")
-        log.debug(f"ID: {self.id}")
-        # TODO: write template for reporting
-        # triples to store with the report_content
+        log.debug("GraphAdditionReport initialized")
 
 
-class AssertionReport:
+class PathAssertionReport:
     """
     A class to represent an AssertionReport.
     This class will report the results of the assertions.
@@ -75,9 +61,8 @@ class AssertionReport:
         assertion_result: bool,
         assertion_time: datetime,
         id: uuid4,
-        rdf_store_access: RDFStoreAccess,
         message: str = None,
-        graph_reports: List[GraphReport] = [],
+        graph_reports: List[GraphAdditionReport] = [],
     ):
         """constructor
 
@@ -97,28 +82,8 @@ class AssertionReport:
         self.assertion_time = assertion_time
         self.message = message
         self.id = id
-        self.rdf_store_access = rdf_store_access
         log.debug("AssertionReport initialized")
         self.graph_reports = graph_reports
-
-    def report_to_store(self):
-        """
-        Report the results of the assertions to the store.
-        """
-        log.debug("Reporting the results of the assertionreport to the store")
-        log.debug(f"Subject URI: {self.subject_uri}")
-        log.debug(f"Assertion Path: {self.assertion_path}")
-        log.debug(f"Assertion Result: {self.assertion_result}")
-        log.debug(f"Assertion Time: {self.assertion_time}")
-        log.debug(f"ID: {self.id}")
-        log.debug(f"Graph Reports: {self.graph_reports}")
-        log.debug(f"Message: {self.message}")
-
-        for graph_report in self.graph_reports:
-            graph_report.report_to_store()
-
-        # TODO: write template for reporting triples
-        # to store with the report_content
 
 
 class TaskExecutionReport:
@@ -130,7 +95,6 @@ class TaskExecutionReport:
 
     def __init__(
         self,
-        rdf_store_access: RDFStoreAccess,
     ):
         """constructor
 
@@ -142,16 +106,14 @@ class TaskExecutionReport:
             "last_mod": datetime.now(),
         }
         self.assertion_reports = []
-        self.rdf_store_access = rdf_store_access
 
-    def report_to_store(self, assertion_report: AssertionReport):
+    def add_path_assertion_report(self, assertion_report: PathAssertionReport):
         """
         Report the results of the assertions to the store.
         """
         log.debug(
             "Reporting the results of the task execution report to the store"
         )
-        assertion_report.report_to_store()
         assertion_report_id = assertion_report.id
         last_mod = assertion_report.assertion_time
 
@@ -159,7 +121,7 @@ class TaskExecutionReport:
         log.debug(f"Last Modified: {last_mod}")
 
         self.assertion_reports.append(assertion_report)
-        # TODO: write template for adding assertion report to the task report
+        self.report_content["last_mod"] = last_mod
 
 
 class ExecutionReport:
@@ -182,7 +144,7 @@ class ExecutionReport:
         }
         self.task_reports = []
 
-    def report_to_store(self, task_execution_report: TaskExecutionReport):
+    def add_task_report(self, task_execution_report: TaskExecutionReport):
         """
         Report the results of the assertions to the store.
         """
@@ -197,3 +159,17 @@ class ExecutionReport:
         self.task_reports.append(task_execution_report)
         # TODO: write template for reporting triples
         # to store with the report_content
+
+        log.debug(f"{task_execution_report.report_content['task_id']=}")
+        for assertion in task_execution_report.assertion_reports:
+            log.debug(f"{assertion.id=}")
+            log.debug(f"{assertion.assertion_path=}")
+            log.debug(f"{assertion.assertion_result=}")
+            log.debug(f"{assertion.message=}")
+            log.debug(f"Graphs added: {len(assertion.graph_reports)}")
+            # count up the ammount of triples that are
+            # located in assertion.graph_reports[i]["triples"]
+            c_triples = 0
+            for graph in assertion.graph_reports:
+                c_triples += graph.triple_count
+            log.debug(f"Triples added: {c_triples}")

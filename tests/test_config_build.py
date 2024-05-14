@@ -84,7 +84,6 @@ yml_pfx_declarations = dict(
 
 
 def test_assert_path():
-
     NSM = makeNSM(yml_pfx_declarations)
 
     resolved_ppaths = resolve_ppaths(
