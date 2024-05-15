@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import List
 from uuid import uuid4
 
+from travharv.helper import timestamp
 from travharv.store import RDFStoreAccess
 
 log = logging.getLogger(__name__)
@@ -22,18 +23,18 @@ class GraphAdditionReport:
     def __init__(
         self,
         download_url: str,
-        document_type: str,
+        mime_type: str,
         triple_count: int,
     ):
         """constructor
 
         :param download_url: str
         :param graph: str
-        :param document_type: str
+        :param mime_type: str
         :param triple_count: int
         """
         self.download_url = download_url
-        self.document_type = document_type
+        self.mime_type = mime_type
         self.triple_count = triple_count
         self.id = uuid4()
         log.debug("GraphAdditionReport initialized")
@@ -72,7 +73,7 @@ class PathAssertionReport:
         :param assertion_time: datetime
         :param uuid: str
         :param triple_count: int
-        :param document_type: str
+        :param mime_type: str
         :param download_url: str
         """
 
@@ -103,7 +104,7 @@ class TaskExecutionReport:
         log.debug("TaskExecutionReport initialized")
         self.report_content = {
             "task_id": uuid4(),
-            "last_mod": datetime.now(),
+            "last_mod": timestamp(),
         }
         self.assertion_reports = []
 
@@ -139,7 +140,7 @@ class ExecutionReport:
         self.rdf_store_access = rdf_store_access
         log.debug("ExecutionReport initialized")
         self.report_content = {
-            "last_mod": datetime.now(),
+            "last_mod": timestamp(),
             "config_name": config_name,
         }
         self.task_reports = []

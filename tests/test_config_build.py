@@ -57,7 +57,6 @@ def test_literal_subject_definition():
 
     literal_subject_definition = LiteralSubjectDefinition(subjects)
     assert literal_subject_definition is not None
-
     assert literal_subject_definition.list_subjects() == subjects
 
 
@@ -127,7 +126,6 @@ def test_travharvconfig(decorated_rdf_stores, sample_file_graph):
         assert "configname" in travharvconfig()
         assert "NPM" in travharvconfig()
         assert "tasks" in travharvconfig()
-
         assert travharvconfig.configname == "base_test.yml"
         assert len(travharvconfig.tasks) == 3
 

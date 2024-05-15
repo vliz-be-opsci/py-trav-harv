@@ -7,19 +7,8 @@ assert:
   - subjects:
       literal:
         - http://marineregions.org/mrgid/63523
-        - http://marineregions.org/mrgid/3293
-        - http://marineregions.org/mrgid/12548
     paths:
       - "mr:hasGeometry"
-      - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
-  - subjects:
-      SPARQL: >
-        SELECT ?s
-        WHERE {
-          [] mr:isPartOf ?s .
-          ?s a mr:GeoObject .
-        }
-    paths:
       - "mr:isPartOf / <https://schema.org/geo> / <https://schema.org/latitude>"
   - subjects:
       SPARQL: >

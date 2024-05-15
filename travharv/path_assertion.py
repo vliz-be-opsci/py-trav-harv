@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 from uuid import uuid4
 
 import rdflib
@@ -12,6 +11,7 @@ from travharv.execution_report import (
     PathAssertionReport,
     TaskExecutionReport,
 )
+from travharv.helper import timestamp
 from travharv.store import RDFStoreAccess
 from travharv.web_discovery import get_graph_for_format
 
@@ -85,7 +85,7 @@ class SubjPropPathAssertion:
                 subject_uri=self.subject,
                 assertion_path=pp_for_report,
                 assertion_result=assertion_result,
-                assertion_time=datetime.now(),
+                assertion_time=timestamp(),
                 id=self.assertion_report_info["id"],
                 message=message,
                 graph_reports=self.graph_reports,
@@ -202,7 +202,7 @@ class SubjPropPathAssertion:
                 self.graph_reports.append(
                     GraphAdditionReport(
                         download_url=uri,
-                        document_type=mimetype,
+                        mime_type=mimetype,
                         triple_count=len(graph),
                     )
                 )
