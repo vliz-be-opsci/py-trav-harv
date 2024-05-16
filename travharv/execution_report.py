@@ -1,12 +1,20 @@
 import logging
 from datetime import datetime
+from pathlib import Path
 from typing import List
 from uuid import uuid4
+
+from pyrdfj2 import J2RDFSyntaxBuilder
 
 from travharv.helper import timestamp
 from travharv.store import RDFStoreAccess
 
 log = logging.getLogger(__name__)
+
+# The syntax-builder for travharv
+QUERY_BUILDER: J2RDFSyntaxBuilder = J2RDFSyntaxBuilder(
+    templates_folder=str(Path(__file__).parent / "templates")
+)
 
 
 class GraphAdditionReport:
@@ -142,6 +150,7 @@ class ExecutionReport:
         self.report_content = {
             "last_mod": timestamp(),
             "config_name": config_name,
+            "id": uuid4(),
         }
         self.task_reports = []
 
@@ -174,3 +183,14 @@ class ExecutionReport:
             for graph in assertion.graph_reports:
                 c_triples += graph.triple_count
             log.debug(f"Triples added: {c_triples}")
+
+        self._make_report_graph()
+
+    def _make_report_graph(self):
+        pre_ttl = QUERY_BUILDER.build_syntax(
+            "execution_report.ttl",
+            execution_report=self.report_content,
+            task_reports=self.task_reports,
+        )
+
+        log.debug(f"{pre_ttl}")

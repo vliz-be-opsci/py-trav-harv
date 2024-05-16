@@ -1,0 +1,56 @@
+{#
+   This file contains the template for the execution report 
+   :param: execution_report 
+   :param: task_reports
+#}
+
+@prefix prov: <http://www.w3.org/ns/prov#>.
+@prefix sh: <http://www.w3.org/ns/shacl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix schema: <http://schema.org/>.
+@prefix travharv: <http://example.org/travharv/ns/>.
+
+<urn:travharv:{{execution_report.id}}> 
+    a prov:Entity, sh:ValidationReport ;
+
+    prov:generatedAtTime "{{execution_report.last_mod}}" ; 
+    travharv:fromContext "{{execution_report.config_name}}" ;
+    sh:result {%- for t in task_reports %} {%- for at in t.assertion_reports %} <urn:travharv:assertionresult-{{at.id}}>{% if not loop.last %}, {% endif %}{% endfor %}{% endfor %}; {# listing results of all travharv tasks #}
+.
+
+{# Report of a single travharv tast #}
+{%- for t in task_reports %}
+{%- for at in t.assertion_reports %}
+<urn:travharv:assertionresult-{{at.id}}>
+    a prov:Entity, sh:ValidationResult ; 
+
+    prov:generatedAtTime {{at.assertion_time}} ; 
+
+    sh:focusNode {{at.subject_uri}} ; {# subject of assertion task #}
+    sh:resultPath {{at.assertion_path}} ; {# property path of assertion task #}
+    sh:resultMessage "{{at.message}}"^^xsd:string ;
+
+    {#- Last retrievanle resource that is added to the rdf-store, with a single travharv task #}
+    {%- for graph_report in at.graph_reports-%}
+    {%- if loop.last -%}travharv:lastRetrievableResource <urn:travharv:assertionresource-{{graph_report.id}}> ;  {%- endif -%}
+    {%- endfor %}
+    
+.
+
+{%- for graph_report in at.graph_reports-%}
+{%- if loop.last -%}
+<urn:travharv:assertionresource-{{graph_report.id}}>
+    a schema:DataDownload, void:Dataset ; 
+    schema:contentUrl {{graph_report.download_url}} ; 
+    schema:encodingFormat {{graph_report.mime_type}} ; 
+    void:triples {{graph_report.triple_count}} ;
+.
+{%- endif -%}
+{%- endfor %}
+
+
+
+{%- endfor %}
+{%- endfor %}
