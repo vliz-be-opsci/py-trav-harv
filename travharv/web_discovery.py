@@ -73,6 +73,10 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
     :returns: the graph whith added discovered triples
     :rtype: rdflib.Graph
     """
+
+    if subject_url is None:
+        return None
+
     if graph is None:
         graph = Graph()  # create a fresh graph if you don't have it yet
 
