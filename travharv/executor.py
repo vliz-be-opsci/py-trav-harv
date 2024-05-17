@@ -81,7 +81,18 @@ class TravHarvExecutor:
                             """
                         )
                         log.exception(e)
+                    finally:
+                        log.debug(
+                            f"Assertion path: {str(assertion_path)} asserted"
+                        )
+
+            # TODO figure out if the task_execution_report object
+            # is a pointer or a copy of the object
+            # so addd_task_report can be done earlier
+            # and the report can happen per assertion basis
+            # and not per task basis
             self.execution_report.add_task_report(task_execution_report)
+            self.execution_report.report_to_store()
             log.debug(f"All paths asserted for task: {task}")
 
         log.debug("All paths asserted for all tasks")

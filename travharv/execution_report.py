@@ -5,6 +5,7 @@ from typing import List
 from uuid import uuid4
 
 from pyrdfj2 import J2RDFSyntaxBuilder
+from rdflib import Graph
 
 from travharv.helper import timestamp
 from travharv.store import RDFStoreAccess
@@ -194,3 +195,13 @@ class ExecutionReport:
         )
 
         log.debug(f"{pre_ttl}")
+
+        self.execution_report_graph = Graph()
+        self.execution_report_graph.parse(data=pre_ttl, format="turtle")
+
+    def report_to_store(self):
+        self._make_report_graph()
+        self.rdf_store_access.insert_for_config(
+            self.execution_report_graph, self.report_content["config_name"]
+        )
+        log.debug("Reported to store")

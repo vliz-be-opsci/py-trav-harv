@@ -17,7 +17,8 @@
 
     prov:generatedAtTime "{{execution_report.last_mod}}" ; 
     travharv:fromContext "{{execution_report.config_name}}" ;
-    sh:result {%- for t in task_reports %} {%- for at in t.assertion_reports %} <urn:travharv:assertionresult-{{at.id}}>{% if not loop.last %}, {% endif %}{% endfor %}{% endfor %}; {# listing results of all travharv tasks #}
+    sh:result 
+    {%- for t in task_reports %}{% if not loop.last %}{%- for at in t.assertion_reports %} <urn:travharv:assertionresult-{{at.id}}>,{% endfor %}{% endif %}{% if loop.last %}{%- for at in t.assertion_reports %} <urn:travharv:assertionresult-{{at.id}}>{% if not loop.last %},{% endif %}{% endfor %}{% endif %}{% endfor %};
 .
 
 {# Report of a single travharv tast #}
@@ -26,26 +27,28 @@
 <urn:travharv:assertionresult-{{at.id}}>
     a prov:Entity, sh:ValidationResult ; 
 
-    prov:generatedAtTime {{at.assertion_time}} ; 
+    prov:generatedAtTime "{{at.assertion_time}}" ; 
 
-    sh:focusNode {{at.subject_uri}} ; {# subject of assertion task #}
-    sh:resultPath {{at.assertion_path}} ; {# property path of assertion task #}
+    sh:focusNode "{{at.subject_uri}}"^^xsd:dateTime ; {# subject of assertion task #}
+    sh:resultPath "{{at.assertion_path}}"^^xsd:string ; {# property path of assertion task #}
     sh:resultMessage "{{at.message}}"^^xsd:string ;
 
     {#- Last retrievanle resource that is added to the rdf-store, with a single travharv task #}
-    {%- for graph_report in at.graph_reports-%}
-    {%- if loop.last -%}travharv:lastRetrievableResource <urn:travharv:assertionresource-{{graph_report.id}}> ;  {%- endif -%}
-    {%- endfor %}
+    {%- for graph_report in at.graph_reports -%}
+    {% if loop.last %}
+    travharv:lastRetrievableResource <urn:travharv:assertionresource-{{graph_report.id}}> ;  
+    {% endif %}
+    {%- endfor -%}
     
 .
 
-{%- for graph_report in at.graph_reports-%}
+{% for graph_report in at.graph_reports-%}
 {%- if loop.last -%}
 <urn:travharv:assertionresource-{{graph_report.id}}>
     a schema:DataDownload, void:Dataset ; 
-    schema:contentUrl {{graph_report.download_url}} ; 
-    schema:encodingFormat {{graph_report.mime_type}} ; 
-    void:triples {{graph_report.triple_count}} ;
+    schema:contentUrl "{{graph_report.download_url}}" ; 
+    schema:encodingFormat "{{graph_report.mime_type}}" ; 
+    void:triples "{{graph_report.triple_count}}"^^xsd:integer ;
 .
 {%- endif -%}
 {%- endfor %}
