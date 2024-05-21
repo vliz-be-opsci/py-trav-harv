@@ -145,9 +145,7 @@ def load_resource_into_graph(graph: Graph, resource: str, format: str):
         return graph
 
     # if resource is neither a URI nor a file then raise an error
-    raise ValueError(
-        "Resource is not a valid URI or file path: {}".format(resource)
-    )
+    raise ValueError(f"Resource is not a valid URI or file path: {resource}")
 
 
 def init_load(args: argparse.Namespace, store: RDFStore):

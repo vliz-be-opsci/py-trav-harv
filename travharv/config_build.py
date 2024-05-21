@@ -343,7 +343,7 @@ class TravHarvConfigBuilder:
         name_config: str = "default",
         # TODO reconsider this "default" for name_config - not self-explaining
     ):
-        log.debug("Making TravHarvConfig from dict for {}".format(name_config))
+        log.debug(f"Making TravHarvConfig from dict for {name_config}")
         # make it so that the assertions are always checked for lowercase
         # TODO - apply this as a general rule on the level of the yml load
         #  thus ensuring that it applies across the board
@@ -368,15 +368,14 @@ class TravHarvConfigBuilder:
                 name_config,
             ):
                 log.info(
-                    "Snoozing config {} for {} minutes".format(
-                        name_config,
-                        dict_object["snooze-till-graph-age-minutes"],
-                    )
+                    f"""{name_config=} snoozed for
+                    {dict_object['snooze-till-graph-age-minutes']} minutes
+                    """
                 )
                 return
         except Exception as e:
             log.exception(e)
-            log.warning("{}".format(e))
+            log.warning(f"{e}")
 
         self.NSM = makeNSM(dict_object["prefix"])
 
@@ -441,9 +440,8 @@ class TravHarvConfigBuilder:
                 {name_config}: {lastmod_config}"""
             )
             log.debug(
-                "Checking if config {} is older then {} minutes".format(
-                    name_config, snooze_time
-                )
+                f"""Checking if config {name_config}
+                is older then {snooze_time} minutes"""
             )
             return not self._rdf_store_access.verify_max_age_of_config(
                 name_config, snooze_time

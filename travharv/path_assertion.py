@@ -48,9 +48,7 @@ class SubjPropPathAssertion:
         log.debug(subject)
         self.subject = self._subject_str_check(subject)
         if not self.subject:
-            log.warning(
-                "Subject is not a valid URIRef or str: {}".format(subject)
-            )
+            log.warning(f"Subject is not a valid URIRef or str: {subject}")
             return
         self.assertion_path = assertion_path
         self.current_depth = 0
@@ -98,7 +96,7 @@ class SubjPropPathAssertion:
         , if subject is rdflib.term.URIRef , convert to str
         """
         if type(subject) is str and validators.url(subject):
-            log.debug("Subject is a valid URIRef: {}".format(subject))
+            log.debug(f"Subject is a valid URIRef: {subject}")
             return subject
         if (
             type(subject) is rdflib.query.ResultRow
@@ -111,18 +109,16 @@ class SubjPropPathAssertion:
                     subject_row = subject_row[
                         "value"
                     ]  # janky way of getting the URIRef from the ResultRow
-                log.debug("Subject row: {}".format(subject_row))
+                log.debug(f"Subject row: {subject_row}")
                 if validators.url(subject_row):
                     return str(subject_row)
-                log.warning(
-                    "Subject row is not a URIRef: {}".format(subject_row)
-                )
+                log.warning(f"Subject row is not a URIRef: {subject_row}")
             if validators.url(str(subject)):
                 return str(subject)
-            log.warning("Subject is not a URIRef: {}".format(subject))
-        log.debug("Subject is of type {}".format(type(subject)))
+            log.warning(f"Subject is not a URIRef: {subject}")
+        log.debug(f"Subject is of type {type(subject)}")
         if not validators.url(str(subject)):
-            log.warning("Subject is not a URIRef or a str: {}".format(subject))
+            log.warning(f"Subject is not a URIRef or a str: {subject}")
             return None
 
     def assert_path(self):
@@ -131,7 +127,7 @@ class SubjPropPathAssertion:
         Put the results in a RDFStoreAccess.
         """
         log.debug("Asserting a property path for a given subject")
-        log.debug("Subject: {}".format(self.subject))
+        log.debug(f"Subject: {self.subject}")
         # Implement method to assert a property path for a given subject
         while self.current_depth <= self.max_depth:
             if (
@@ -154,13 +150,11 @@ class SubjPropPathAssertion:
         log.debug(
             "Asserting a property path for a given subject at a given depth"
         )
-        log.debug("Depth: {}".format(self.max_depth - self.current_depth))
+        log.debug(f"Depth: {self.max_depth - self.current_depth}")
         log.debug(
-            "ppath: {}".format(
-                self.assertion_path.get_path_for_depth(
+            f"""ppath: {self.assertion_path.get_path_for_depth(
                     self.max_depth - self.current_depth
-                )
-            )
+                )}"""
         )
         if self.rdf_store_access.verify_path(
             self.subject,
@@ -188,12 +182,12 @@ class SubjPropPathAssertion:
         # doubting if this is really needed
         # here as a mimetype to get
 
-        log.debug("Beginning harvesting of URI: {}".format(uri))
+        log.debug(f"Beginning harvesting of URI: {uri}")
 
         for mimetype in ACCEPTABLE_MIMETYPES:
             # do a get of the uri with the mimetype
             graph = get_graph_for_format(uri, [mimetype])
-            log.debug("Graph: {}".format(graph))
+            log.debug(f"Graph: {graph}")
             if graph is not None:
                 self.rdf_store_access.insert_for_config(
                     graph, self.config_name
@@ -208,11 +202,7 @@ class SubjPropPathAssertion:
                 )
 
             else:
-                log.debug(
-                    "{} for mimetype: {} did not return graph".format(
-                        uri, mimetype
-                    )
-                )
+                log.debug(f"{uri=}, {mimetype=} did not return graph")
                 return
         return
 

@@ -107,8 +107,8 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
         if r.status_code == 200 and bool(mime_type in ACCEPTABLE_MIMETYPES):
             triples_found = True
             try:
-                # if mimetype is application/json use application/ls+json
-                # this because otherwise error for rdflib.parser
+                # if mimetype is application/json assume application/ld+json
+                # to satisfy the known formats of rdflib.parser
                 if mime_type == "application/json":
                     mime_type = "application/ld+json"
                 graph.parse(
