@@ -167,8 +167,13 @@ class ExecutionReport:
         log.debug(f"Task ID: {task_id}")
         log.debug(f"Last Modified: {last_mod}")
 
-        self.task_reports.append(task_execution_report)
-        # TODO: write template for reporting triples
+        # only if task execution report contains any assertion reports
+        # add it
+        # this is to circomvent the case where a task is executed
+        # but no assertions are made (e.g. no results came back
+        # from an initial SPARQL query)
+        if task_execution_report.assertion_reports.__len__() > 0:
+            self.task_reports.append(task_execution_report)
         # to store with the report_content
 
         log.debug(f"{task_execution_report.report_content['task_id']=}")

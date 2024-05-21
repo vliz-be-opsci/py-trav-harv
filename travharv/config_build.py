@@ -14,6 +14,11 @@ from travharv.store import RDFStoreAccess
 log = logging.getLogger(__name__)
 
 
+def relative_pathname(subpath: Path, ancestorpath: Path) -> str:
+    """gives the relative part pointing to the subpath from the ancestorpath"""
+    return str(subpath.absolute().relative_to(ancestorpath.absolute()))
+
+
 class TravHarvTask:
     """
     A task for the travharv
@@ -261,7 +266,16 @@ class TravHarvConfigBuilder:
         """
         config_file = str(Path.cwd() / self.config_files_folder / config_name)
         dict_object = self._load_yml_to_dict(config_file)
-        return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
+
+        relative_name_config = relative_pathname(
+            Path(config_file), Path.cwd() / self.config_files_folder
+        )
+
+        log.debug(f"{config_file=}")
+
+        return self._makeTravHarvConfigPartFromDict(
+            dict_object, relative_name_config
+        )
 
     def build_from_folder(self):
         """
@@ -276,6 +290,7 @@ class TravHarvConfigBuilder:
             path_config_file = (
                 Path.cwd() / self.config_files_folder / config_file
             )
+            log.debug(f"{path_config_file=}")
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
                 self._makeTravHarvConfigPartFromDict(dict_object, config_file)

@@ -18,7 +18,19 @@
     prov:generatedAtTime "{{execution_report.last_mod}}" ; 
     travharv:fromContext "{{execution_report.config_name}}" ;
     sh:result 
-    {%- for t in task_reports %}{% if not loop.last %}{%- for at in t.assertion_reports %} <urn:travharv:assertionresult-{{at.id}}>,{% endfor %}{% endif %}{% if loop.last %}{%- for at in t.assertion_reports %} <urn:travharv:assertionresult-{{at.id}}>{% if not loop.last %},{% endif %}{% endfor %}{% endif %}{% endfor %};
+    {%- for t in task_reports -%}
+        {% if not loop.last %}
+            {%- for at in t.assertion_reports -%}
+    <urn:travharv:assertionresult-{{at.id}}>,
+            {%- endfor -%}
+        {%- endif -%}
+        {%- if loop.last -%}
+            {%- for at in t.assertion_reports -%} 
+    <urn:travharv:assertionresult-{{at.id}}>
+                {%- if not loop.last -%},{%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+    {% endfor %};
 .
 
 {# Report of a single travharv tast #}
@@ -33,7 +45,7 @@
     sh:resultPath "{{at.assertion_path}}"^^xsd:string ; {# property path of assertion task #}
     sh:resultMessage "{{at.message}}"^^xsd:string ;
 
-    {#- Last retrievanle resource that is added to the rdf-store, with a single travharv task #}
+    {#- Last retrievable resource that is added to the rdf-store, with a single travharv task #}
     {%- for graph_report in at.graph_reports -%}
     {% if loop.last %}
     travharv:lastRetrievableResource <urn:travharv:assertionresource-{{graph_report.id}}> ;  
@@ -52,8 +64,6 @@
 .
 {%- endif -%}
 {%- endfor %}
-
-
 
 {%- endfor %}
 {%- endfor %}
