@@ -8,9 +8,9 @@ authors = ["Decruw Cedric <cedric.decruw@vliz.be>"]
 python = ">=3.9,<4.0.0"
 rdflib = "*"
 pyyaml = "^6.0.1"
-validators = "^0.22.0"
+validators = "^0.28.0"
 sparqlwrapper = "^2.0.0"
-pyrdfj2 = "^0.0.5"
+pyrdfj2 = {git = "https://github.com/vliz-be-opsci/pyrdfj2.git", rev = "main"}
 sphinx-rtd-theme = "^2.0.0"
 recommonmark = "^0.7.1"
 myst-parser = "^2.0.0"
