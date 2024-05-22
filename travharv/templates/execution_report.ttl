@@ -15,8 +15,8 @@
 <urn:travharv:{{execution_report.id}}> 
     a prov:Entity, sh:ValidationReport ;
 
-    prov:generatedAtTime {{execution_report.last_mod | xsd("dateTime") }} ; 
-    travharv:fromContext {{execution_report.config_name | xsd("string") }} ;
+    prov:generatedAtTime {{execution_report.last_mod | xsd("xsd:datetime") }} ; 
+    travharv:fromContext {{execution_report.config_name | xsd("xsd:string") }} ;
     sh:result 
     {%- for t in task_reports -%}
         {% if not loop.last %}
@@ -39,11 +39,11 @@
 <urn:travharv:assertionresult-{{at.id}}>
     a prov:Entity, sh:ValidationResult ; 
 
-    prov:generatedAtTime {{at.assertion_time | xsd("dateTime") }} ; 
+    prov:generatedAtTime {{at.assertion_time | xsd("xsd:datetime") }} ; 
 
-    sh:focusNode {{at.subject_uri | xsd("anyURI") }}; {# subject of assertion task #}
-    sh:resultPath {{at.assertion_path | xsd("string") }} ; {# property path of assertion task #}
-    sh:resultMessage {{at.message | xsd("string") }} ;
+    sh:focusNode {{at.subject_uri | xsd("xsd:anyURI") }}; {# subject of assertion task #}
+    sh:resultPath {{at.assertion_path | xsd("xsd:string") }} ; {# property path of assertion task #}
+    sh:resultMessage {{at.message | xsd("xsd:string") }} ;
 
     {#- Last retrievable resource that is added to the rdf-store, with a single travharv task #}
     {%- for graph_report in at.graph_reports -%}
@@ -58,9 +58,9 @@
 {%- if loop.last -%}
 <urn:travharv:assertionresource-{{graph_report.id}}>
     a schema:DataDownload, void:Dataset ; 
-    schema:contentUrl {{graph_report.download_url | xsd("anyURI") }} ; 
-    schema:encodingFormat {{graph_report.mime_type | xsd("string") }} ; 
-    void:triples {{graph_report.triple_count | xsd("integer") }} ;
+    schema:contentUrl {{graph_report.download_url | xsd("xsd:anyURI") }} ; 
+    schema:encodingFormat {{graph_report.mime_type | xsd("xsd:string") }} ; 
+    void:triples {{graph_report.triple_count | xsd("xsd:integer") }} ;
 .
 {%- endif -%}
 {%- endfor %}
