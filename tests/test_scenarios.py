@@ -75,6 +75,7 @@ def test_scenarios(
             )
             travharv.process()
             # assert travharv.error_occurred
+            # other assertions here based on the scenarios
 
 
 if __name__ == "__main__":
