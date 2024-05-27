@@ -1,3 +1,4 @@
+import mimetypes
 import os
 import re
 import shutil
@@ -10,7 +11,6 @@ import pytest
 from pyrdfstore import create_rdf_store
 from rdflib import Graph
 from util4tests import enable_test_logging
-import mimetypes
 
 from travharv.store import RDFStoreAccess
 
