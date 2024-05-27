@@ -21,10 +21,21 @@ RDF_MIMES = {
     "application/ld+json",
 }
 
+# TODO write out all the assertions for the tests
+# this being the number of triples
+# the documents that ware asserted
+SCENARIOS_OUTCOMES = {
+    "dereference_test1_sparql.yml": {},
+    "dereference_test2_sparql.yml": {},
+    "dereference_test3_sparql.yml": {},
+    "dereference_test4_sparql.yml": {},
+    "dereference_test5_sparql.yml": {},
+}
+
 
 # test if all objects can be retrieved
-@pytest.mark.usefixtures("httpd_server_base")
-def test_inputs(httpd_server_base: str):
+@pytest.mark.usefixtures("httpd_server_base", "all_extensions_testset")
+def test_inputs(httpd_server_base: str, all_extensions_testset):
     assert httpd_server_base
 
     for input in Path(INPUT).glob("*"):
@@ -39,6 +50,7 @@ def test_inputs(httpd_server_base: str):
         clen = int(req.headers.get("content-length"))
         assert clen > 0
         log.debug(f"{clen=}")
+        log.debug(f"{ctype=}")
 
         if ctype in RDF_MIMES:
             g = Graph().parse(url)
