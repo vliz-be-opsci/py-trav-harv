@@ -10,6 +10,7 @@ import pytest
 from pyrdfstore import create_rdf_store
 from rdflib import Graph
 from util4tests import enable_test_logging
+import mimetypes
 
 from travharv.store import RDFStoreAccess
 
@@ -109,6 +110,7 @@ TestRequestHandler.extensions_map = HTTPD_EXTENSION_MAP
 
 @pytest.fixture(scope="session")
 def httpd_server():
+    mimetypes.add_type("text/turtle", ".ttl")
     with HTTPServer((HTTPD_HOST, HTTPD_PORT), TestRequestHandler) as httpd:
 
         def httpd_serve():
