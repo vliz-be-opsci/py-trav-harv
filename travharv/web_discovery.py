@@ -97,6 +97,7 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
         "application/ld+json",
         "text/turtle",
         "application/json",
+        "application/octet-stream",  # This temp for testing
     }
 
     for format in formats:
@@ -104,6 +105,8 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
         log.debug(f"requesting {subject_url} with {headers=}")
         r = session.get(subject_url, headers=headers)
         mime_type, options = cgi.parse_header(r.headers["Content-Type"])
+        log.debug(f"got {r.status_code=} {mime_type=}")
+
         if r.status_code == 200 and bool(mime_type in ACCEPTABLE_MIMETYPES):
             triples_found = True
             try:
@@ -111,6 +114,10 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
                 # to satisfy the known formats of rdflib.parser
                 if mime_type == "application/json":
                     mime_type = "application/ld+json"
+                # TODO: find out how to configure local_server.py
+                # to return the correct mime types for the response header
+                if mime_type == "application/octet-stream":
+                    mime_type = "text/turtle"
                 graph.parse(
                     data=r.text, format=mime_type, publicID=subject_url
                 )

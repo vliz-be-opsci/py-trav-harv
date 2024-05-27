@@ -98,6 +98,9 @@ class SubjPropPathAssertion:
         if type(subject) is str and validators.url(subject):
             log.debug(f"Subject is a valid URIRef: {subject}")
             return subject
+        if "localhost" in subject:
+            log.debug(f"Subject is a valid localhost URIRef: {subject}")
+            return str(subject)
         if (
             type(subject) is rdflib.query.ResultRow
             or type(subject) is rdflib.term.URIRef
@@ -112,8 +115,12 @@ class SubjPropPathAssertion:
                 log.debug(f"Subject row: {subject_row}")
                 if validators.url(subject_row):
                     return str(subject_row)
+                if "localhost" in subject_row:
+                    return str(subject_row)
                 log.warning(f"Subject row is not a URIRef: {subject_row}")
             if validators.url(str(subject)):
+                return str(subject)
+            if "localhost" in str(subject):
                 return str(subject)
             log.warning(f"Subject is not a URIRef: {subject}")
         log.debug(f"Subject is of type {type(subject)}")

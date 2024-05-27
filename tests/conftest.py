@@ -6,6 +6,8 @@ import pytest
 from pyrdfstore import create_rdf_store
 from rdflib import Graph
 from util4tests import enable_test_logging
+import http.server as http_server
+import socketserver
 
 from travharv.store import RDFStoreAccess
 
@@ -13,6 +15,7 @@ TEST_FOLDER = Path(__file__).parent
 TEST_CONFIG_FOLDER = TEST_FOLDER / "config"
 TEST_INPUT_FOLDER = TEST_FOLDER / "inputs"
 TEST_OUTPUT_FOLDER = TEST_FOLDER / "output"
+TEST_SCENARIOS_FOLDER = TEST_FOLDER / "scenarios"
 
 
 # enables logging for all test
@@ -75,3 +78,19 @@ def sample_file_graph():
     in casu: tests/input/3293.jsonld
     """
     return loadfilegraph(str(TEST_INPUT_FOLDER / "3293.jsonld"))
+
+
+class CustomHandler(http_server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.extensions_map[""] = "text/turtle"
+        self.extensions_map[".ttl"] = "text/turle"
+        self.extensions_map[".jsonld"] = "application/ld+json"
+        super().end_headers()
+
+
+@pytest.fixture(scope="session")
+def local_server():
+    pass
