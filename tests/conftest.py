@@ -1,4 +1,3 @@
-import mimetypes
 import os
 import re
 import shutil
@@ -24,11 +23,11 @@ HTTPD_HOST: str = (
     "localhost"  # can be '' - maybe also try '0.0.0.0' to bind all
 )
 HTTPD_PORT: int = 8080
-HTTPD_EXTENSION_MAP: Dict[str, str] = dict(
-    txt="text/plain",
-    jsonld="application/ld+json",
-    ttl="text/turtle",
-)
+HTTPD_EXTENSION_MAP: Dict[str, str] = {
+    ".txt": "text/plain",
+    ".jsonld": "application/ld+json",
+    ".ttl": "text/turtle",
+}
 
 
 # enables logging for all test
@@ -110,7 +109,6 @@ TestRequestHandler.extensions_map = HTTPD_EXTENSION_MAP
 
 @pytest.fixture(scope="session")
 def httpd_server():
-    mimetypes.add_type("text/turtle", ".ttl")
     with HTTPServer((HTTPD_HOST, HTTPD_PORT), TestRequestHandler) as httpd:
 
         def httpd_serve():
