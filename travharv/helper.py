@@ -1,9 +1,14 @@
 import re
+from datetime import datetime, timezone
 from typing import Dict, List
 
 from pyrdfstore.clean import check_valid_uri
 from rdflib import Graph, Namespace, URIRef
 from rdflib.namespace import NamespaceManager
+
+
+def timestamp():
+    return datetime.now(timezone.utc)
 
 
 def makeNSM(pfx_declarations: Dict[str, str]) -> Dict[str, Namespace]:

@@ -57,7 +57,6 @@ def test_literal_subject_definition():
 
     literal_subject_definition = LiteralSubjectDefinition(subjects)
     assert literal_subject_definition is not None
-
     assert literal_subject_definition.list_subjects() == subjects
 
 
@@ -84,7 +83,6 @@ yml_pfx_declarations = dict(
 
 
 def test_assert_path():
-
     NSM = makeNSM(yml_pfx_declarations)
 
     resolved_ppaths = resolve_ppaths(
@@ -128,7 +126,6 @@ def test_travharvconfig(decorated_rdf_stores, sample_file_graph):
         assert "configname" in travharvconfig()
         assert "NPM" in travharvconfig()
         assert "tasks" in travharvconfig()
-
         assert travharvconfig.configname == "base_test.yml"
         assert len(travharvconfig.tasks) == 3
 

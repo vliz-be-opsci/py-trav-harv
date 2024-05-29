@@ -58,9 +58,7 @@ class LODAwareHTMLParser(HTMLParser):
             self.scripts.append({self.type: data})
 
 
-def get_description_into_graph(
-    subject_url: str, *, graph: Graph = None, format="turtle"
-):
+def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
     """
     Discover triples describing the subject (assumed at subject_url)
     and add them to the graph
@@ -76,6 +74,9 @@ def get_description_into_graph(
     :rtype: rdflib.Graph
     """
 
+    if subject_url is None:
+        return None
+
     if graph is None:
         graph = Graph()  # create a fresh graph if you don't have it yet
 
@@ -90,31 +91,44 @@ def get_description_into_graph(
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
-    formats = ["text/turtle", "application/ld+json"]
+    triples_found = False
+
     ACCEPTABLE_MIMETYPES = {
         "application/ld+json",
         "text/turtle",
         "application/json",
+        "application/octet-stream",  # This temp for testing
     }
-    triples_found = False
 
     for format in formats:
         headers = {"Accept": format}
         log.debug(f"requesting {subject_url} with {headers=}")
         r = session.get(subject_url, headers=headers)
         mime_type, options = cgi.parse_header(r.headers["Content-Type"])
+        log.debug(f"got {r.status_code=} {mime_type=}")
 
         if r.status_code == 200 and bool(mime_type in ACCEPTABLE_MIMETYPES):
             triples_found = True
             try:
-                graph.parse(data=r.text, format=format, publicID=subject_url)
-                log.info(
-                    f"content of{subject_url} added to triplestore in{format=}"
+                # if mimetype is application/json assume application/ld+json
+                # to satisfy the known formats of rdflib.parser
+                if mime_type == "application/json":
+                    mime_type = "application/ld+json"
+                # TODO: find out how to configure local_server.py
+                # to return the correct mime types for the response header
+                if mime_type == "application/octet-stream":
+                    mime_type = "text/turtle"
+                graph.parse(
+                    data=r.text, format=mime_type, publicID=subject_url
                 )
+
             except Exception as e:
                 log.warning(
                     f"failed to parse {subject_url} in {format=} error: {e}"
                 )
+
+            finally:
+                return graph
 
     if not triples_found:
         # perform a check in the html to
@@ -133,6 +147,7 @@ def get_description_into_graph(
             parser = LODAwareHTMLParser()
             parser.feed(r.text)
             log.info(f"found {len(parser.links)} links in the html file")
+            graph = Graph()
             for alt_url in parser.links:
                 # check first if the link is absolute or relative
                 if alt_url.startswith("http"):
@@ -141,7 +156,22 @@ def get_description_into_graph(
                     # Resolve the relative URL to an absolute URL
                     alt_abs_url = urljoin(subject_url, alt_url)
                 # use this linked uri as the alternative for this subect
-                get_description_into_graph(alt_abs_url, graph=graph)
+                # determine the format of the file and use the correct parser
+                try:
+                    graph = graph + get_graph_for_format(
+                        alt_abs_url,
+                        formats=[
+                            "text/turtle",
+                            "application/ld+json",
+                            "application/json",
+                        ],
+                    )
+
+                except Exception as e:
+                    log.warning(
+                        f"failed to get {alt_abs_url} in {format=} error: {e}"
+                    )
+
             for script in parser.scripts:
                 # parse the script and check if it is json-ld or turtle
                 # if so then add it to the triplestore
@@ -155,11 +185,13 @@ def get_description_into_graph(
                     graph.parse(
                         data=content, format=cformat, publicID=subject_url
                     )
+
             parser.close()
-            return
+            return graph
         log.warning(
             f"request for {subject_url} failed "
             f"with status code {r.status_code} "
             f"and content type {r.headers['Content-Type']}"
         )
-    return graph
+
+    return None

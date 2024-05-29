@@ -1,6 +1,10 @@
 import os
+import re
 import shutil
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
+from threading import Thread
+from typing import Dict
 
 import pytest
 from pyrdfstore import create_rdf_store
@@ -13,6 +17,17 @@ TEST_FOLDER = Path(__file__).parent
 TEST_CONFIG_FOLDER = TEST_FOLDER / "config"
 TEST_INPUT_FOLDER = TEST_FOLDER / "inputs"
 TEST_OUTPUT_FOLDER = TEST_FOLDER / "output"
+TEST_PATH: Path = TEST_FOLDER / "scenarios"
+HTTPD_ROOT: Path = TEST_PATH / "input"
+HTTPD_HOST: str = (
+    "localhost"  # can be '' - maybe also try '0.0.0.0' to bind all
+)
+HTTPD_PORT: int = 8080
+HTTPD_EXTENSION_MAP: Dict[str, str] = {
+    ".txt": "text/plain",
+    ".jsonld": "application/ld+json",
+    ".ttl": "text/turtle",
+}
 
 
 # enables logging for all test
@@ -75,3 +90,46 @@ def sample_file_graph():
     in casu: tests/input/3293.jsonld
     """
     return loadfilegraph(str(TEST_INPUT_FOLDER / "3293.jsonld"))
+
+
+class TestRequestHandler(SimpleHTTPRequestHandler):
+    def __init__(
+        self, request, client_address, server, *args, **kwargs
+    ) -> None:
+        super().__init__(
+            request,
+            client_address,
+            server,
+            directory=str(HTTPD_ROOT.absolute()),
+        )
+
+
+TestRequestHandler.extensions_map = HTTPD_EXTENSION_MAP
+
+
+@pytest.fixture(scope="session")
+def httpd_server():
+    with HTTPServer((HTTPD_HOST, HTTPD_PORT), TestRequestHandler) as httpd:
+
+        def httpd_serve():
+            httpd.serve_forever()
+
+        t = Thread(target=httpd_serve)
+        t.daemon = True
+        t.start()
+
+        yield httpd
+        httpd.shutdown()
+
+
+@pytest.fixture(scope="session")
+def httpd_server_base(httpd_server: HTTPServer) -> str:
+    return f"http://{httpd_server.server_name}:{httpd_server.server_port}/"
+
+
+@pytest.fixture(scope="session")
+def all_extensions_testset():
+    return {
+        mime: f"{re.sub(r'[^0-9a-zA-Z]+', '-', mime)}.{ext}"
+        for ext, mime in HTTPD_EXTENSION_MAP.items()
+    }

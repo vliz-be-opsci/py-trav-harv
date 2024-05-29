@@ -14,6 +14,11 @@ from travharv.store import RDFStoreAccess
 log = logging.getLogger(__name__)
 
 
+def relative_pathname(subpath: Path, ancestorpath: Path) -> str:
+    """gives the relative part pointing to the subpath from the ancestorpath"""
+    return str(subpath.absolute().relative_to(ancestorpath.absolute()))
+
+
 class TravHarvTask:
     """
     A task for the travharv
@@ -261,7 +266,16 @@ class TravHarvConfigBuilder:
         """
         config_file = str(Path.cwd() / self.config_files_folder / config_name)
         dict_object = self._load_yml_to_dict(config_file)
-        return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
+
+        relative_name_config = relative_pathname(
+            Path(config_file), Path.cwd() / self.config_files_folder
+        )
+
+        log.debug(f"{config_file=}")
+
+        return self._makeTravHarvConfigPartFromDict(
+            dict_object, relative_name_config
+        )
 
     def build_from_folder(self):
         """
@@ -276,6 +290,7 @@ class TravHarvConfigBuilder:
             path_config_file = (
                 Path.cwd() / self.config_files_folder / config_file
             )
+            log.debug(f"{path_config_file=}")
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
                 self._makeTravHarvConfigPartFromDict(dict_object, config_file)
@@ -328,7 +343,7 @@ class TravHarvConfigBuilder:
         name_config: str = "default",
         # TODO reconsider this "default" for name_config - not self-explaining
     ):
-        log.debug("Making TravHarvConfig from dict for {}".format(name_config))
+        log.debug(f"Making TravHarvConfig from dict for {name_config}")
         # make it so that the assertions are always checked for lowercase
         # TODO - apply this as a general rule on the level of the yml load
         #  thus ensuring that it applies across the board
@@ -353,15 +368,14 @@ class TravHarvConfigBuilder:
                 name_config,
             ):
                 log.info(
-                    "Snoozing config {} for {} minutes".format(
-                        name_config,
-                        dict_object["snooze-till-graph-age-minutes"],
-                    )
+                    f"""{name_config=} snoozed for
+                    {dict_object['snooze-till-graph-age-minutes']} minutes
+                    """
                 )
                 return
         except Exception as e:
             log.exception(e)
-            log.warning("{}".format(e))
+            log.warning(f"{e}")
 
         self.NSM = makeNSM(dict_object["prefix"])
 
@@ -426,9 +440,8 @@ class TravHarvConfigBuilder:
                 {name_config}: {lastmod_config}"""
             )
             log.debug(
-                "Checking if config {} is older then {} minutes".format(
-                    name_config, snooze_time
-                )
+                f"Checking if config {name_config}"
+                f"is older then {snooze_time} minutes"
             )
             return not self._rdf_store_access.verify_max_age_of_config(
                 name_config, snooze_time
