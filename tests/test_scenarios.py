@@ -134,28 +134,26 @@ def test_scenarios(
 
                 # if store info is an empty tuple then skip
                 if store_info == ():
-                    log.debug(f"Skipping {config} with store {store_info}")
-                    continue
-                    # TODO: for now this is continue since the store
-                    # TODO: does not contain any triples
-                    # TODO: search for a way that
-                    # TODO: I can access the store locally
                     sparql = QUERY_BUILDER.build_syntax(
                         "execution_report_data.sparql",
                     )
-
-                log.debug(f"{sparql}")
-
-                execution_report_data_result = rdf_store_access.select(sparql)
+                    execution_report_data_result = (
+                        travharv.target_store.select(sparql)
+                    )
+                    sparql_all = "SELECT ?s ?p ?o WHERE { ?s ?p ?o }"
+                    all_triples = travharv.target_store.select(sparql_all)
+                else:
+                    execution_report_data_result = rdf_store_access.select(
+                        sparql
+                    )
+                    sparql_all = (
+                        "SELECT ?s ?p ?o FROM <"
+                        + context_name_graph
+                        + "> \n WHERE { ?s ?p ?o }"
+                    )
+                    all_triples = rdf_store_access.select(sparql_all)
                 # get length of the result
                 log.debug(f"{len(execution_report_data_result)=}")
-
-                sparql_all = (
-                    "SELECT ?s ?p ?o FROM <"
-                    + context_name_graph
-                    + "> \n WHERE { ?s ?p ?o }"
-                )
-                all_triples = rdf_store_access.select(sparql_all)
                 log.debug(f"{len(all_triples)=}")
                 netto_triples = len(all_triples) - len(
                     execution_report_data_result

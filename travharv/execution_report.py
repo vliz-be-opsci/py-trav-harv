@@ -141,12 +141,12 @@ class ExecutionReport:
     e.g.: All TaskExecutionReports will be stored in a dictionary
     """
 
-    def __init__(self, rdf_store_access: RDFStoreAccess, config_name: str):
+    def __init__(self, config_name: str):
         """constructor
 
-        :param rdf_store_access: RDFStoreAccess
+        :param config_name: str
         """
-        self.rdf_store_access = rdf_store_access
+
         log.debug("ExecutionReport initialized")
         self.report_content = {
             "last_mod": timestamp(),
@@ -204,9 +204,9 @@ class ExecutionReport:
         self.execution_report_graph = Graph()
         self.execution_report_graph.parse(data=pre_ttl, format="turtle")
 
-    def report_to_store(self):
+    def report_to_store(self, rdf_store_access: RDFStoreAccess):
         self._make_report_graph()
-        self.rdf_store_access.insert_for_config(
+        rdf_store_access.insert_for_config(
             self.execution_report_graph, self.report_content["config_name"]
         )
         log.debug("Reported to store")

@@ -440,8 +440,8 @@ class TravHarvConfigBuilder:
                 {name_config}: {lastmod_config}"""
             )
             log.debug(
-                f"""Checking if config {name_config}
-                is older then {snooze_time} minutes"""
+                f"Checking if config {name_config}"
+                f"is older then {snooze_time} minutes"
             )
             return not self._rdf_store_access.verify_max_age_of_config(
                 name_config, snooze_time

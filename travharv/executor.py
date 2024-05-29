@@ -33,9 +33,7 @@ class TravHarvExecutor:
         self.NSM = NSM
         self.tasks = tasks
         self.rdf_store_access = rdf_store_access
-        self.execution_report = ExecutionReport(
-            rdf_store_access, config_filename
-        )
+        self.execution_report = ExecutionReport(config_filename)
         log.debug("TravHarvExecutor initialized")
         log.debug(f"Config filename: {self.config_filename}")
         log.debug(f"NSM set: {self.NSM}")
@@ -92,7 +90,7 @@ class TravHarvExecutor:
             # and the report can happen per assertion basis
             # and not per task basis
             self.execution_report.add_task_report(task_execution_report)
-            self.execution_report.report_to_store()
+            self.execution_report.report_to_store(self.rdf_store_access)
             log.debug(f"All paths asserted for task: {task}")
 
         log.debug("All paths asserted for all tasks")
