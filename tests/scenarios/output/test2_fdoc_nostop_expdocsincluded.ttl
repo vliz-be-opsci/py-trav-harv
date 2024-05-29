@@ -38,7 +38,7 @@
 .
 
 # DOC5
-<DOC8.ttl>
+<DOC5.ttl>
     a ex:Blue ; 
     ex:part [
         ex:id <DOC6.ttl> ; 

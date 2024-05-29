@@ -65,6 +65,11 @@ class SubjPropPathAssertion:
         }
         self.bounced = False
         self.graph_reports = []
+        # TODO: test if it is needed to really assert the path
+        # During testing it came out that sometimes this is needed
+        # since sometimes the subject is the beginning one for the path
+        # and sometimes it is not
+        self._harvest_uri(self.subject)
         self.assert_path()
 
         # based on the self.successfull assertion depth determine
