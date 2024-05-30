@@ -58,23 +58,29 @@ def test_scenarios(
     store_info_sets,
 ):
     assert httpd_server_base
-
-    for config in CONFIGS.glob("*.yml"):
-        if config.name not in SCENARIOS_OUTCOMES:
-            log.debug(f"Skipping scenario {config}")
-            continue
-        for test_case in SCENARIOS_OUTCOMES[config.name]:
-            mode = test_case["mode"]
-            log.debug(f"{mode=}")
-
-            # TODO: when mode is added in 0.0.5 add tests here
-            # for now continue
-
-            if mode == "nostop":
-                log.debug(f"Skipping scenario {config} with mode {mode}")
+    for store_info in store_info_sets:
+        for config in CONFIGS.glob("*.yml"):
+            if config.name not in SCENARIOS_OUTCOMES:
+                log.debug(
+                    f"Skipping scenario {config}"
+                    f" as it is not present in"
+                    f" SCENARIOS_OUTCOMES"
+                )
                 continue
+            for test_case in SCENARIOS_OUTCOMES[config.name]:
+                mode = test_case["mode"]
+                log.debug(f"{mode=}")
 
-            for store_info in store_info_sets:
+                # TODO: when mode is added in 0.0.5 add tests here
+                # for now continue
+
+                if mode == "nostop":
+                    log.debug(
+                        f"Skipping scenario {config} with mode {mode}"
+                        f" as it is not yet implemented"
+                    )
+                    continue
+
                 log.debug(f"Running scenario {config} with store {store_info}")
                 travharv = TravHarv(
                     config,
