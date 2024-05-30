@@ -97,7 +97,6 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
         "application/ld+json",
         "text/turtle",
         "application/json",
-        "application/octet-stream",  # This temp for testing
     }
 
     for format in formats:
@@ -159,12 +158,7 @@ def get_graph_for_format(subject_url: str, formats: str, graph: Graph = None):
                 # determine the format of the file and use the correct parser
                 try:
                     graph = graph + get_graph_for_format(
-                        alt_abs_url,
-                        formats=[
-                            "text/turtle",
-                            "application/ld+json",
-                            "application/json",
-                        ],
+                        alt_abs_url, formats=ACCEPTABLE_MIMETYPES
                     )
 
                 except Exception as e:

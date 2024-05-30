@@ -86,7 +86,7 @@ class TravHarvExecutor:
 
             # TODO figure out if the task_execution_report object
             # is a pointer or a copy of the object
-            # so addd_task_report can be done earlier
+            # so add_task_report can be done earlier
             # and the report can happen per assertion basis
             # and not per task basis
             self.execution_report.add_task_report(task_execution_report)

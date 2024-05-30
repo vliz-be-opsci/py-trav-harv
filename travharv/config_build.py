@@ -189,7 +189,7 @@ class AssertPath:
         """
         Make the path parts by splitting the path string on regex expression
         """
-        REGEXP = r"\s*/\s*(?![^<]*>)"  # TODO - define the regex expression
+        REGEXP = r"\s*/\s*(?![^<]*>)"
 
         # split the path on the regex expression
         return re.split(REGEXP, assert_path)
