@@ -8,6 +8,7 @@ from pyrdfj2 import J2RDFSyntaxBuilder
 from util4tests import run_single_test
 
 from travharv import TravHarv
+from travharv.store import RDFStoreAccess
 
 log = logging.getLogger(__name__)
 
@@ -51,6 +52,33 @@ SCENARIOS_OUTCOMES = {
 }
 
 
+def graphs_in_execution_report(rdfstore: RDFStoreAccess):
+    sparql = """
+    PREFIX schema: <https://schema.org/>
+    SELECT ?s ?contentUrl ?triples 
+    WHERE { 
+    ?s a schema:DataDownload ; 
+        schema:contentUrl ?contentUrl ; 
+        void:triples ?triples .
+    }
+    """
+    results = rdfstore.select(sparql)
+    # convert results into list of dicts with just the value
+    # convert uriref term or literal to str
+    results = [
+        {
+            "contentUrl": str(result["contentUrl"]),
+            "triples": str(result["triples"]),
+        }
+        for result in results
+    ]
+    # get the unique results
+    results = list(
+        {result["contentUrl"]: result for result in results}.values()
+    )
+    return results
+
+
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
 def test_scenario_one(
     httpd_server_base: str,
@@ -67,7 +95,11 @@ def test_scenario_one(
 
         travharv.process()
 
-        # assertions here
+        # get all the travharv:downloadedresources from the store
+        results = graphs_in_execution_report(travharv.target_store)
+        log.debug(results)
+        for result in results:
+            log.debug(f"{result=}")
 
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
@@ -86,6 +118,11 @@ def test_scenario_two(
         travharv.process()
         # assertions here
 
+        results = graphs_in_execution_report(travharv.target_store)
+        log.debug(results)
+        for result in results:
+            log.debug(f"{result=}")
+
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
 def test_scenario_tree(
@@ -102,6 +139,12 @@ def test_scenario_tree(
         )
         travharv.process()
         # assertions here
+
+        # get all the travharv:downloadedresources from the store
+        results = graphs_in_execution_report(travharv.target_store)
+        log.debug(results)
+        for result in results:
+            log.debug(f"{result=}")
 
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
@@ -120,6 +163,12 @@ def test_scenario_four(
         travharv.process()
         # assertions here
 
+        # get all the travharv:downloadedresources from the store
+        results = graphs_in_execution_report(travharv.target_store)
+        log.debug(results)
+        for result in results:
+            log.debug(f"{result=}")
+
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
 def test_scenario_five(
@@ -136,6 +185,12 @@ def test_scenario_five(
         )
         travharv.process()
         # assertions here
+
+        # get all the travharv:downloadedresources from the store
+        results = graphs_in_execution_report(travharv.target_store)
+        log.debug(results)
+        for result in results:
+            log.debug(f"{result=}")
 
 
 """

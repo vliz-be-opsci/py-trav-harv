@@ -52,14 +52,14 @@
     <urn:travharv:downloadresource-{{graph_report.id}}> ;
     {%- endif -%}
     {%- endfor -%}
-
+    {% endif %}
     {#- Last retrievable resource that is added to the rdf-store, with a single travharv task #}
     {%- for graph_report in at.graph_reports -%}
     {% if loop.last %}
     travharv:lastRetrievableResource <urn:travharv:downloadresource-{{graph_report.id}}> ;  
     {% endif %}
     {%- endfor -%}   
-    {% endif %}
+    
 .
 
 {% for graph_report in at.graph_reports-%}
