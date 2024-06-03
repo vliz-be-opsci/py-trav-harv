@@ -70,15 +70,6 @@
     void:triples {{graph_report.triple_count | xsd("integer") }} ;
 .
 
-{% if loop.last %}
-<urn:travharv:downloadresource-{{graph_report.id}}>
-    a schema:DataDownload, void:Dataset ; 
-    schema:contentUrl {{graph_report.download_url | xsd("anyURI") }} ; 
-    schema:encodingFormat {{graph_report.mime_type | xsd("string") }} ; 
-    void:triples {{graph_report.triple_count | xsd("integer") }} ;
-.
-
-{%- endif -%}
 {%- endfor %}
 {%- endfor %}
 {%- endfor %}

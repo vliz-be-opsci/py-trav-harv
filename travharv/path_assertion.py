@@ -148,7 +148,7 @@ class SubjPropPathAssertion:
             if self.depth == self.max_depth:
                 self._harvest_uri(self.subject)
                 self._surface()
-                return
+
             self._assert_at_depth()
             self._increase_depth()
 
