@@ -44,26 +44,42 @@
     sh:focusNode {{at.subject_uri | xsd("anyURI") }}; {# subject of assertion task #}
     sh:resultPath {{at.assertion_path | xsd("string") }} ; {# property path of assertion task #}
     sh:resultMessage {{at.message | xsd("string") }} ;
+    {% if graph_report | length > 0 %}
+    travharv:downloadedresources 
+    {%- for graph_report in at.graph_reports -%}
+    <urn:travharv:downloadresource-{{graph_report.id}}> ,
+    {%- if loop.last -%}
+    <urn:travharv:downloadresource-{{graph_report.id}}> ;
+    {%- endif -%}
+    {%- endfor -%}
 
     {#- Last retrievable resource that is added to the rdf-store, with a single travharv task #}
     {%- for graph_report in at.graph_reports -%}
     {% if loop.last %}
-    travharv:lastRetrievableResource <urn:travharv:assertionresource-{{graph_report.id}}> ;  
+    travharv:lastRetrievableResource <urn:travharv:downloadresource-{{graph_report.id}}> ;  
     {% endif %}
-    {%- endfor -%}
-    
+    {%- endfor -%}   
+    {% endif %}
 .
 
 {% for graph_report in at.graph_reports-%}
-{%- if loop.last -%}
-<urn:travharv:assertionresource-{{graph_report.id}}>
+<urn:travharv:downloadresource-{{graph_report.id}}>
     a schema:DataDownload, void:Dataset ; 
     schema:contentUrl {{graph_report.download_url | xsd("anyURI") }} ; 
     schema:encodingFormat {{graph_report.mime_type | xsd("string") }} ; 
     void:triples {{graph_report.triple_count | xsd("integer") }} ;
 .
+
+{% if loop.last %}
+<urn:travharv:downloadresource-{{graph_report.id}}>
+    a schema:DataDownload, void:Dataset ; 
+    schema:contentUrl {{graph_report.download_url | xsd("anyURI") }} ; 
+    schema:encodingFormat {{graph_report.mime_type | xsd("string") }} ; 
+    void:triples {{graph_report.triple_count | xsd("integer") }} ;
+.
+
 {%- endif -%}
 {%- endfor %}
+{%- endfor %}
+{%- endfor %}
 
-{%- endfor %}
-{%- endfor %}

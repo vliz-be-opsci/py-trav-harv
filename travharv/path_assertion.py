@@ -69,7 +69,7 @@ class SubjPropPathAssertion:
         # During testing it came out that sometimes this is needed
         # since sometimes the subject is the beginning one for the path
         # and sometimes it is not
-        self._harvest_uri(self.subject)
+        # self._harvest_uri(self.subject)
         self.assert_path()
 
         # based on the self.successfull assertion depth determine
@@ -177,17 +177,15 @@ class SubjPropPathAssertion:
         :param uri: str
         """
         # TODO in a next update this will be config driven
-        ACCEPTABLE_MIMETYPES = {
-            "application/ld+json",
+        MIMETYPES_TO_GET = {
             "text/turtle",
-            "application/json",
         }
         # doubting if this is really needed
         # here as a mimetype to get
 
         log.debug(f"Beginning harvesting of URI: {uri}")
 
-        for mimetype in ACCEPTABLE_MIMETYPES:
+        for mimetype in MIMETYPES_TO_GET:
             # do a get of the uri with the mimetype
             graph = get_graph_for_format(uri, [mimetype])
             log.debug(f"Graph: {graph}")

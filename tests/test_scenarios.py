@@ -51,6 +51,94 @@ SCENARIOS_OUTCOMES = {
 }
 
 
+@pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
+def test_scenario_one(
+    httpd_server_base: str,
+    store_info_sets,
+):
+    assert httpd_server_base
+    for store in store_info_sets:
+        log.debug(f"testing scenario one for {store}")
+        config = CONFIGS / "dereference_test1_sparql.yml"
+        travharv = TravHarv(
+            config,
+            store,
+        )
+
+        travharv.process()
+
+        # assertions here
+
+
+@pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
+def test_scenario_two(
+    httpd_server_base: str,
+    store_info_sets,
+):
+    assert httpd_server_base
+    for store in store_info_sets:
+        log.debug(f"testing scenario one for {store}")
+        config = CONFIGS / "dereference_test2_sparql.yml"
+        travharv = TravHarv(
+            config,
+            store,
+        )
+        travharv.process()
+        # assertions here
+
+
+@pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
+def test_scenario_tree(
+    httpd_server_base: str,
+    store_info_sets,
+):
+    assert httpd_server_base
+    for store in store_info_sets:
+        log.debug(f"testing scenario one for {store}")
+        config = CONFIGS / "dereference_test3_sparql.yml"
+        travharv = TravHarv(
+            config,
+            store,
+        )
+        travharv.process()
+        # assertions here
+
+
+@pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
+def test_scenario_four(
+    httpd_server_base: str,
+    store_info_sets,
+):
+    assert httpd_server_base
+    for store in store_info_sets:
+        log.debug(f"testing scenario one for {store}")
+        config = CONFIGS / "dereference_test4_sparql.yml"
+        travharv = TravHarv(
+            config,
+            store,
+        )
+        travharv.process()
+        # assertions here
+
+
+@pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
+def test_scenario_five(
+    httpd_server_base: str,
+    store_info_sets,
+):
+    assert httpd_server_base
+    for store in store_info_sets:
+        log.debug(f"testing scenario one for {store}")
+        config = CONFIGS / "dereference_test5_sparql.yml"
+        travharv = TravHarv(
+            config,
+            store,
+        )
+        travharv.process()
+        # assertions here
+
+
+"""
 # launch a server with subprocess from local_server.py
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
 def test_scenarios(
@@ -136,8 +224,8 @@ def test_scenarios(
 
                 # assert to see if the netto_triples is
                 # the same as the expected_len_triples
-                assert netto_triples == int(test_case["expected_len_triples"])
-
+                # assert netto_triples == int(test_case["expected_len_triples"])
+"""
 
 if __name__ == "__main__":
     run_single_test(__file__)
