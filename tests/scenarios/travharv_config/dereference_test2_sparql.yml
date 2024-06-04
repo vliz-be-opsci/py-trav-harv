@@ -11,11 +11,11 @@ assert:
       - "ex:resource / ex:part"
     # to assert n1:
     # None of the resource children of DOC1 have and ex:subset & ex:part.
-    # After this step the randomly chosen resource will have let to 
+    # After this step the randomly chosen resource will have let to
     # either one of both assertions failing
     # This means that an execution log failure on sh:focusnode DOC1.
-    # to assert n2: 
-    # reassure all triples from DOC1 are loaded, 
+    # to assert n2:
+    # reassure all triples from DOC1 are loaded,
     # this means all triples in graphs > len(triples(DOC1))
     # assure ex:resource DOC2, DOC3, DOC8 ,DOC5, DOC7 == true
   - subjects:
@@ -36,3 +36,4 @@ assert:
       - "ex:p1"
       - "ex:p2"
       - "ex:p3"
+    # assure that DOC4 and DOC6 are present in the graph

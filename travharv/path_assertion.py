@@ -74,7 +74,9 @@ class SubjPropPathAssertion:
 
         # based on the self.successfull assertion depth determine
         # the property path that was successfull asserted
-        pp_for_report = self.path_for_depth
+        pp_for_report = self.assertion_path.get_path_for_depth(
+            self.succesful_assertion_depth
+        )
         assertion_result = False
         message = f"Assertion failed, last path: {pp_for_report}"
         if self.succesful_assertion_depth == self.max_depth:
@@ -140,15 +142,15 @@ class SubjPropPathAssertion:
         log.debug(f"Subject: {self.subject}")
         # Implement method to assert a property path for a given subject
         while self.depth <= self.max_depth:
-            if (
-                self.depth >= (self.max_depth - self.previous_bounce_depth)
-                and self.bounced is True
-            ):
-                return
-            if self.depth == self.max_depth:
+            # first check if last_succesful_depth is not
+            # the same as the current depth
+            # if it is not the same, then we have to assert the path
+            if self.depth == self.max_depth and self.bounced is False:
                 self._harvest_uri(self.subject)
                 self._surface()
 
+            if self.depth == self.max_depth and self.bounced is True:
+                return
             self._assert_at_depth()
             self._increase_depth()
 
@@ -159,6 +161,7 @@ class SubjPropPathAssertion:
         log.debug(
             "Asserting a property path for a given subject at a given depth"
         )
+        log.debug(f"Subject: {self.subject}")
         log.debug(f"Depth: {self.path_length}")
         log.debug(f"""ppath: {self.path_for_depth}""")
         if self.rdf_store_access.verify_path(
@@ -166,8 +169,14 @@ class SubjPropPathAssertion:
             self.path_for_depth,
             self.NSM,
         ):
-            self._harvest_and_surface()
+            if self.depth != self.max_depth:
+                log.debug("Subjects for property path assertion found")
+                self._harvest()
+                self.succesful_assertion_depth = self.depth
+                return
+            log.debug("Path assertion successful")
             self.succesful_assertion_depth = self.depth
+            self._increase_depth()
             return
 
     def _harvest_uri(self, uri):
@@ -231,15 +240,11 @@ class SubjPropPathAssertion:
         self.depth = 0
         self.bounced = True
 
-    def _harvest_and_surface(self):
+    def _harvest(self):
         """
-        Harvest the property path and surface back to depth 0.
+        Harvest the property path.
         """
-        log.debug(
-            """Harvesting the property path and
-               backtracking to the previous depth"""
-        )
-
+        log.debug("Harvesting the property path")
         # get the uri to harvest by getting
         # the first element of the path trajectory
         uri = self.rdf_store_access.select_subjects_for_ppath(
@@ -250,4 +255,3 @@ class SubjPropPathAssertion:
 
         log.debug(f"uri: {self._subject_str_check(uri)}")
         self._harvest_uri(self._subject_str_check(uri))
-        self._surface()

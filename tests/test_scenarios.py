@@ -52,13 +52,39 @@ SCENARIOS_OUTCOMES = {
 }
 
 
+def netto_triples_for_store_info_set(
+    store_info_set: tuple, store: RDFStoreAccess, context_name_graph: str
+):
+    if store_info_set == ():
+        sparql_all = "SELECT ?s ?p ?o WHERE { ?s ?p ?o }"
+        context_name_graph = ""
+        sparql = QUERY_BUILDER.build_syntax(
+            "execution_report_data.sparql",
+        )
+    else:
+        context_name_graph = store._nmapper.key_to_ng(context_name_graph)
+        sparql_all = (
+            f"SELECT ?s ?p ?o FROM <{context_name_graph}> "
+            f"WHERE {{ ?s ?p ?o }}"
+        )
+        sparql = QUERY_BUILDER.build_syntax(
+            "execution_report_data.sparql",
+            context_name_graph=context_name_graph,
+        )
+    all_triples = store.select(sparql_all)
+    execution_report_data_result = store.select(sparql)
+    netto_triples = len(all_triples) - len(execution_report_data_result)
+    return netto_triples
+
+
 def graphs_in_execution_report(rdfstore: RDFStoreAccess):
     sparql = """
     PREFIX schema: <https://schema.org/>
-    SELECT ?s ?contentUrl ?triples 
-    WHERE { 
-    ?s a schema:DataDownload ; 
-        schema:contentUrl ?contentUrl ; 
+    PREFIX void: <http://rdfs.org/ns/void#>
+    SELECT ?s ?contentUrl ?triples
+    WHERE {
+        ?s a schema:DataDownload ;
+        schema:contentUrl ?contentUrl ;
         void:triples ?triples .
     }
     """
@@ -79,6 +105,12 @@ def graphs_in_execution_report(rdfstore: RDFStoreAccess):
     return results
 
 
+def len_store(store: RDFStoreAccess):
+    log.debug("Getting the length of the store")
+    triples = store.all_triples()
+    return len(triples)
+
+
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
 def test_scenario_one(
     httpd_server_base: str,
@@ -86,20 +118,47 @@ def test_scenario_one(
 ):
     assert httpd_server_base
     for store in store_info_sets:
+
         log.debug(f"testing scenario one for {store}")
         config = CONFIGS / "dereference_test1_sparql.yml"
         travharv = TravHarv(
             config,
             store,
         )
+        length_store = len_store(travharv.target_store)
 
         travharv.process()
 
         # get all the travharv:downloadedresources from the store
         results = graphs_in_execution_report(travharv.target_store)
-        log.debug(results)
-        for result in results:
-            log.debug(f"{result=}")
+
+        # docs that should be present at all times are
+        # DOC1
+        docs = ["DOC1"]
+        for doc in docs:
+            assert any(doc in result["contentUrl"] for result in results)
+
+        # len expected triples is the triplecount of the docs
+        # that should be present at all times
+        # count all the triples in the results
+        expected_len_triples = sum(
+            int(result["triples"]) for result in results
+        )
+        log.debug(f"{expected_len_triples=}")
+        log.debug(f"{store=}")
+        netto_triples = netto_triples_for_store_info_set(
+            store,
+            travharv.target_store,
+            "dereference_test1_sparql.yml",
+        )
+        log.debug(f"{netto_triples=}")
+        assert netto_triples + length_store >= expected_len_triples
+
+        # delete the context from the store so
+        # it doesn't interfere with the next test
+        travharv.target_store.drop_graph_for_config(
+            "dereference_test1_sparql.yml"
+        )
 
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
@@ -115,17 +174,43 @@ def test_scenario_two(
             config,
             store,
         )
+        length_store = len_store(travharv.target_store)
         travharv.process()
         # assertions here
 
         results = graphs_in_execution_report(travharv.target_store)
-        log.debug(results)
-        for result in results:
-            log.debug(f"{result=}")
+
+        # docs that should be present at all times are
+        # DOC1, DOC2, DOC3, DOC4, DOC5, DOC6
+        docs = ["DOC1", "DOC2", "DOC3", "DOC4", "DOC5", "DOC6"]
+        for doc in docs:
+            assert any(doc in result["contentUrl"] for result in results)
+
+        # len expected triples is the triplecount of the docs
+        # that should be present at all times
+        # count all the triples in the results
+        expected_len_triples = sum(
+            int(result["triples"]) for result in results
+        )
+        log.debug(f"{expected_len_triples=}")
+        log.debug(f"{store=}")
+        netto_triples = netto_triples_for_store_info_set(
+            store,
+            travharv.target_store,
+            "dereference_test2_sparql.yml",
+        )
+        log.debug(f"{netto_triples=}")
+        assert netto_triples + length_store >= expected_len_triples
+
+        # delete the context from the store so
+        # it doesn't interfere with the next test
+        travharv.target_store.drop_graph_for_config(
+            "dereference_test2_sparql.yml"
+        )
 
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
-def test_scenario_tree(
+def test_scenario_three(
     httpd_server_base: str,
     store_info_sets,
 ):
@@ -137,14 +222,71 @@ def test_scenario_tree(
             config,
             store,
         )
+        length_store = len_store(travharv.target_store)
         travharv.process()
         # assertions here
 
         # get all the travharv:downloadedresources from the store
         results = graphs_in_execution_report(travharv.target_store)
-        log.debug(results)
-        for result in results:
-            log.debug(f"{result=}")
+
+        # docs that should be present at all times are
+        # DOC1
+        docs = ["DOC1"]
+        for doc in docs:
+            assert any(doc in result["contentUrl"] for result in results)
+
+        # scenarios that could happen are
+        # DOC1, DOC2, DOC4
+        # DOC1, DOC5, DOC6
+        # DOC1, DPC3
+        # DOC1, DOC8
+        # DOC1, DOC7
+
+        possible_docs = [
+            ["DOC1", "DOC2", "DOC4"],
+            ["DOC1", "DOC5", "DOC6"],
+            ["DOC1", "DOC3"],
+            ["DOC1", "DOC8"],
+            ["DOC1", "DOC7"],
+        ]
+
+        # check if any of the possible docs are the same as the results
+        scenario_found = False
+        for possible_doc in possible_docs:
+            log.debug(f"{possible_doc=}")
+
+            # check if all the docs are present in the results
+            # if they are then break the loop
+            if all(
+                any(doc in result["contentUrl"] for result in results)
+                for doc in possible_doc
+            ):
+                scenario_found = True
+                break
+        assert scenario_found
+
+        # len expected triples is the triplecount of the docs
+        # that should be present at all times
+        # count all the triples in the results
+        expected_len_triples = sum(
+            int(result["triples"]) for result in results
+        )
+        log.debug(f"{expected_len_triples=}")
+        log.debug(f"{store=}")
+
+        netto_triples = netto_triples_for_store_info_set(
+            store,
+            travharv.target_store,
+            "dereference_test3_sparql.yml",
+        )
+
+        log.debug(f"{netto_triples=}")
+        assert netto_triples + length_store >= expected_len_triples
+        # delete the context from the store so
+        # it doesn't interfere with the next test
+        travharv.target_store.drop_graph_for_config(
+            "dereference_test3_sparql.yml"
+        )
 
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
@@ -160,14 +302,72 @@ def test_scenario_four(
             config,
             store,
         )
+        length_store = len_store(travharv.target_store)
         travharv.process()
         # assertions here
 
         # get all the travharv:downloadedresources from the store
         results = graphs_in_execution_report(travharv.target_store)
-        log.debug(results)
-        for result in results:
-            log.debug(f"{result=}")
+
+        # docs that should be present at all times are
+        # DOC1
+        docs = ["DOC1"]
+        for doc in docs:
+            assert any(doc in result["contentUrl"] for result in results)
+
+        # scenarios that could happen are
+        # DOC1, DOC2, DOC4
+        # DOC1, DOC5, DOC6
+        # DOC1, DPC3
+        # DOC1, DOC8
+        # DOC1, DOC7
+
+        possible_docs = [
+            ["DOC1", "DOC2", "DOC4"],
+            ["DOC1", "DOC5", "DOC6"],
+            ["DOC1", "DOC3"],
+            ["DOC1", "DOC8"],
+            ["DOC1", "DOC7"],
+        ]
+
+        # check if any of the possible docs are the same as the results
+        scenario_found = False
+        for possible_doc in possible_docs:
+            log.debug(f"{possible_doc=}")
+
+            # check if all the docs are present in the results
+            # if they are then break the loop
+            if all(
+                any(doc in result["contentUrl"] for result in results)
+                for doc in possible_doc
+            ):
+                scenario_found = True
+                break
+        assert scenario_found
+
+        # len expected triples is the triplecount of the docs
+        # that should be present at all times
+        # count all the triples in the results
+        expected_len_triples = sum(
+            int(result["triples"]) for result in results
+        )
+        log.debug(f"{expected_len_triples=}")
+        log.debug(f"{store=}")
+
+        netto_triples = netto_triples_for_store_info_set(
+            store,
+            travharv.target_store,
+            "dereference_test4_sparql.yml",
+        )
+
+        log.debug(f"{netto_triples=}")
+        assert netto_triples + length_store >= expected_len_triples
+
+        # delete the context from the store so
+        # it doesn't interfere with the next test
+        travharv.target_store.drop_graph_for_config(
+            "dereference_test4_sparql.yml"
+        )
 
 
 @pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
@@ -183,104 +383,73 @@ def test_scenario_five(
             config,
             store,
         )
+        length_store = len_store(travharv.target_store)
         travharv.process()
         # assertions here
 
         # get all the travharv:downloadedresources from the store
         results = graphs_in_execution_report(travharv.target_store)
-        log.debug(results)
-        for result in results:
-            log.debug(f"{result=}")
 
+        # docs that should be present at all times are
+        # DOC1
+        docs = ["DOC1"]
+        for doc in docs:
+            assert any(doc in result["contentUrl"] for result in results)
 
-"""
-# launch a server with subprocess from local_server.py
-@pytest.mark.usefixtures("httpd_server_base", "store_info_sets")
-def test_scenarios(
-    httpd_server_base: str,
-    store_info_sets,
-):
-    assert httpd_server_base
-    for store_info in store_info_sets:
-        for config in CONFIGS.glob("*.yml"):
-            if config.name not in SCENARIOS_OUTCOMES:
-                log.debug(
-                    f"Skipping scenario {config}"
-                    f" as it is not present in"
-                    f" SCENARIOS_OUTCOMES"
-                )
-                continue
-            for test_case in SCENARIOS_OUTCOMES[config.name]:
-                mode = test_case["mode"]
-                log.debug(f"{mode=}")
+        # scenarios that could happen are
+        # DOC1, DOC2, DOC4
+        # DOC1, DOC5, DOC6
+        # DOC1, DPC3
+        # DOC1, DOC8
+        # DOC1, DOC7
 
-                # TODO: when mode is added in 0.0.5 add tests here
-                # for now continue
+        possible_docs = [
+            ["DOC1", "DOC2", "DOC4"],
+            ["DOC1", "DOC5", "DOC6"],
+            ["DOC1", "DOC3"],
+            ["DOC1", "DOC8"],
+            ["DOC1", "DOC7"],
+        ]
 
-                if mode == "nostop":
-                    log.debug(
-                        f"Skipping scenario {config} with mode {mode}"
-                        f" as it is not yet implemented"
-                    )
-                    continue
+        # check if any of the possible docs are the same as the results
+        scenario_found = False
+        for possible_doc in possible_docs:
+            log.debug(f"{possible_doc=}")
 
-                log.debug(f"Running scenario {config} with store {store_info}")
-                travharv = TravHarv(
-                    config,
-                    store_info,
-                )
-                travharv.process()
-                # assert travharv.error_occurred
-                # other assertions here based on the scenarios
+            # check if all the docs are present in the results
+            # if they are then break the loop
+            if all(
+                any(doc in result["contentUrl"] for result in results)
+                for doc in possible_doc
+            ):
+                scenario_found = True
+                break
+        assert scenario_found
 
-                # get the context name for the config name
-                context_name_graph = travharv.target_store._nmapper.key_to_ng(
-                    config.name
-                )
-                log.debug(f"{context_name_graph=}")
+        # len expected triples is the triplecount of the docs
+        # that should be present at all times
+        # count all the triples in the results
+        expected_len_triples = sum(
+            int(result["triples"]) for result in results
+        )
+        log.debug(f"{expected_len_triples=}")
+        log.debug(f"{store=}")
 
-                # make sparql for the test
-                sparql = QUERY_BUILDER.build_syntax(
-                    "execution_report_data.sparql",
-                    context_name_graph=context_name_graph,
-                )
+        netto_triples = netto_triples_for_store_info_set(
+            store,
+            travharv.target_store,
+            "dereference_test5_sparql.yml",
+        )
 
-                log.debug(f"{store_info=}")
+        log.debug(f"{netto_triples=}")
+        assert netto_triples + length_store >= expected_len_triples
 
-                if store_info == ():
-                    sparql = QUERY_BUILDER.build_syntax(
-                        "execution_report_data.sparql",
-                    )
-                    execution_report_data_result = (
-                        travharv.target_store.select(sparql)
-                    )
-                    sparql_all = "SELECT ?s ?p ?o WHERE { ?s ?p ?o }"
-                else:
-                    execution_report_data_result = (
-                        travharv.target_store.select(sparql)
-                    )
-                    sparql_all = (
-                        f"SELECT ?s ?p ?o FROM <{context_name_graph}> "
-                        f"WHERE {{ ?s ?p ?o }}"
-                    )
+        # delete the context from the store so
+        # it doesn't interfere with the next test
+        travharv.target_store.drop_graph_for_config(
+            "dereference_test5_sparql.yml"
+        )
 
-                all_triples = travharv.target_store.select(sparql_all)
-                # get length of the result
-                log.debug(f"{len(execution_report_data_result)=}")
-                log.debug(f"{len(all_triples)=}")
-                netto_triples = len(all_triples) - len(
-                    execution_report_data_result
-                )
-                log.debug(f"{netto_triples=}")
-
-                # delete the context from the store so
-                # # it doesn't interfere with the next test
-                travharv.target_store.drop_graph_for_config(config.name)
-
-                # assert to see if the netto_triples is
-                # the same as the expected_len_triples
-                # assert netto_triples == int(test_case["expected_len_triples"])
-"""
 
 if __name__ == "__main__":
     run_single_test(__file__)
