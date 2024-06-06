@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv.executor &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">travharv.executor</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for travharv.executor</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">travharv.config_build</span> <span class="kn">import</span> <span class="n">TravHarvConfig</span>
+<span class="kn">from</span> <span class="nn">travharv.execution_report</span> <span class="kn">import</span> <span class="n">ExecutionReport</span><span class="p">,</span> <span class="n">TaskExecutionReport</span>
+<span class="kn">from</span> <span class="nn">travharv.path_assertion</span> <span class="kn">import</span> <span class="n">SubjPropPathAssertion</span>
+<span class="kn">from</span> <span class="nn">travharv.store</span> <span class="kn">import</span> <span class="n">RDFStoreAccess</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TravHarvExecutor">
+<a class="viewcode-back" href="../../travharv.html#travharv.executor.TravHarvExecutor">[docs]</a>
+<span class="k">class</span> <span class="nc">TravHarvExecutor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a TravHarvExecutor.</span>
+<span class="sd">    This class will assert all paths</span>
+<span class="sd">    for all subjects given for each task per config.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">NSM</span><span class="p">:</span> <span class="n">TravHarvConfig</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span>
+        <span class="n">tasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+        <span class="n">rdf_store_access</span><span class="p">:</span> <span class="n">RDFStoreAccess</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor</span>
+
+<span class="sd">        :param config_filename: str</span>
+<span class="sd">        :param NSM: dict</span>
+<span class="sd">        :param tasks: list</span>
+<span class="sd">        :param rdf_store_access: RDFStoreAccess</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span> <span class="o">=</span> <span class="n">config_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span> <span class="o">=</span> <span class="n">NSM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="n">tasks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span> <span class="o">=</span> <span class="n">rdf_store_access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execution_report</span> <span class="o">=</span> <span class="n">ExecutionReport</span><span class="p">(</span><span class="n">config_filename</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;TravHarvExecutor initialized&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Config filename: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NSM set: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Tasks: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TravHarvExecutor.assert_all_paths">
+<a class="viewcode-back" href="../../travharv.html#travharv.executor.TravHarvExecutor.assert_all_paths">[docs]</a>
+    <span class="k">def</span> <span class="nf">assert_all_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assert all paths for all subjects given for each task per config.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Asserting all paths for all</span>
+<span class="sd">               subjects given for each task per config&quot;&quot;&quot;</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
+            <span class="n">task_execution_report</span> <span class="o">=</span> <span class="n">TaskExecutionReport</span><span class="p">()</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># check if subject is a URI or a SPARQL query</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Info task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">subject_definition</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">subject_definition</span>
+            <span class="n">assertion_path_set</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">assert_path_set</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject definition: </span><span class="si">{</span><span class="n">subject_definition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assertion path set: </span><span class="si">{</span><span class="n">assertion_path_set</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">subject_definition</span><span class="o">.</span><span class="n">list_subjects</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject: </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span>
+                    <span class="n">assertion_path</span>
+                <span class="p">)</span> <span class="ow">in</span> <span class="n">assertion_path_set</span><span class="o">.</span><span class="n">list_assertion_paths</span><span class="p">():</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assertion path: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">assertion_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">SubjPropPathAssertion</span><span class="p">(</span>
+                            <span class="n">subject</span><span class="p">,</span>
+                            <span class="n">assertion_path</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">config_filename</span><span class="p">,</span>
+                            <span class="n">task_execution_report</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                            </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2"> has an error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span>
+<span class="s2">                            for assertion path: </span><span class="si">{</span><span class="n">assertion_path</span><span class="si">}</span>
+<span class="s2">                            &quot;&quot;&quot;</span>
+                        <span class="p">)</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                    <span class="k">finally</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Assertion path: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">assertion_path</span><span class="p">)</span><span class="si">}</span><span class="s2"> asserted&quot;</span>
+                        <span class="p">)</span>
+
+            <span class="c1"># TODO figure out if the task_execution_report object</span>
+            <span class="c1"># is a pointer or a copy of the object</span>
+            <span class="c1"># so add_task_report can be done earlier</span>
+            <span class="c1"># and the report can happen per assertion basis</span>
+            <span class="c1"># and not per task basis</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execution_report</span><span class="o">.</span><span class="n">add_task_report</span><span class="p">(</span><span class="n">task_execution_report</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execution_report</span><span class="o">.</span><span class="n">report_to_store</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All paths asserted for task: </span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;All paths asserted for all tasks&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

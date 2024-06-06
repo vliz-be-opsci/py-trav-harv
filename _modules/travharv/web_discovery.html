@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv.web_discovery &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">travharv.web_discovery</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for travharv.web_discovery</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">cgi</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">html.parser</span> <span class="kn">import</span> <span class="n">HTMLParser</span>
+<span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">urljoin</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">requests.adapters</span> <span class="kn">import</span> <span class="n">HTTPAdapter</span>
+<span class="kn">from</span> <span class="nn">requests.packages.urllib3.util.retry</span> <span class="kn">import</span> <span class="n">Retry</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="n">RDF_MIME_TO_FORMAT</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;application/ld+json&quot;</span><span class="p">:</span> <span class="s2">&quot;json-ld&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;text/turtle&quot;</span><span class="p">:</span> <span class="s2">&quot;turtle&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="ctype_to_rdf_format">
+<a class="viewcode-back" href="../../travharv.html#travharv.web_discovery.ctype_to_rdf_format">[docs]</a>
+<span class="k">def</span> <span class="nf">ctype_to_rdf_format</span><span class="p">(</span><span class="n">ctype</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">RDF_MIME_TO_FORMAT</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ctype</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LODAwareHTMLParser">
+<a class="viewcode-back" href="../../travharv.html#travharv.web_discovery.LODAwareHTMLParser">[docs]</a>
+<span class="k">class</span> <span class="nc">LODAwareHTMLParser</span><span class="p">(</span><span class="n">HTMLParser</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    HTMLParser that knows about LOD embedding and linking techniques.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_script</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LODAwareHTMLParser.handle_starttag">
+<a class="viewcode-back" href="../../travharv.html#travharv.web_discovery.LODAwareHTMLParser.handle_starttag">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_starttag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;link&quot;</span> <span class="ow">and</span> <span class="s2">&quot;rel&quot;</span> <span class="ow">in</span> <span class="n">attrs</span> <span class="ow">and</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;rel&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;describedby&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;href&quot;</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;href&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;script&quot;</span>
+            <span class="ow">and</span> <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">attrs</span>
+            <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;application/ld+json&quot;</span>
+                <span class="ow">or</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;text/turtle&quot;</span>
+            <span class="p">)</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_script</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="LODAwareHTMLParser.handle_endtag">
+<a class="viewcode-back" href="../../travharv.html#travharv.web_discovery.LODAwareHTMLParser.handle_endtag">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_endtag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;script&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">in_script</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="LODAwareHTMLParser.handle_data">
+<a class="viewcode-back" href="../../travharv.html#travharv.web_discovery.LODAwareHTMLParser.handle_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_script</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">:</span> <span class="n">data</span><span class="p">})</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="get_graph_for_format">
+<a class="viewcode-back" href="../../travharv.html#travharv.web_discovery.get_graph_for_format">[docs]</a>
+<span class="k">def</span> <span class="nf">get_graph_for_format</span><span class="p">(</span><span class="n">subject_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">formats</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Discover triples describing the subject (assumed at subject_url)</span>
+<span class="sd">    and add them to the graph</span>
+
+<span class="sd">    :param subject_url: url (originally assumed from &lt;uri&gt;)</span>
+<span class="sd">    pointing to the subject to be discovered</span>
+<span class="sd">    :type subject_url: str</span>
+<span class="sd">    :param g: graph to be filled</span>
+<span class="sd">    :type g: rdflib.Graph</span>
+<span class="sd">    :param format: indicating what format should be retrieved json-ld, turtle</span>
+<span class="sd">    :type form: str</span>
+<span class="sd">    :returns: the graph whith added discovered triples</span>
+<span class="sd">    :rtype: rdflib.Graph</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">subject_url</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">graph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>  <span class="c1"># create a fresh graph if you don&#39;t have it yet</span>
+
+    <span class="n">total_retry</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
+    <span class="n">retry</span> <span class="o">=</span> <span class="n">Retry</span><span class="p">(</span>
+        <span class="n">total</span><span class="o">=</span><span class="n">total_retry</span><span class="p">,</span>
+        <span class="n">backoff_factor</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+        <span class="n">status_forcelist</span><span class="o">=</span><span class="p">[</span><span class="mi">500</span><span class="p">,</span> <span class="mi">502</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">504</span><span class="p">,</span> <span class="mi">429</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">adapter</span> <span class="o">=</span> <span class="n">HTTPAdapter</span><span class="p">(</span><span class="n">max_retries</span><span class="o">=</span><span class="n">retry</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="n">adapter</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span> <span class="n">adapter</span><span class="p">)</span>
+
+    <span class="n">triples_found</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">ACCEPTABLE_MIMETYPES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;application/ld+json&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text/turtle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">for</span> <span class="nb">format</span> <span class="ow">in</span> <span class="n">formats</span><span class="p">:</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="nb">format</span><span class="p">}</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;requesting </span><span class="si">{</span><span class="n">subject_url</span><span class="si">}</span><span class="s2"> with </span><span class="si">{</span><span class="n">headers</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subject_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">mime_type</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">cgi</span><span class="o">.</span><span class="n">parse_header</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">])</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="si">=}</span><span class="s2"> </span><span class="si">{</span><span class="n">mime_type</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">mime_type</span> <span class="ow">in</span> <span class="n">ACCEPTABLE_MIMETYPES</span><span class="p">):</span>
+            <span class="n">triples_found</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># if mimetype is application/json assume application/ld+json</span>
+                <span class="c1"># to satisfy the known formats of rdflib.parser</span>
+                <span class="k">if</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/json&quot;</span><span class="p">:</span>
+                    <span class="n">mime_type</span> <span class="o">=</span> <span class="s2">&quot;application/ld+json&quot;</span>
+                <span class="c1"># TODO: find out how to configure local_server.py</span>
+                <span class="c1"># to return the correct mime types for the response header</span>
+                <span class="k">if</span> <span class="n">mime_type</span> <span class="o">==</span> <span class="s2">&quot;application/octet-stream&quot;</span><span class="p">:</span>
+                    <span class="n">mime_type</span> <span class="o">=</span> <span class="s2">&quot;text/turtle&quot;</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">mime_type</span><span class="p">,</span> <span class="n">publicID</span><span class="o">=</span><span class="n">subject_url</span>
+                <span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;failed to parse </span><span class="si">{</span><span class="n">subject_url</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="nb">format</span><span class="si">=}</span><span class="s2"> error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">graph</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">triples_found</span><span class="p">:</span>
+        <span class="c1"># perform a check in the html to</span>
+        <span class="c1"># see if there is any link to fair signposting</span>
+        <span class="c1"># perform request to uri with accept header text/html</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Accept&quot;</span><span class="p">:</span> <span class="s2">&quot;text/html&quot;</span><span class="p">}</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subject_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span> <span class="ow">and</span> <span class="s2">&quot;text/html&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">]:</span>
+            <span class="c1"># parse the html and check if there is any link to fair signposting</span>
+            <span class="c1"># if there is then download it to the triplestore</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;content of </span><span class="si">{</span><span class="n">subject_url</span><span class="si">}</span><span class="s2"> is html&quot;</span><span class="p">)</span>
+            <span class="c1"># go over the html file and find all the links in the head section</span>
+            <span class="c1"># and check if there is any links with rel=&quot;describedby&quot; anf if so</span>
+            <span class="c1"># then follow it and download it to the triplestore</span>
+
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">LODAwareHTMLParser</span><span class="p">()</span>
+            <span class="n">parser</span><span class="o">.</span><span class="n">feed</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">links</span><span class="p">)</span><span class="si">}</span><span class="s2"> links in the html file&quot;</span><span class="p">)</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">alt_url</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">links</span><span class="p">:</span>
+                <span class="c1"># check first if the link is absolute or relative</span>
+                <span class="k">if</span> <span class="n">alt_url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">):</span>
+                    <span class="n">alt_abs_url</span> <span class="o">=</span> <span class="n">alt_url</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Resolve the relative URL to an absolute URL</span>
+                    <span class="n">alt_abs_url</span> <span class="o">=</span> <span class="n">urljoin</span><span class="p">(</span><span class="n">subject_url</span><span class="p">,</span> <span class="n">alt_url</span><span class="p">)</span>
+                <span class="c1"># use this linked uri as the alternative for this subect</span>
+                <span class="c1"># determine the format of the file and use the correct parser</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">graph</span> <span class="o">=</span> <span class="n">graph</span> <span class="o">+</span> <span class="n">get_graph_for_format</span><span class="p">(</span>
+                        <span class="n">alt_abs_url</span><span class="p">,</span> <span class="n">formats</span><span class="o">=</span><span class="n">ACCEPTABLE_MIMETYPES</span>
+                    <span class="p">)</span>
+
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;failed to get </span><span class="si">{</span><span class="n">alt_abs_url</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="nb">format</span><span class="si">=}</span><span class="s2"> error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">scripts</span><span class="p">:</span>
+                <span class="c1"># parse the script and check if it is json-ld or turtle</span>
+                <span class="c1"># if so then add it to the triplestore</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;script: </span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="c1"># { &#39;application/ld+json&#39;: &#39;...&#39;} | {&#39;text/turtle&#39;: &#39;...&#39;}</span>
+                <span class="k">for</span> <span class="n">ctype</span><span class="p">,</span> <span class="n">content</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">cformat</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">ctype_to_rdf_format</span><span class="p">(</span><span class="n">ctype</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># ctype is not known as rdf-format</span>
+                        <span class="k">continue</span>  <span class="c1"># skip</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;found script with rdf </span><span class="si">{</span><span class="n">ctype</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">cformat</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span>
+                        <span class="n">data</span><span class="o">=</span><span class="n">content</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">cformat</span><span class="p">,</span> <span class="n">publicID</span><span class="o">=</span><span class="n">subject_url</span>
+                    <span class="p">)</span>
+
+            <span class="n">parser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">graph</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;request for </span><span class="si">{</span><span class="n">subject_url</span><span class="si">}</span><span class="s2"> failed &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;with status code </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2"> &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;and content type </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv.path_assertion &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">travharv.path_assertion</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for travharv.path_assertion</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">import</span> <span class="nn">rdflib</span>
+<span class="kn">import</span> <span class="nn">validators</span>
+<span class="kn">from</span> <span class="nn">rdflib.namespace</span> <span class="kn">import</span> <span class="n">NamespaceManager</span>
+
+<span class="kn">from</span> <span class="nn">travharv.config_build</span> <span class="kn">import</span> <span class="n">AssertPath</span>
+<span class="kn">from</span> <span class="nn">travharv.execution_report</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GraphAdditionReport</span><span class="p">,</span>
+    <span class="n">PathAssertionReport</span><span class="p">,</span>
+    <span class="n">TaskExecutionReport</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">travharv.helper</span> <span class="kn">import</span> <span class="n">timestamp</span>
+<span class="kn">from</span> <span class="nn">travharv.store</span> <span class="kn">import</span> <span class="n">RDFStoreAccess</span>
+<span class="kn">from</span> <span class="nn">travharv.web_discovery</span> <span class="kn">import</span> <span class="n">get_graph_for_format</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SubjPropPathAssertion">
+<a class="viewcode-back" href="../../travharv.html#travharv.path_assertion.SubjPropPathAssertion">[docs]</a>
+<span class="k">class</span> <span class="nc">SubjPropPathAssertion</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent the assertion of</span>
+<span class="sd">    all given property traversal paths for a given subject.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">subject</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">assertion_path</span><span class="p">:</span> <span class="n">AssertPath</span><span class="p">,</span>
+        <span class="n">rdf_store_access</span><span class="p">:</span> <span class="n">RDFStoreAccess</span><span class="p">,</span>
+        <span class="n">NSM</span><span class="p">:</span> <span class="n">NamespaceManager</span><span class="p">,</span>
+        <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">task_execution_report</span><span class="p">:</span> <span class="n">TaskExecutionReport</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a SubjPropPathAssertion object.</span>
+<span class="sd">        Automatically asserts a property path for a given subject.</span>
+<span class="sd">        Puts the results in a RDFStoreAccess.</span>
+
+<span class="sd">        :param subject: str</span>
+<span class="sd">        :param assertion_path: AssertPath</span>
+<span class="sd">        :param rdf_store_access: RDFStoreAccess</span>
+<span class="sd">        :param NSM: dict</span>
+<span class="sd">        :param config_name: str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subject_str_check</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject is not a valid URIRef or str: </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span> <span class="o">=</span> <span class="n">assertion_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span> <span class="o">=</span> <span class="n">rdf_store_access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_bounce_depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span><span class="o">.</span><span class="n">get_max_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span> <span class="o">=</span> <span class="n">NSM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_name</span> <span class="o">=</span> <span class="n">config_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">succesful_assertion_depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_execution_report</span> <span class="o">=</span> <span class="n">task_execution_report</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_report_info</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;subject_uri&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">uuid4</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounced</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># TODO: test if it is needed to really assert the path</span>
+        <span class="c1"># During testing it came out that sometimes this is needed</span>
+        <span class="c1"># since sometimes the subject is the beginning one for the path</span>
+        <span class="c1"># and sometimes it is not</span>
+        <span class="c1"># self._harvest_uri(self.subject)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_path</span><span class="p">()</span>
+
+        <span class="c1"># based on the self.successfull assertion depth determine</span>
+        <span class="c1"># the property path that was successfull asserted</span>
+        <span class="n">pp_for_report</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span><span class="o">.</span><span class="n">get_path_for_depth</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">succesful_assertion_depth</span>
+        <span class="p">)</span>
+        <span class="n">assertion_result</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Assertion failed, last path: </span><span class="si">{</span><span class="n">pp_for_report</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">succesful_assertion_depth</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">:</span>
+            <span class="n">assertion_result</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Assertion successful&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_execution_report</span><span class="o">.</span><span class="n">add_path_assertion_report</span><span class="p">(</span>
+            <span class="n">PathAssertionReport</span><span class="p">(</span>
+                <span class="n">subject_uri</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+                <span class="n">assertion_path</span><span class="o">=</span><span class="n">pp_for_report</span><span class="p">,</span>
+                <span class="n">assertion_result</span><span class="o">=</span><span class="n">assertion_result</span><span class="p">,</span>
+                <span class="n">assertion_time</span><span class="o">=</span><span class="n">timestamp</span><span class="p">(),</span>
+                <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">assertion_report_info</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+                <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
+                <span class="n">graph_reports</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">graph_reports</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_subject_str_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if subject is a strict str</span>
+<span class="sd">        , if subject is rdflib.term.URIRef , convert to str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span> <span class="ow">and</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">subject</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject is a valid URIRef: </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">subject</span>
+        <span class="k">if</span> <span class="s2">&quot;localhost&quot;</span> <span class="ow">in</span> <span class="n">subject</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject is a valid localhost URIRef: </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="ow">is</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">ResultRow</span>
+            <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="ow">is</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">term</span><span class="o">.</span><span class="n">URIRef</span>
+        <span class="p">):</span>
+            <span class="c1"># extract URIRef from ResultRow</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span> <span class="ow">is</span> <span class="n">rdflib</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">ResultRow</span><span class="p">:</span>
+                <span class="n">subject_row</span> <span class="o">=</span> <span class="n">subject</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+                    <span class="n">subject_row</span> <span class="o">=</span> <span class="n">subject_row</span><span class="p">[</span>
+                        <span class="s2">&quot;value&quot;</span>
+                    <span class="p">]</span>  <span class="c1"># janky way of getting the URIRef from the ResultRow</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject row: </span><span class="si">{</span><span class="n">subject_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="n">subject_row</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s2">&quot;localhost&quot;</span> <span class="ow">in</span> <span class="n">subject_row</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject_row</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject row is not a URIRef: </span><span class="si">{</span><span class="n">subject_row</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)):</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;localhost&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject is not a URIRef: </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject is of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">validators</span><span class="o">.</span><span class="n">url</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">subject</span><span class="p">)):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject is not a URIRef or a str: </span><span class="si">{</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="SubjPropPathAssertion.assert_path">
+<a class="viewcode-back" href="../../travharv.html#travharv.path_assertion.SubjPropPathAssertion.assert_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">assert_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assert a property path for a given subject.</span>
+<span class="sd">        Put the results in a RDFStoreAccess.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Asserting a property path for a given subject&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Implement method to assert a property path for a given subject</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">:</span>
+            <span class="c1"># first check if last_succesful_depth is not</span>
+            <span class="c1"># the same as the current depth</span>
+            <span class="c1"># if it is not the same, then we have to assert the path</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounced</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_harvest_uri</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_surface</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounced</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_assert_at_depth</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_increase_depth</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_assert_at_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assert a property path for a given subject at a given depth.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Asserting a property path for a given subject at a given depth&quot;</span>
+        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Depth: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_length</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;ppath: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_for_depth</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span><span class="o">.</span><span class="n">verify_path</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_for_depth</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Subjects for property path assertion found&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_harvest</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">succesful_assertion_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span>
+                <span class="k">return</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Path assertion successful&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">succesful_assertion_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_increase_depth</span><span class="p">()</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_harvest_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Harvest a given uri</span>
+
+<span class="sd">        :param uri: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO in a next update this will be config driven</span>
+        <span class="n">MIMETYPES_TO_GET</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;text/turtle&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="c1"># doubting if this is really needed</span>
+        <span class="c1"># here as a mimetype to get</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Beginning harvesting of URI: </span><span class="si">{</span><span class="n">uri</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">mimetype</span> <span class="ow">in</span> <span class="n">MIMETYPES_TO_GET</span><span class="p">:</span>
+            <span class="c1"># do a get of the uri with the mimetype</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">get_graph_for_format</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="p">[</span><span class="n">mimetype</span><span class="p">])</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Graph: </span><span class="si">{</span><span class="n">graph</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span><span class="o">.</span><span class="n">insert_for_config</span><span class="p">(</span>
+                    <span class="n">graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_name</span>
+                <span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">graph_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">GraphAdditionReport</span><span class="p">(</span>
+                        <span class="n">download_url</span><span class="o">=</span><span class="n">uri</span><span class="p">,</span>
+                        <span class="n">mime_type</span><span class="o">=</span><span class="n">mimetype</span><span class="p">,</span>
+                        <span class="n">triple_count</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">uri</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">mimetype</span><span class="si">=}</span><span class="s2"> did not return graph&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">return</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path_length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">path_for_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span><span class="o">.</span><span class="n">get_path_for_depth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_length</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_increase_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Increase the depth of the property path assertion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Increasing the depth of the property path assertion&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Surface back to depth 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Surfacing back to depth 0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_bounce_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounced</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_harvest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Harvest the property path.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Harvesting the property path&quot;</span><span class="p">)</span>
+        <span class="c1"># get the uri to harvest by getting</span>
+        <span class="c1"># the first element of the path trajectory</span>
+        <span class="n">uri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span><span class="o">.</span><span class="n">select_subjects_for_ppath</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">subject</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_for_depth</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;uri: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject_str_check</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_harvest_uri</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subject_str_check</span><span class="p">(</span><span class="n">uri</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

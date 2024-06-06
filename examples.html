@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="travharv package" href="travharv.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-cli">Using the CLI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#command-line-arguments">Command Line Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#config-file-example">Config File example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-options">Configuration options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-api">Using the API</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<section id="using-the-cli">
+<h2>Using the CLI<a class="headerlink" href="#using-the-cli" title="Link to this heading"></a></h2>
+<p>You can use the <cite>travharv</cite> package from the command line like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>travharv<span class="w"> </span>&lt;arguments&gt;
+</pre></div>
+</div>
+<p>For example, if you want to use the <cite>TravHarvExecuter</cite> module, you might do something like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>travharv<span class="w"> </span>TravHarvExecuter<span class="w"> </span>--config<span class="w"> </span>&lt;config_file&gt;
+</pre></div>
+</div>
+<p>Replace <cite>&lt;config_file&gt;</cite> with the path to your configuration file.</p>
+<section id="command-line-arguments">
+<h3>Command Line Arguments<a class="headerlink" href="#command-line-arguments" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Short Form</p></th>
+<th class="head"><p>Long Form</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-cf</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--config-folder</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>Specify the folder containing configuration files. The path can be relative to the folder or file this was called from. By default, this is the <cite>config</cite> folder in the current working directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-n</span> <span class="pre">&lt;name&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--name</span> <span class="pre">&lt;name&gt;</span></code></p></td>
+<td><p>Specify the name of the configuration to use.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-o</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--output-folder</span> <span class="pre">&lt;path&gt;</span></code></p></td>
+<td><p>Specify the folder to output files to. By default, this is the <cite>output</cite> folder in the current working directory.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">-ts</span> <span class="pre">&lt;store&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">--target-store</span> <span class="pre">&lt;store&gt;</span></code></p></td>
+<td><p>Specify the target store to harvest. This can be a pointer to a triple store in memory or the base URI of a triple store.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="config-file-example">
+<h2>Config File example<a class="headerlink" href="#config-file-example" title="Link to this heading"></a></h2>
+<section id="configuration-options">
+<h3>Configuration options<a class="headerlink" href="#configuration-options" title="Link to this heading"></a></h3>
+<dl>
+<dt><strong>snooze-till-graph-age-minutes</strong></dt><dd><p>This option specifies the number of minutes to wait before the graph is updated. The value is an integer.</p>
+</dd>
+<dt><strong>prefix</strong></dt><dd><p>This section defines the prefixes used in the configuration file. Each prefix is defined by a key-value pair, where the key is the prefix and the value is the URI that the prefix represents.</p>
+</dd>
+<dt><strong>assert</strong></dt><dd><p>This section contains a list of assertions. Each assertion is defined by a <code class="docutils literal notranslate"><span class="pre">subjects</span></code> section and a <code class="docutils literal notranslate"><span class="pre">paths</span></code> section.</p>
+<dl>
+<dt><strong>subjects</strong></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">subjects</span></code> section can contain either <code class="docutils literal notranslate"><span class="pre">literal</span></code> or <code class="docutils literal notranslate"><span class="pre">SPARQL</span></code> values.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">literal</span></code></dt><dd><p>A list of URIs that the assertion applies to.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">SPARQL</span></code></dt><dd><p>A SPARQL query that selects the subjects that the assertion applies to.</p>
+</dd>
+</dl>
+</dd>
+<dt><strong>paths</strong></dt><dd><p>The <code class="docutils literal notranslate"><span class="pre">paths</span></code> section contains a list of paths. Each path is a string that represents a sequence of predicates that form a path in the graph.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="example">
+<h3>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h3>
+<p>Here is an example of an assertion:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">subjects</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">literal</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://marineregions.org/mrgid/63523</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://marineregions.org/mrgid/2540</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://marineregions.org/mrgid/12548</span>
+<span class="w">  </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:hasGeometry&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:isPartOf&quot;</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:isPartOf</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">&lt;https://schema.org/geo&gt;</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">&lt;https://schema.org/latitude&gt;&quot;</span>
+</pre></div>
+</div>
+<p>In this example, the assertion applies to the subjects <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/63523</span></code>, <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/2540</span></code>, and <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/12548</span></code>. The paths are <code class="docutils literal notranslate"><span class="pre">mr:hasGeometry</span></code>, <code class="docutils literal notranslate"><span class="pre">mr:isPartOf</span></code>, and <code class="docutils literal notranslate"><span class="pre">mr:isPartOf</span> <span class="pre">/</span> <span class="pre">&lt;https://schema.org/geo&gt;</span> <span class="pre">/</span> <span class="pre">&lt;https://schema.org/latitude&gt;</span></code>.</p>
+<p>Example of a full configuration file</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">snooze-till-graph-age-minutes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="nt">prefix</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mr</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://marineregions.org/mrgid/&quot;</span>
+<span class="w">  </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://schema.org/&quot;</span>
+<span class="nt">assert</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">subjects</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">SPARQL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT</span><span class="nv"> </span><span class="s">?s</span><span class="nv"> </span><span class="s">WHERE</span><span class="nv"> </span><span class="s">{</span><span class="nv"> </span><span class="s">?s</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">&lt;http://marineregions.org/mrgid/Region&gt;</span><span class="nv"> </span><span class="s">}&quot;</span>
+<span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:hasGeometry&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:isPartOf&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:isPartOf</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">&lt;https://schema.org/geo&gt;</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">&lt;https://schema.org/latitude&gt;&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">subjects</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">literal</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://marineregions.org/mrgid/63523</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://marineregions.org/mrgid/2540</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http://marineregions.org/mrgid/12548</span>
+<span class="w">    </span><span class="nt">paths</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:hasGeometry&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:isPartOf&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;mr:isPartOf</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">&lt;https://schema.org/geo&gt;</span><span class="nv"> </span><span class="s">/</span><span class="nv"> </span><span class="s">&lt;https://schema.org/latitude&gt;&quot;</span>
+</pre></div>
+</div>
+<p>In the above example, the configuration file specifies that the graph should be updated every 5 minutes. It also specifies two assertions. The first assertion applies to all subjects that are instances of the class <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/Region</span></code>. The second assertion applies to the subjects <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/63523</span></code>, <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/2540</span></code>, and <code class="docutils literal notranslate"><span class="pre">http://marineregions.org/mrgid/12548</span></code>.
+In the second case the paths to be asserted are <code class="docutils literal notranslate"><span class="pre">mr:hasGeometry</span></code>, <code class="docutils literal notranslate"><span class="pre">mr:isPartOf</span></code>, and <code class="docutils literal notranslate"><span class="pre">mr:isPartOf</span> <span class="pre">/</span> <span class="pre">&lt;https://schema.org/geo&gt;</span> <span class="pre">/</span> <span class="pre">&lt;https://schema.org/latitude&gt;</span></code>.</p>
+</section>
+</section>
+<section id="using-the-api">
+<h2>Using the API<a class="headerlink" href="#using-the-api" title="Link to this heading"></a></h2>
+<p>You can also use the <cite>travharv</cite> package directly in your Python code. Here’s an example of how you might use the <cite>TravHarvExecuter</cite> and <cite>TravHarvConfigBuilder</cite> modules:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">travharv</span> <span class="kn">import</span> <span class="n">TargetStore</span><span class="p">,</span> <span class="n">TravHarvConfigBuilder</span><span class="p">,</span> <span class="n">TravHarvExecuter</span>
+
+<span class="n">config_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;cf&quot;</span><span class="p">)</span> <span class="c1"># path to the configuration folder</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:7200/repositories/lwua23&quot;</span> <span class="c1"># URL of the triple store repository</span>
+
+<span class="n">TARGETSTORE</span> <span class="o">=</span> <span class="n">TargetStore</span><span class="o">.</span><span class="n">TargetStore</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">CONFIGBUILDER</span> <span class="o">=</span> <span class="n">TravHarvConfigBuilder</span><span class="o">.</span><span class="n">TravHarvConfigBuilder</span><span class="p">(</span>
+  <span class="n">TARGETSTORE</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">config_folder</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">CONFIGLIST</span> <span class="o">=</span> <span class="n">CONFIGBUILDER</span><span class="o">.</span><span class="n">build_from_folder</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">travHarvConfig</span> <span class="ow">in</span> <span class="n">CONFIGLIST</span><span class="p">:</span>
+  <span class="n">prefix_set</span> <span class="o">=</span> <span class="n">travHarvConfig</span><span class="o">.</span><span class="n">PrefixSet</span>
+  <span class="n">config_name</span> <span class="o">=</span> <span class="n">travHarvConfig</span><span class="o">.</span><span class="n">ConfigName</span>
+  <span class="n">tasks</span> <span class="o">=</span> <span class="n">travHarvConfig</span><span class="o">.</span><span class="n">tasks</span>
+  <span class="n">travharvexecutor</span> <span class="o">=</span> <span class="n">TravHarvExecuter</span><span class="o">.</span><span class="n">TravHarvExecutor</span><span class="p">(</span>
+    <span class="n">config_name</span><span class="p">,</span> <span class="n">prefix_set</span><span class="p">,</span> <span class="n">tasks</span><span class="p">,</span> <span class="n">TARGETSTORE</span>
+  <span class="p">)</span>
+  <span class="n">travharvexecutor</span><span class="o">.</span><span class="n">assert_all_paths</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Replace <cite>&lt;config_file&gt;</cite> with the path to your configuration folder where the config file(s) are located.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="travharv.html" class="btn btn-neutral float-right" title="travharv package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv.execution_report &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">travharv.execution_report</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for travharv.execution_report</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span> <span class="nn">pyrdfj2</span> <span class="kn">import</span> <span class="n">J2RDFSyntaxBuilder</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span>
+
+<span class="kn">from</span> <span class="nn">travharv.helper</span> <span class="kn">import</span> <span class="n">timestamp</span>
+<span class="kn">from</span> <span class="nn">travharv.store</span> <span class="kn">import</span> <span class="n">RDFStoreAccess</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># The syntax-builder for travharv</span>
+<span class="n">QUERY_BUILDER</span><span class="p">:</span> <span class="n">J2RDFSyntaxBuilder</span> <span class="o">=</span> <span class="n">J2RDFSyntaxBuilder</span><span class="p">(</span>
+    <span class="n">templates_folder</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;templates&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="GraphAdditionReport">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.GraphAdditionReport">[docs]</a>
+<span class="k">class</span> <span class="nc">GraphAdditionReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a GraphAdditionReport.</span>
+<span class="sd">    This class will report the results of the assertions.</span>
+<span class="sd">    Contents of this report are :</span>
+<span class="sd">    - the download url of the document</span>
+<span class="sd">    - the graph added</span>
+<span class="sd">    - type of document added : text/turtle or application/ld+json or etc.</span>
+<span class="sd">    - triple count of the graph added</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">download_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">mime_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">triple_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor</span>
+
+<span class="sd">        :param download_url: str</span>
+<span class="sd">        :param graph: str</span>
+<span class="sd">        :param mime_type: str</span>
+<span class="sd">        :param triple_count: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_url</span> <span class="o">=</span> <span class="n">download_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mime_type</span> <span class="o">=</span> <span class="n">mime_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">triple_count</span> <span class="o">=</span> <span class="n">triple_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">uuid4</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GraphAdditionReport initialized&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PathAssertionReport">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.PathAssertionReport">[docs]</a>
+<span class="k">class</span> <span class="nc">PathAssertionReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent an AssertionReport.</span>
+<span class="sd">    This class will report the results of the assertions.</span>
+<span class="sd">    Contents of this report are :</span>
+<span class="sd">    - the subject_uri</span>
+<span class="sd">    - the assertion_path</span>
+<span class="sd">    - the assertion_result (True or False)</span>
+<span class="sd">    - the assertion_time</span>
+<span class="sd">    - id of the assertion (uuid4)</span>
+<span class="sd">    - triple count of the graph added</span>
+<span class="sd">    - type of document added : text/turtle or application/ld+json or etc.</span>
+<span class="sd">    - download url of the document</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">subject_uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">assertion_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">assertion_result</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">assertion_time</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+        <span class="nb">id</span><span class="p">:</span> <span class="n">uuid4</span><span class="p">,</span>
+        <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">graph_reports</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">GraphAdditionReport</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor</span>
+
+<span class="sd">        :param subject_uri: str</span>
+<span class="sd">        :param assertion_path: str</span>
+<span class="sd">        :param assertion_result: bool</span>
+<span class="sd">        :param assertion_time: datetime</span>
+<span class="sd">        :param uuid: str</span>
+<span class="sd">        :param triple_count: int</span>
+<span class="sd">        :param mime_type: str</span>
+<span class="sd">        :param download_url: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">subject_uri</span> <span class="o">=</span> <span class="n">subject_uri</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_path</span> <span class="o">=</span> <span class="n">assertion_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_result</span> <span class="o">=</span> <span class="n">assertion_result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_time</span> <span class="o">=</span> <span class="n">assertion_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;AssertionReport initialized&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graph_reports</span> <span class="o">=</span> <span class="n">graph_reports</span></div>
+
+
+
+<div class="viewcode-block" id="TaskExecutionReport">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.TaskExecutionReport">[docs]</a>
+<span class="k">class</span> <span class="nc">TaskExecutionReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a TaskExecutionReport.</span>
+<span class="sd">    This class will report the results of the assertions per task.</span>
+<span class="sd">    e.g.: All AssertionReports will be stored in a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor</span>
+
+<span class="sd">        :param task: Task</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;TaskExecutionReport initialized&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_content</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;task_id&quot;</span><span class="p">:</span> <span class="n">uuid4</span><span class="p">(),</span>
+            <span class="s2">&quot;last_mod&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="TaskExecutionReport.add_path_assertion_report">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.TaskExecutionReport.add_path_assertion_report">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_path_assertion_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assertion_report</span><span class="p">:</span> <span class="n">PathAssertionReport</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Report the results of the assertions to the store.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Reporting the results of the task execution report to the store&quot;</span>
+        <span class="p">)</span>
+        <span class="n">assertion_report_id</span> <span class="o">=</span> <span class="n">assertion_report</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">last_mod</span> <span class="o">=</span> <span class="n">assertion_report</span><span class="o">.</span><span class="n">assertion_time</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Assertion Report ID: </span><span class="si">{</span><span class="n">assertion_report_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last Modified: </span><span class="si">{</span><span class="n">last_mod</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertion_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">assertion_report</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_content</span><span class="p">[</span><span class="s2">&quot;last_mod&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">last_mod</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ExecutionReport">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.ExecutionReport">[docs]</a>
+<span class="k">class</span> <span class="nc">ExecutionReport</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent an ExecutionReport.</span>
+<span class="sd">    This class will report the results of the assertions per task per config.</span>
+<span class="sd">    e.g.: All TaskExecutionReports will be stored in a dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;constructor</span>
+
+<span class="sd">        :param config_name: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ExecutionReport initialized&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_content</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;last_mod&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">(),</span>
+            <span class="s2">&quot;config_name&quot;</span><span class="p">:</span> <span class="n">config_name</span><span class="p">,</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">uuid4</span><span class="p">(),</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task_reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ExecutionReport.add_task_report">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.ExecutionReport.add_task_report">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_task_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_execution_report</span><span class="p">:</span> <span class="n">TaskExecutionReport</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Report the results of the assertions to the store.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reporting the results of the execution report to the store&quot;</span><span class="p">)</span>
+        <span class="c1"># get info needed for update</span>
+        <span class="n">task_id</span> <span class="o">=</span> <span class="n">task_execution_report</span><span class="o">.</span><span class="n">report_content</span><span class="p">[</span><span class="s2">&quot;task_id&quot;</span><span class="p">]</span>
+        <span class="n">last_mod</span> <span class="o">=</span> <span class="n">task_execution_report</span><span class="o">.</span><span class="n">report_content</span><span class="p">[</span><span class="s2">&quot;last_mod&quot;</span><span class="p">]</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Task ID: </span><span class="si">{</span><span class="n">task_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last Modified: </span><span class="si">{</span><span class="n">last_mod</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># only if task execution report contains any assertion reports</span>
+        <span class="c1"># add it</span>
+        <span class="c1"># this is to circomvent the case where a task is executed</span>
+        <span class="c1"># but no assertions are made (e.g. no results came back</span>
+        <span class="c1"># from an initial SPARQL query)</span>
+        <span class="k">if</span> <span class="n">task_execution_report</span><span class="o">.</span><span class="n">assertion_reports</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_reports</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task_execution_report</span><span class="p">)</span>
+        <span class="c1"># to store with the report_content</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">task_execution_report</span><span class="o">.</span><span class="n">report_content</span><span class="p">[</span><span class="s1">&#39;task_id&#39;</span><span class="p">]</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">assertion</span> <span class="ow">in</span> <span class="n">task_execution_report</span><span class="o">.</span><span class="n">assertion_reports</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assertion</span><span class="o">.</span><span class="n">id</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assertion</span><span class="o">.</span><span class="n">assertion_path</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assertion</span><span class="o">.</span><span class="n">assertion_result</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">assertion</span><span class="o">.</span><span class="n">message</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Graphs added: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">assertion</span><span class="o">.</span><span class="n">graph_reports</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># count up the ammount of triples that are</span>
+            <span class="c1"># located in assertion.graph_reports[i][&quot;triples&quot;]</span>
+            <span class="n">c_triples</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">graph</span> <span class="ow">in</span> <span class="n">assertion</span><span class="o">.</span><span class="n">graph_reports</span><span class="p">:</span>
+                <span class="n">c_triples</span> <span class="o">+=</span> <span class="n">graph</span><span class="o">.</span><span class="n">triple_count</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Triples added: </span><span class="si">{</span><span class="n">c_triples</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_report_graph</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_make_report_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pre_ttl</span> <span class="o">=</span> <span class="n">QUERY_BUILDER</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span>
+            <span class="s2">&quot;execution_report.ttl&quot;</span><span class="p">,</span>
+            <span class="n">execution_report</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">report_content</span><span class="p">,</span>
+            <span class="n">task_reports</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_reports</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pre_ttl</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">execution_report_graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">execution_report_graph</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">pre_ttl</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;turtle&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExecutionReport.report_to_store">
+<a class="viewcode-back" href="../../travharv.html#travharv.execution_report.ExecutionReport.report_to_store">[docs]</a>
+    <span class="k">def</span> <span class="nf">report_to_store</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdf_store_access</span><span class="p">:</span> <span class="n">RDFStoreAccess</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_report_graph</span><span class="p">()</span>
+        <span class="n">rdf_store_access</span><span class="o">.</span><span class="n">insert_for_config</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execution_report_graph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_content</span><span class="p">[</span><span class="s2">&quot;config_name&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Reported to store&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

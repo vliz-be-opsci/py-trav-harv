@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv.store &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">travharv.store</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for travharv.store</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">from</span> <span class="nn">pyrdfj2</span> <span class="kn">import</span> <span class="n">J2RDFSyntaxBuilder</span>
+<span class="kn">from</span> <span class="nn">pyrdfstore</span> <span class="kn">import</span> <span class="n">GraphNameMapper</span><span class="p">,</span> <span class="n">RDFStore</span>
+<span class="kn">from</span> <span class="nn">pyrdfstore.store</span> <span class="kn">import</span> <span class="n">RDFStoreDecorator</span>
+<span class="kn">from</span> <span class="nn">rdflib</span> <span class="kn">import</span> <span class="n">Graph</span>
+<span class="kn">from</span> <span class="nn">rdflib.plugins.sparql.processor</span> <span class="kn">import</span> <span class="n">Result</span>
+
+<span class="kn">from</span> <span class="nn">travharv.helper</span> <span class="kn">import</span> <span class="n">resolve_sparql</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># The syntax-builder for travharv</span>
+<span class="n">QUERY_BUILDER</span><span class="p">:</span> <span class="n">J2RDFSyntaxBuilder</span> <span class="o">=</span> <span class="n">J2RDFSyntaxBuilder</span><span class="p">(</span>
+    <span class="n">templates_folder</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;templates&quot;</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># The default URN BASE fopr travharv</span>
+<span class="n">DEFAULT_URN_BASE</span> <span class="o">=</span> <span class="s2">&quot;urn:traversal-harvesting:&quot;</span>
+
+
+<div class="viewcode-block" id="RDFStoreAccess">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess">[docs]</a>
+<span class="k">class</span> <span class="nc">RDFStoreAccess</span><span class="p">(</span><span class="n">RDFStoreDecorator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator class adding some trav-harv specific features&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">core</span><span class="p">:</span> <span class="n">RDFStore</span><span class="p">,</span>
+        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">GraphNameMapper</span> <span class="o">=</span> <span class="n">GraphNameMapper</span><span class="p">(</span><span class="n">base</span><span class="o">=</span><span class="n">DEFAULT_URN_BASE</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">core</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qryBuilder</span> <span class="o">=</span> <span class="n">QUERY_BUILDER</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span> <span class="o">=</span> <span class="n">name_mapper</span>
+
+<div class="viewcode-block" id="RDFStoreAccess.select_subjects">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.select_subjects">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparql</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sparql</span><span class="p">)</span>
+
+        <span class="c1"># todo convert response into list of subjects</span>
+        <span class="n">list_of_subjects</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;length list_of_subjects: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">list_of_subjects</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;list_of_subjects: </span><span class="si">{</span><span class="n">list_of_subjects</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">list_of_subjects</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.select_subjects_for_ppath">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.select_subjects_for_ppath">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_subjects_for_ppath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">property_path</span><span class="p">,</span> <span class="n">NSM</span><span class="p">):</span>
+        <span class="n">pre_sparql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qryBuilder</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span>
+            <span class="s2">&quot;trajectory.sparql&quot;</span><span class="p">,</span>
+            <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span>
+            <span class="n">property_trajectory</span><span class="o">=</span><span class="n">property_path</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sparql</span> <span class="o">=</span> <span class="n">resolve_sparql</span><span class="p">(</span><span class="n">pre_sparql</span><span class="p">,</span> <span class="n">NSM</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sparql</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_subjects</span><span class="p">(</span><span class="n">sparql</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.verify_path">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.verify_path">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">property_path</span><span class="p">,</span> <span class="n">NSM</span><span class="p">):</span>
+        <span class="n">pre_sparql</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qryBuilder</span><span class="o">.</span><span class="n">build_syntax</span><span class="p">(</span>
+            <span class="s2">&quot;trajectory.sparql&quot;</span><span class="p">,</span>
+            <span class="n">subject</span><span class="o">=</span><span class="n">subject</span><span class="p">,</span>
+            <span class="n">property_trajectory</span><span class="o">=</span><span class="n">property_path</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sparql</span> <span class="o">=</span> <span class="n">resolve_sparql</span><span class="p">(</span><span class="n">pre_sparql</span><span class="p">,</span> <span class="n">NSM</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">sparql</span><span class="p">)</span>
+
+        <span class="n">list_of_bindings</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">list_of_bindings</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.all_triples">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.all_triples">[docs]</a>
+    <span class="k">def</span> <span class="nf">all_triples</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">&quot;SELECT ?s ?p ?o WHERE { ?s ?p ?o }&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.insert_for_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.insert_for_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">insert_for_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">name_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;inserts the triples from the passed graph</span>
+<span class="sd">        into a graph tied to this name_config</span>
+
+<span class="sd">        :param graph: the graph of triples to insert</span>
+<span class="sd">        :type graph: Graph</span>
+<span class="sd">        :param name_config: the name of the config</span>
+<span class="sd">        :type name_config: str</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span><span class="o">.</span><span class="n">key_to_ng</span><span class="p">(</span><span class="n">name_config</span><span class="p">)</span>
+        <span class="c1"># chekc if graph is not Nonetype or empty</span>
+        <span class="k">if</span> <span class="n">graph</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Graph for </span><span class="si">{</span><span class="n">name_config</span><span class="si">}</span><span class="s2"> is empty. Nothing to insert.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">ng</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.lastmod_ts_for_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.lastmod_ts_for_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">lastmod_ts_for_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span><span class="o">.</span><span class="n">key_to_ng</span><span class="p">(</span><span class="n">name_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lastmod_ts</span><span class="p">(</span><span class="n">ng</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.verify_max_age_of_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.verify_max_age_of_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">verify_max_age_of_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">age_minutes</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;verifies that a certain graph is not aged older</span>
+<span class="sd">        than a certain amount of minutes</span>
+
+<span class="sd">        :param name_config: the name of the config to check</span>
+<span class="sd">        :type name_config: str</span>
+<span class="sd">        :param age_minutes: the max acceptable age in minutes</span>
+<span class="sd">        :type age_minutes: int</span>
+<span class="sd">        :return: True if the contents of the store associated</span>
+<span class="sd">        to the config has aged less than the passed number of</span>
+<span class="sd">        minutes in the argument, else False</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span><span class="o">.</span><span class="n">key_to_ng</span><span class="p">(</span><span class="n">name_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">verify_max_age</span><span class="p">(</span><span class="n">ng</span><span class="p">,</span> <span class="n">age_minutes</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;returns the known &amp; managed name-configs in the store</span>
+
+<span class="sd">        :return: the list of name-configs, known and managed</span>
+<span class="sd">        (but possibly already deleted, but not forgotten) in this store</span>
+<span class="sd">        :rtype: List[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span><span class="o">.</span><span class="n">get_kets_in_store</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RDFStoreAccess.drop_graph_for_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.drop_graph_for_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">drop_graph_for_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;drops the content in rdf_store associated to specified name_config</span>
+<span class="sd">        (and all its contents)</span>
+
+<span class="sd">        :param name_config: the uri describing the named_graph to drop</span>
+<span class="sd">        :type name_config: str</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span><span class="o">.</span><span class="n">key_to_ng</span><span class="p">(</span><span class="n">name_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_graph</span><span class="p">(</span><span class="n">ng</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RDFStoreAccess.forget_graph_for_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.store.RDFStoreAccess.forget_graph_for_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">forget_graph_for_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name_config</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;forgets about the name_config being under control</span>
+<span class="sd">        This functions independent of the drop_graph method.</span>
+<span class="sd">        So any client of this service is expected to decide when</span>
+<span class="sd">        (or not) to combine both</span>
+
+<span class="sd">        :param name_config: the uri describing the named_graph to drop</span>
+<span class="sd">        :type name_config: str</span>
+<span class="sd">        :rtype: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ng</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nmapper</span><span class="o">.</span><span class="n">key_to_ng</span><span class="p">(</span><span class="n">name_config</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forget_graph</span><span class="p">(</span><span class="n">ng</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

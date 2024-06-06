@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv package &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.config_build">travharv.config_build module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.AssertPath"><code class="docutils literal notranslate"><span class="pre">AssertPath</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.AssertPath.get_max_size"><code class="docutils literal notranslate"><span class="pre">AssertPath.get_max_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.AssertPath.get_path_for_depth"><code class="docutils literal notranslate"><span class="pre">AssertPath.get_path_for_depth()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.AssertPath.get_path_parts"><code class="docutils literal notranslate"><span class="pre">AssertPath.get_path_parts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.AssertPathSet"><code class="docutils literal notranslate"><span class="pre">AssertPathSet</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.AssertPathSet.list_assertion_paths"><code class="docutils literal notranslate"><span class="pre">AssertPathSet.list_assertion_paths()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.LiteralSubjectDefinition"><code class="docutils literal notranslate"><span class="pre">LiteralSubjectDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.LiteralSubjectDefinition.list_subjects"><code class="docutils literal notranslate"><span class="pre">LiteralSubjectDefinition.list_subjects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.SPARQLSubjectDefinition"><code class="docutils literal notranslate"><span class="pre">SPARQLSubjectDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.SPARQLSubjectDefinition.list_subjects"><code class="docutils literal notranslate"><span class="pre">SPARQLSubjectDefinition.list_subjects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.SubjectDefinition"><code class="docutils literal notranslate"><span class="pre">SubjectDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.SubjectDefinition.list_subjects"><code class="docutils literal notranslate"><span class="pre">SubjectDefinition.list_subjects()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.TravHarvConfig"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvConfig.NSM"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.NSM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvConfig.configname"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.configname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvConfig.get_config"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.get_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvConfig.tasks"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.tasks</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.TravHarvConfigBuilder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvConfigBuilder.build_from_config"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvConfigBuilder.build_from_folder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.TravHarvTask"><code class="docutils literal notranslate"><span class="pre">TravHarvTask</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvTask.assert_path_set"><code class="docutils literal notranslate"><span class="pre">TravHarvTask.assert_path_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.config_build.TravHarvTask.subject_definition"><code class="docutils literal notranslate"><span class="pre">TravHarvTask.subject_definition</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.config_build.relative_pathname"><code class="docutils literal notranslate"><span class="pre">relative_pathname()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.execution_report">travharv.execution_report module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.execution_report.ExecutionReport"><code class="docutils literal notranslate"><span class="pre">ExecutionReport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.execution_report.ExecutionReport.add_task_report"><code class="docutils literal notranslate"><span class="pre">ExecutionReport.add_task_report()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.execution_report.ExecutionReport.report_to_store"><code class="docutils literal notranslate"><span class="pre">ExecutionReport.report_to_store()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.execution_report.GraphAdditionReport"><code class="docutils literal notranslate"><span class="pre">GraphAdditionReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.execution_report.PathAssertionReport"><code class="docutils literal notranslate"><span class="pre">PathAssertionReport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.execution_report.TaskExecutionReport"><code class="docutils literal notranslate"><span class="pre">TaskExecutionReport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.execution_report.TaskExecutionReport.add_path_assertion_report"><code class="docutils literal notranslate"><span class="pre">TaskExecutionReport.add_path_assertion_report()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.executor">travharv.executor module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.executor.TravHarvExecutor"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.executor.TravHarvExecutor.assert_all_paths"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor.assert_all_paths()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.helper">travharv.helper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.makeNSM"><code class="docutils literal notranslate"><span class="pre">makeNSM()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.ppath_split"><code class="docutils literal notranslate"><span class="pre">ppath_split()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.resolve_literals"><code class="docutils literal notranslate"><span class="pre">resolve_literals()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.resolve_ppaths"><code class="docutils literal notranslate"><span class="pre">resolve_ppaths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.resolve_sparql"><code class="docutils literal notranslate"><span class="pre">resolve_sparql()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.resolve_uri"><code class="docutils literal notranslate"><span class="pre">resolve_uri()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.helper.timestamp"><code class="docutils literal notranslate"><span class="pre">timestamp()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.path_assertion">travharv.path_assertion module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.path_assertion.SubjPropPathAssertion"><code class="docutils literal notranslate"><span class="pre">SubjPropPathAssertion</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.path_assertion.SubjPropPathAssertion.assert_path"><code class="docutils literal notranslate"><span class="pre">SubjPropPathAssertion.assert_path()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.path_assertion.SubjPropPathAssertion.path_for_depth"><code class="docutils literal notranslate"><span class="pre">SubjPropPathAssertion.path_for_depth</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.path_assertion.SubjPropPathAssertion.path_length"><code class="docutils literal notranslate"><span class="pre">SubjPropPathAssertion.path_length</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.service">travharv.service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.service.TravHarv"><code class="docutils literal notranslate"><span class="pre">TravHarv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.service.TravHarv.process"><code class="docutils literal notranslate"><span class="pre">TravHarv.process()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.store">travharv.store module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.store.RDFStoreAccess"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.all_triples"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.all_triples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.drop_graph_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.drop_graph_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.forget_graph_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.forget_graph_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.insert_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.insert_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.lastmod_ts_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.lastmod_ts_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.name_configs"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.name_configs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.select_subjects"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.select_subjects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.select_subjects_for_ppath"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.select_subjects_for_ppath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.verify_max_age_of_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.verify_max_age_of_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.store.RDFStoreAccess.verify_path"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.verify_path()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-travharv.web_discovery">travharv.web_discovery module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.web_discovery.LODAwareHTMLParser"><code class="docutils literal notranslate"><span class="pre">LODAwareHTMLParser</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.web_discovery.LODAwareHTMLParser.handle_data"><code class="docutils literal notranslate"><span class="pre">LODAwareHTMLParser.handle_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.web_discovery.LODAwareHTMLParser.handle_endtag"><code class="docutils literal notranslate"><span class="pre">LODAwareHTMLParser.handle_endtag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.web_discovery.LODAwareHTMLParser.handle_starttag"><code class="docutils literal notranslate"><span class="pre">LODAwareHTMLParser.handle_starttag()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.web_discovery.ctype_to_rdf_format"><code class="docutils literal notranslate"><span class="pre">ctype_to_rdf_format()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.web_discovery.get_graph_for_format"><code class="docutils literal notranslate"><span class="pre">get_graph_for_format()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-0">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.RDFStoreAccess"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.all_triples"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.all_triples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.drop_graph_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.drop_graph_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.forget_graph_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.forget_graph_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.insert_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.insert_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.lastmod_ts_for_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.lastmod_ts_for_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.name_configs"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.name_configs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.select_subjects"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.select_subjects()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.select_subjects_for_ppath"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.select_subjects_for_ppath()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.verify_max_age_of_config"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.verify_max_age_of_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.RDFStoreAccess.verify_path"><code class="docutils literal notranslate"><span class="pre">RDFStoreAccess.verify_path()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.TravHarv"><code class="docutils literal notranslate"><span class="pre">TravHarv</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarv.process"><code class="docutils literal notranslate"><span class="pre">TravHarv.process()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.TravHarvConfig"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvConfig.NSM"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.NSM</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvConfig.configname"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.configname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvConfig.get_config"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.get_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvConfig.tasks"><code class="docutils literal notranslate"><span class="pre">TravHarvConfig.tasks</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.TravHarvConfigBuilder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvConfigBuilder.build_from_config"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_config()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvConfigBuilder.build_from_folder"><code class="docutils literal notranslate"><span class="pre">TravHarvConfigBuilder.build_from_folder()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#travharv.TravHarvExecutor"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#travharv.TravHarvExecutor.assert_all_paths"><code class="docutils literal notranslate"><span class="pre">TravHarvExecutor.assert_all_paths()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">travharv package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/travharv.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="travharv-package">
+<h1>travharv package<a class="headerlink" href="#travharv-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-travharv.config_build">
+<span id="travharv-config-build-module"></span><h2>travharv.config_build module<a class="headerlink" href="#module-travharv.config_build" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.AssertPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">AssertPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assert_path=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#AssertPath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.AssertPath" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A path to assert.
+This class contains the following:
+- Path_parts: a list of strings
+- max_size: a function to return the len of the list of path_parts
+- get_path_for_depth(): a function that returns a path at a given depth</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.AssertPath.get_max_size">
+<span class="sig-name descname"><span class="pre">get_max_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#AssertPath.get_max_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.AssertPath.get_max_size" title="Link to this definition"></a></dt>
+<dd><p>Get the max size</p>
+<p>return: int
+rtype: int</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.AssertPath.get_path_for_depth">
+<span class="sig-name descname"><span class="pre">get_path_for_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#AssertPath.get_path_for_depth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.AssertPath.get_path_for_depth" title="Link to this definition"></a></dt>
+<dd><p>Get a concatination of the path parts up to a given depth</p>
+<p>return: str
+rtype: str</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.AssertPath.get_path_parts">
+<span class="sig-name descname"><span class="pre">get_path_parts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#AssertPath.get_path_parts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.AssertPath.get_path_parts" title="Link to this definition"></a></dt>
+<dd><p>Get the path parts</p>
+<p>return: list[str]
+rtype: list[str]</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.AssertPathSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">AssertPathSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NSM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NamespaceManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assert_paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#AssertPathSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.AssertPathSet" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A set/list of assert paths</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.AssertPathSet.list_assertion_paths">
+<span class="sig-name descname"><span class="pre">list_assertion_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span></span></span><a class="reference internal" href="_modules/travharv/config_build.html#AssertPathSet.list_assertion_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.AssertPathSet.list_assertion_paths" title="Link to this definition"></a></dt>
+<dd><p>Get the assertion paths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[AssertPath]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#travharv.config_build.AssertPath" title="travharv.config_build.AssertPath">AssertPath</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.LiteralSubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">LiteralSubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#LiteralSubjectDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.LiteralSubjectDefinition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#travharv.config_build.SubjectDefinition" title="travharv.config_build.SubjectDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubjectDefinition</span></code></a></p>
+<p>A subject definition that is a list of strings</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.LiteralSubjectDefinition.list_subjects">
+<span class="sig-name descname"><span class="pre">list_subjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/config_build.html#LiteralSubjectDefinition.list_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.LiteralSubjectDefinition.list_subjects" title="Link to this definition"></a></dt>
+<dd><p>Get the subjects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.SPARQLSubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">SPARQLSubjectDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NSM:</span> <span class="pre">~rdflib.namespace.NamespaceManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SPARQL=&lt;class</span> <span class="pre">'str'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rdf_store_access=&lt;class</span> <span class="pre">'travharv.store.RDFStoreAccess'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#SPARQLSubjectDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.SPARQLSubjectDefinition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#travharv.config_build.SubjectDefinition" title="travharv.config_build.SubjectDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubjectDefinition</span></code></a></p>
+<p>A subject definition that is a SPARQL query</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.SPARQLSubjectDefinition.list_subjects">
+<span class="sig-name descname"><span class="pre">list_subjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/config_build.html#SPARQLSubjectDefinition.list_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.SPARQLSubjectDefinition.list_subjects" title="Link to this definition"></a></dt>
+<dd><p>Get the subjects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.SubjectDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">SubjectDefinition</span></span><a class="reference internal" href="_modules/travharv/config_build.html#SubjectDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.SubjectDefinition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.SubjectDefinition.list_subjects">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_subjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/config_build.html#SubjectDefinition.list_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.SubjectDefinition.list_subjects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">travharv_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.TravHarvConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Configuration for the travharv
+This class contains the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>NSM: NamespaceManager object from rdflib</p></li>
+<li><p>tasks: a list of tasks</p></li>
+<li><p>configname: a string</p></li>
+</ul>
+</div></blockquote>
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfig.NSM">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NSM</span></span><a class="headerlink" href="#travharv.config_build.TravHarvConfig.NSM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfig.configname">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">configname</span></span><a class="headerlink" href="#travharv.config_build.TravHarvConfig.configname" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfig.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfig.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.TravHarvConfig.get_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfig.tasks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tasks</span></span><a class="headerlink" href="#travharv.config_build.TravHarvConfig.tasks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfigBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfigBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdf_store_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.store.RDFStoreAccess" title="travharv.store.RDFStoreAccess"><span class="pre">RDFStoreAccess</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfigBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.TravHarvConfigBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfigBuilder.build_from_config">
+<span class="sig-name descname"><span class="pre">build_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfigBuilder.build_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.TravHarvConfigBuilder.build_from_config" title="Link to this definition"></a></dt>
+<dd><p>Build a TravHarvConfig from a given config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_name</strong> (<em>str</em>) – The name of the config file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TravHarvConfig object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#travharv.config_build.TravHarvConfig" title="travharv.config_build.TravHarvConfig">TravHarvConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvConfigBuilder.build_from_folder">
+<span class="sig-name descname"><span class="pre">build_from_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfigBuilder.build_from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.TravHarvConfigBuilder.build_from_folder" title="Link to this definition"></a></dt>
+<dd><p>Build a list of TravHarvConfig objects from a given folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of TravHarvConfig objects.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#travharv.config_build.TravHarvConfig" title="travharv.config_build.TravHarvConfig">TravHarvConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvTask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">TravHarvTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.TravHarvTask" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A task for the travharv
+This task contains the following:
+- SubjectDefinition class: a class that defines the subjects
+- AssertPathSet class: a class that contains a list of AssertPath objects</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvTask.assert_path_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assert_path_set</span></span><a class="headerlink" href="#travharv.config_build.TravHarvTask.assert_path_set" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.config_build.TravHarvTask.subject_definition">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">subject_definition</span></span><a class="headerlink" href="#travharv.config_build.TravHarvTask.subject_definition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.config_build.relative_pathname">
+<span class="sig-prename descclassname"><span class="pre">travharv.config_build.</span></span><span class="sig-name descname"><span class="pre">relative_pathname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestorpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/travharv/config_build.html#relative_pathname"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.config_build.relative_pathname" title="Link to this definition"></a></dt>
+<dd><p>gives the relative part pointing to the subpath from the ancestorpath</p>
+</dd></dl>
+
+</section>
+<section id="module-travharv.execution_report">
+<span id="travharv-execution-report-module"></span><h2>travharv.execution_report module<a class="headerlink" href="#module-travharv.execution_report" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.execution_report.ExecutionReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.execution_report.</span></span><span class="sig-name descname"><span class="pre">ExecutionReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/execution_report.html#ExecutionReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.ExecutionReport" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent an ExecutionReport.
+This class will report the results of the assertions per task per config.
+e.g.: All TaskExecutionReports will be stored in a dictionary</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.execution_report.ExecutionReport.add_task_report">
+<span class="sig-name descname"><span class="pre">add_task_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_execution_report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.execution_report.TaskExecutionReport" title="travharv.execution_report.TaskExecutionReport"><span class="pre">TaskExecutionReport</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/execution_report.html#ExecutionReport.add_task_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.ExecutionReport.add_task_report" title="Link to this definition"></a></dt>
+<dd><p>Report the results of the assertions to the store.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.execution_report.ExecutionReport.report_to_store">
+<span class="sig-name descname"><span class="pre">report_to_store</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdf_store_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.store.RDFStoreAccess" title="travharv.store.RDFStoreAccess"><span class="pre">RDFStoreAccess</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/execution_report.html#ExecutionReport.report_to_store"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.ExecutionReport.report_to_store" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.execution_report.GraphAdditionReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.execution_report.</span></span><span class="sig-name descname"><span class="pre">GraphAdditionReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">download_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mime_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triple_count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/execution_report.html#GraphAdditionReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.GraphAdditionReport" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a GraphAdditionReport.
+This class will report the results of the assertions.
+Contents of this report are :
+- the download url of the document
+- the graph added
+- type of document added : text/turtle or application/ld+json or etc.
+- triple count of the graph added</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.execution_report.PathAssertionReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.execution_report.</span></span><span class="sig-name descname"><span class="pre">PathAssertionReport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assertion_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assertion_result</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assertion_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">uuid4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_reports</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#travharv.execution_report.GraphAdditionReport" title="travharv.execution_report.GraphAdditionReport"><span class="pre">GraphAdditionReport</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/execution_report.html#PathAssertionReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.PathAssertionReport" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent an AssertionReport.
+This class will report the results of the assertions.
+Contents of this report are :
+- the subject_uri
+- the assertion_path
+- the assertion_result (True or False)
+- the assertion_time
+- id of the assertion (uuid4)
+- triple count of the graph added
+- type of document added : text/turtle or application/ld+json or etc.
+- download url of the document</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.execution_report.TaskExecutionReport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.execution_report.</span></span><span class="sig-name descname"><span class="pre">TaskExecutionReport</span></span><a class="reference internal" href="_modules/travharv/execution_report.html#TaskExecutionReport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.TaskExecutionReport" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a TaskExecutionReport.
+This class will report the results of the assertions per task.
+e.g.: All AssertionReports will be stored in a dictionary</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.execution_report.TaskExecutionReport.add_path_assertion_report">
+<span class="sig-name descname"><span class="pre">add_path_assertion_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assertion_report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.execution_report.PathAssertionReport" title="travharv.execution_report.PathAssertionReport"><span class="pre">PathAssertionReport</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/execution_report.html#TaskExecutionReport.add_path_assertion_report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.execution_report.TaskExecutionReport.add_path_assertion_report" title="Link to this definition"></a></dt>
+<dd><p>Report the results of the assertions to the store.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-travharv.executor">
+<span id="travharv-executor-module"></span><h2>travharv.executor module<a class="headerlink" href="#module-travharv.executor" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.executor.TravHarvExecutor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.executor.</span></span><span class="sig-name descname"><span class="pre">TravHarvExecutor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM:</span> <span class="pre">&lt;property</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f94aedd5b70&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks:</span> <span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rdf_store_access:</span> <span class="pre">~travharv.store.RDFStoreAccess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/executor.html#TravHarvExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.executor.TravHarvExecutor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a TravHarvExecutor.
+This class will assert all paths
+for all subjects given for each task per config.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.executor.TravHarvExecutor.assert_all_paths">
+<span class="sig-name descname"><span class="pre">assert_all_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/executor.html#TravHarvExecutor.assert_all_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.executor.TravHarvExecutor.assert_all_paths" title="Link to this definition"></a></dt>
+<dd><p>Assert all paths for all subjects given for each task per config.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-travharv.helper">
+<span id="travharv-helper-module"></span><h2>travharv.helper module<a class="headerlink" href="#module-travharv.helper" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.makeNSM">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">makeNSM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pfx_declarations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Namespace</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/helper.html#makeNSM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.makeNSM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.ppath_split">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">ppath_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ppath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/helper.html#ppath_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.ppath_split" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.resolve_literals">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">resolve_literals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">literal_uris</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NamespaceManager</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">URIRef</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/helper.html#resolve_literals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.resolve_literals" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.resolve_ppaths">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">resolve_ppaths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ppaths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NamespaceManager</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/helper.html#resolve_ppaths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.resolve_ppaths" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.resolve_sparql">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">resolve_sparql</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/helper.html#resolve_sparql"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.resolve_sparql" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.resolve_uri">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">resolve_uri</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nsm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NamespaceManager</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">URIRef</span></span></span><a class="reference internal" href="_modules/travharv/helper.html#resolve_uri"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.resolve_uri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.helper.timestamp">
+<span class="sig-prename descclassname"><span class="pre">travharv.helper.</span></span><span class="sig-name descname"><span class="pre">timestamp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/helper.html#timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.helper.timestamp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-travharv.path_assertion">
+<span id="travharv-path-assertion-module"></span><h2>travharv.path_assertion module<a class="headerlink" href="#module-travharv.path_assertion" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.path_assertion.SubjPropPathAssertion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.path_assertion.</span></span><span class="sig-name descname"><span class="pre">SubjPropPathAssertion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assertion_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.config_build.AssertPath" title="travharv.config_build.AssertPath"><span class="pre">AssertPath</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rdf_store_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.store.RDFStoreAccess" title="travharv.store.RDFStoreAccess"><span class="pre">RDFStoreAccess</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">NamespaceManager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_execution_report</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.execution_report.TaskExecutionReport" title="travharv.execution_report.TaskExecutionReport"><span class="pre">TaskExecutionReport</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/path_assertion.html#SubjPropPathAssertion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.path_assertion.SubjPropPathAssertion" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent the assertion of
+all given property traversal paths for a given subject.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.path_assertion.SubjPropPathAssertion.assert_path">
+<span class="sig-name descname"><span class="pre">assert_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/path_assertion.html#SubjPropPathAssertion.assert_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.path_assertion.SubjPropPathAssertion.assert_path" title="Link to this definition"></a></dt>
+<dd><p>Assert a property path for a given subject.
+Put the results in a RDFStoreAccess.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.path_assertion.SubjPropPathAssertion.path_for_depth">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path_for_depth</span></span><a class="headerlink" href="#travharv.path_assertion.SubjPropPathAssertion.path_for_depth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.path_assertion.SubjPropPathAssertion.path_length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path_length</span></span><a class="headerlink" href="#travharv.path_assertion.SubjPropPathAssertion.path_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-travharv.service">
+<span id="travharv-service-module"></span><h2>travharv.service module<a class="headerlink" href="#module-travharv.service" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.service.TravHarv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.service.</span></span><span class="sig-name descname"><span class="pre">TravHarv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_store_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/service.html#TravHarv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.service.TravHarv" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Assert all paths for given subjects.
+Given a configuration file, assert all paths
+for all subjects in the configuration file.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.service.TravHarv.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/service.html#TravHarv.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.service.TravHarv.process" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-travharv.store">
+<span id="travharv-store-module"></span><h2>travharv.store module<a class="headerlink" href="#module-travharv.store" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.store.</span></span><span class="sig-name descname"><span class="pre">RDFStoreAccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">core:</span> <span class="pre">~pyrdfstore.store.RDFStore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_mapper:</span> <span class="pre">~pyrdfstore.store.GraphNameMapper</span> <span class="pre">=</span> <span class="pre">&lt;pyrdfstore.store.GraphNameMapper</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RDFStoreDecorator</span></code></p>
+<p>Decorator class adding some trav-harv specific features</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.all_triples">
+<span class="sig-name descname"><span class="pre">all_triples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.all_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.all_triples" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.drop_graph_for_config">
+<span class="sig-name descname"><span class="pre">drop_graph_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.drop_graph_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.drop_graph_for_config" title="Link to this definition"></a></dt>
+<dd><p>drops the content in rdf_store associated to specified name_config
+(and all its contents)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name_config</strong> (<em>str</em>) – the uri describing the named_graph to drop</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.forget_graph_for_config">
+<span class="sig-name descname"><span class="pre">forget_graph_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.forget_graph_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.forget_graph_for_config" title="Link to this definition"></a></dt>
+<dd><p>forgets about the name_config being under control
+This functions independent of the drop_graph method.
+So any client of this service is expected to decide when
+(or not) to combine both</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name_config</strong> (<em>str</em>) – the uri describing the named_graph to drop</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.insert_for_config">
+<span class="sig-name descname"><span class="pre">insert_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.insert_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.insert_for_config" title="Link to this definition"></a></dt>
+<dd><p>inserts the triples from the passed graph
+into a graph tied to this name_config</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>Graph</em>) – the graph of triples to insert</p></li>
+<li><p><strong>name_config</strong> (<em>str</em>) – the name of the config</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.lastmod_ts_for_config">
+<span class="sig-name descname"><span class="pre">lastmod_ts_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.lastmod_ts_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.lastmod_ts_for_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.name_configs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#travharv.store.RDFStoreAccess.name_configs" title="Link to this definition"></a></dt>
+<dd><p>returns the known &amp; managed name-configs in the store</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the list of name-configs, known and managed</p>
+</dd>
+</dl>
+<p>(but possibly already deleted, but not forgotten) in this store
+:rtype: List[str]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.select_subjects">
+<span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.select_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.select_subjects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.select_subjects_for_ppath">
+<span class="sig-name descname"><span class="pre">select_subjects_for_ppath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.select_subjects_for_ppath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.select_subjects_for_ppath" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.verify_max_age_of_config">
+<span class="sig-name descname"><span class="pre">verify_max_age_of_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_minutes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.verify_max_age_of_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.verify_max_age_of_config" title="Link to this definition"></a></dt>
+<dd><p>verifies that a certain graph is not aged older
+than a certain amount of minutes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name_config</strong> (<em>str</em>) – the name of the config to check</p></li>
+<li><p><strong>age_minutes</strong> (<em>int</em>) – the max acceptable age in minutes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the contents of the store associated</p>
+</dd>
+</dl>
+<p>to the config has aged less than the passed number of
+minutes in the argument, else False
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.store.RDFStoreAccess.verify_path">
+<span class="sig-name descname"><span class="pre">verify_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.verify_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.store.RDFStoreAccess.verify_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-travharv.web_discovery">
+<span id="travharv-web-discovery-module"></span><h2>travharv.web_discovery module<a class="headerlink" href="#module-travharv.web_discovery" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.web_discovery.LODAwareHTMLParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.web_discovery.</span></span><span class="sig-name descname"><span class="pre">LODAwareHTMLParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/web_discovery.html#LODAwareHTMLParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.web_discovery.LODAwareHTMLParser" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HTMLParser</span></code></p>
+<p>HTMLParser that knows about LOD embedding and linking techniques.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.web_discovery.LODAwareHTMLParser.handle_data">
+<span class="sig-name descname"><span class="pre">handle_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/web_discovery.html#LODAwareHTMLParser.handle_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.web_discovery.LODAwareHTMLParser.handle_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.web_discovery.LODAwareHTMLParser.handle_endtag">
+<span class="sig-name descname"><span class="pre">handle_endtag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/web_discovery.html#LODAwareHTMLParser.handle_endtag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.web_discovery.LODAwareHTMLParser.handle_endtag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.web_discovery.LODAwareHTMLParser.handle_starttag">
+<span class="sig-name descname"><span class="pre">handle_starttag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/web_discovery.html#LODAwareHTMLParser.handle_starttag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.web_discovery.LODAwareHTMLParser.handle_starttag" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.web_discovery.ctype_to_rdf_format">
+<span class="sig-prename descclassname"><span class="pre">travharv.web_discovery.</span></span><span class="sig-name descname"><span class="pre">ctype_to_rdf_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/travharv/web_discovery.html#ctype_to_rdf_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.web_discovery.ctype_to_rdf_format" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="travharv.web_discovery.get_graph_for_format">
+<span class="sig-prename descclassname"><span class="pre">travharv.web_discovery.</span></span><span class="sig-name descname"><span class="pre">get_graph_for_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject_url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/web_discovery.html#get_graph_for_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.web_discovery.get_graph_for_format" title="Link to this definition"></a></dt>
+<dd><p>Discover triples describing the subject (assumed at subject_url)
+and add them to the graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subject_url</strong> – url (originally assumed from &lt;uri&gt;)</p>
+</dd>
+</dl>
+<p>pointing to the subject to be discovered
+:type subject_url: str
+:param g: graph to be filled
+:type g: rdflib.Graph
+:param format: indicating what format should be retrieved json-ld, turtle
+:type form: str
+:returns: the graph whith added discovered triples
+:rtype: rdflib.Graph</p>
+</dd></dl>
+
+</section>
+<section id="module-0">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-0" title="Link to this heading"></a></h2>
+<p>travharv</p>
+<dl class="field-list simple" id="module-travharv">
+<dt class="field-odd">platform<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Unix, Windows</p>
+</dd>
+<dt class="field-even">synopsis<span class="colon">:</span></dt>
+<dd class="field-even"><p>A package for traversing and harvesting RDF data</p>
+</dd>
+</dl>
+<p>by dereferencing URIs and asserting paths.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.</span></span><span class="sig-name descname"><span class="pre">RDFStoreAccess</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">core:</span> <span class="pre">~pyrdfstore.store.RDFStore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_mapper:</span> <span class="pre">~pyrdfstore.store.GraphNameMapper</span> <span class="pre">=</span> <span class="pre">&lt;pyrdfstore.store.GraphNameMapper</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RDFStoreDecorator</span></code></p>
+<p>Decorator class adding some trav-harv specific features</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.all_triples">
+<span class="sig-name descname"><span class="pre">all_triples</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.all_triples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.all_triples" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.drop_graph_for_config">
+<span class="sig-name descname"><span class="pre">drop_graph_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.drop_graph_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.drop_graph_for_config" title="Link to this definition"></a></dt>
+<dd><p>drops the content in rdf_store associated to specified name_config
+(and all its contents)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name_config</strong> (<em>str</em>) – the uri describing the named_graph to drop</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.forget_graph_for_config">
+<span class="sig-name descname"><span class="pre">forget_graph_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.forget_graph_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.forget_graph_for_config" title="Link to this definition"></a></dt>
+<dd><p>forgets about the name_config being under control
+This functions independent of the drop_graph method.
+So any client of this service is expected to decide when
+(or not) to combine both</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name_config</strong> (<em>str</em>) – the uri describing the named_graph to drop</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.insert_for_config">
+<span class="sig-name descname"><span class="pre">insert_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.insert_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.insert_for_config" title="Link to this definition"></a></dt>
+<dd><p>inserts the triples from the passed graph
+into a graph tied to this name_config</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>graph</strong> (<em>Graph</em>) – the graph of triples to insert</p></li>
+<li><p><strong>name_config</strong> (<em>str</em>) – the name of the config</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.lastmod_ts_for_config">
+<span class="sig-name descname"><span class="pre">lastmod_ts_for_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.lastmod_ts_for_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.lastmod_ts_for_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.name_configs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name_configs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#travharv.RDFStoreAccess.name_configs" title="Link to this definition"></a></dt>
+<dd><p>returns the known &amp; managed name-configs in the store</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>the list of name-configs, known and managed</p>
+</dd>
+</dl>
+<p>(but possibly already deleted, but not forgotten) in this store
+:rtype: List[str]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.select_subjects">
+<span class="sig-name descname"><span class="pre">select_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparql</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.select_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.select_subjects" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.select_subjects_for_ppath">
+<span class="sig-name descname"><span class="pre">select_subjects_for_ppath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.select_subjects_for_ppath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.select_subjects_for_ppath" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.verify_max_age_of_config">
+<span class="sig-name descname"><span class="pre">verify_max_age_of_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">age_minutes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.verify_max_age_of_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.verify_max_age_of_config" title="Link to this definition"></a></dt>
+<dd><p>verifies that a certain graph is not aged older
+than a certain amount of minutes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name_config</strong> (<em>str</em>) – the name of the config to check</p></li>
+<li><p><strong>age_minutes</strong> (<em>int</em>) – the max acceptable age in minutes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the contents of the store associated</p>
+</dd>
+</dl>
+<p>to the config has aged less than the passed number of
+minutes in the argument, else False
+:rtype: bool</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.RDFStoreAccess.verify_path">
+<span class="sig-name descname"><span class="pre">verify_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/store.html#RDFStoreAccess.verify_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.RDFStoreAccess.verify_path" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.TravHarv">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.</span></span><span class="sig-name descname"><span class="pre">TravHarv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_store_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/service.html#TravHarv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarv" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Assert all paths for given subjects.
+Given a configuration file, assert all paths
+for all subjects in the configuration file.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.TravHarv.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/service.html#TravHarv.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarv.process" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.TravHarvConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">travharv_config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Configuration for the travharv
+This class contains the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>NSM: NamespaceManager object from rdflib</p></li>
+<li><p>tasks: a list of tasks</p></li>
+<li><p>configname: a string</p></li>
+</ul>
+</div></blockquote>
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.TravHarvConfig.NSM">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">NSM</span></span><a class="headerlink" href="#travharv.TravHarvConfig.NSM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.TravHarvConfig.configname">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">configname</span></span><a class="headerlink" href="#travharv.TravHarvConfig.configname" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.TravHarvConfig.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfig.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvConfig.get_config" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="travharv.TravHarvConfig.tasks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tasks</span></span><a class="headerlink" href="#travharv.TravHarvConfig.tasks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.TravHarvConfigBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.</span></span><span class="sig-name descname"><span class="pre">TravHarvConfigBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rdf_store_access</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#travharv.store.RDFStoreAccess" title="travharv.store.RDFStoreAccess"><span class="pre">RDFStoreAccess</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfigBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvConfigBuilder" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.TravHarvConfigBuilder.build_from_config">
+<span class="sig-name descname"><span class="pre">build_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_name=&lt;class</span> <span class="pre">'str'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfigBuilder.build_from_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvConfigBuilder.build_from_config" title="Link to this definition"></a></dt>
+<dd><p>Build a TravHarvConfig from a given config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_name</strong> (<em>str</em>) – The name of the config file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A TravHarvConfig object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#travharv.TravHarvConfig" title="travharv.TravHarvConfig">TravHarvConfig</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.TravHarvConfigBuilder.build_from_folder">
+<span class="sig-name descname"><span class="pre">build_from_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/config_build.html#TravHarvConfigBuilder.build_from_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvConfigBuilder.build_from_folder" title="Link to this definition"></a></dt>
+<dd><p>Build a list of TravHarvConfig objects from a given folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of TravHarvConfig objects.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#travharv.TravHarvConfig" title="travharv.TravHarvConfig">TravHarvConfig</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="travharv.TravHarvExecutor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">travharv.</span></span><span class="sig-name descname"><span class="pre">TravHarvExecutor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_filename:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NSM:</span> <span class="pre">&lt;property</span> <span class="pre">object</span> <span class="pre">at</span> <span class="pre">0x7f94aedd5b70&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks:</span> <span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rdf_store_access:</span> <span class="pre">~travharv.store.RDFStoreAccess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/executor.html#TravHarvExecutor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvExecutor" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a TravHarvExecutor.
+This class will assert all paths
+for all subjects given for each task per config.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="travharv.TravHarvExecutor.assert_all_paths">
+<span class="sig-name descname"><span class="pre">assert_all_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/travharv/executor.html#TravHarvExecutor.assert_all_paths"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#travharv.TravHarvExecutor.assert_all_paths" title="Link to this definition"></a></dt>
+<dd><p>Assert all paths for all subjects given for each task per config.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

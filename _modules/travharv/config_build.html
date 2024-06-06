@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>travharv.config_build &mdash; travharv  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            travharv
+          </a>
+              <div class="version">
+                0.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../travharv.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">travharv</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">travharv.config_build</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for travharv.config_build</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">rdflib.namespace</span> <span class="kn">import</span> <span class="n">NamespaceManager</span>
+<span class="kn">from</span> <span class="nn">rdflib.plugins.sparql.parser</span> <span class="kn">import</span> <span class="n">parseQuery</span>
+
+<span class="kn">from</span> <span class="nn">travharv.helper</span> <span class="kn">import</span> <span class="n">makeNSM</span><span class="p">,</span> <span class="n">resolve_ppaths</span><span class="p">,</span> <span class="n">resolve_sparql</span>
+<span class="kn">from</span> <span class="nn">travharv.store</span> <span class="kn">import</span> <span class="n">RDFStoreAccess</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="relative_pathname">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.relative_pathname">[docs]</a>
+<span class="k">def</span> <span class="nf">relative_pathname</span><span class="p">(</span><span class="n">subpath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">ancestorpath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;gives the relative part pointing to the subpath from the ancestorpath&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">subpath</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">ancestorpath</span><span class="o">.</span><span class="n">absolute</span><span class="p">()))</span></div>
+
+
+
+<div class="viewcode-block" id="TravHarvTask">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.TravHarvTask">[docs]</a>
+<span class="k">class</span> <span class="nc">TravHarvTask</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A task for the travharv</span>
+<span class="sd">    This task contains the following:</span>
+<span class="sd">    - SubjectDefinition class: a class that defines the subjects</span>
+<span class="sd">    - AssertPathSet class: a class that contains a list of AssertPath objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the task</span>
+
+<span class="sd">        :param task: The task.</span>
+<span class="sd">        :type task: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">subject_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;subject_definition&quot;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">assert_path_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">[</span><span class="s2">&quot;assert_path_set&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="SubjectDefinition">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.SubjectDefinition">[docs]</a>
+<span class="k">class</span> <span class="nc">SubjectDefinition</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="SubjectDefinition.list_subjects">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.SubjectDefinition.list_subjects">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">list_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LiteralSubjectDefinition">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.LiteralSubjectDefinition">[docs]</a>
+<span class="k">class</span> <span class="nc">LiteralSubjectDefinition</span><span class="p">(</span><span class="n">SubjectDefinition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A subject definition that is a list of strings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the literal subject definition</span>
+
+<span class="sd">        :param subjects: The subjects.</span>
+<span class="sd">        :type subjects: list[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span> <span class="o">=</span> <span class="n">subjects</span>
+
+<div class="viewcode-block" id="LiteralSubjectDefinition.list_subjects">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.LiteralSubjectDefinition.list_subjects">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the subjects</span>
+
+<span class="sd">        :return: list[str]</span>
+<span class="sd">        :rtype: list[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjects</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SPARQLSubjectDefinition">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.SPARQLSubjectDefinition">[docs]</a>
+<span class="k">class</span> <span class="nc">SPARQLSubjectDefinition</span><span class="p">(</span><span class="n">SubjectDefinition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A subject definition that is a SPARQL query</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">NSM</span><span class="p">:</span> <span class="n">NamespaceManager</span><span class="p">,</span>
+        <span class="n">SPARQL</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">rdf_store_access</span><span class="o">=</span><span class="n">RDFStoreAccess</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the SPARQL subject definition</span>
+
+<span class="sd">        :param SPARQL: The SPARQL query.</span>
+<span class="sd">        :type SPARQL: str</span>
+<span class="sd">        :param targetstore: The target store.</span>
+<span class="sd">        :type targetstore: TargetStore</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;init SPARQL subjects&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">NSM</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span> <span class="o">=</span> <span class="n">NSM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sparql</span> <span class="o">=</span> <span class="n">resolve_sparql</span><span class="p">(</span><span class="n">SPARQL</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span> <span class="o">=</span> <span class="n">rdf_store_access</span>
+
+<div class="viewcode-block" id="SPARQLSubjectDefinition.list_subjects">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.SPARQLSubjectDefinition.list_subjects">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the subjects</span>
+
+<span class="sd">        :return: list[str]</span>
+<span class="sd">        :rtype: list[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_subjects</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sparql</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rdf_store_access</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SPARQL</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">rdf_store_access</span><span class="o">=</span><span class="n">RDFStoreAccess</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;getting subjects&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rdf_store_access</span><span class="o">.</span><span class="n">select_subjects</span><span class="p">(</span><span class="n">SPARQL</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AssertPathSet">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.AssertPathSet">[docs]</a>
+<span class="k">class</span> <span class="nc">AssertPathSet</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A set/list of assert paths</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">NSM</span><span class="p">:</span> <span class="n">NamespaceManager</span><span class="p">,</span> <span class="n">assert_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the assert path set</span>
+
+<span class="sd">        :param assert_path_set: The set of assert paths.</span>
+<span class="sd">        :type assert_path_set: list[AssertPath]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span> <span class="o">=</span> <span class="n">NSM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_assert_paths</span> <span class="o">=</span> <span class="n">resolve_ppaths</span><span class="p">(</span><span class="n">assert_paths</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assert_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">AssertPath</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_assert_paths</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AssertPathSet.list_assertion_paths">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.AssertPathSet.list_assertion_paths">[docs]</a>
+    <span class="k">def</span> <span class="nf">list_assertion_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the assertion paths</span>
+
+<span class="sd">        :return: list[AssertPath]</span>
+<span class="sd">        :rtype: list[AssertPath]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">assert_paths</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AssertPath">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.AssertPath">[docs]</a>
+<span class="k">class</span> <span class="nc">AssertPath</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A path to assert.</span>
+<span class="sd">    This class contains the following:</span>
+<span class="sd">    - Path_parts: a list of strings</span>
+<span class="sd">    - max_size: a function to return the len of the list of path_parts</span>
+<span class="sd">    - get_path_for_depth(): a function that returns a path at a given depth</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assert_path</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the assert path</span>
+
+<span class="sd">        :param assert_path: The path to assert.</span>
+<span class="sd">        :type assert_path: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path_parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_path_parts</span><span class="p">(</span><span class="n">assert_path</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AssertPath.get_path_parts">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.AssertPath.get_path_parts">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_path_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the path parts</span>
+
+<span class="sd">        return: list[str]</span>
+<span class="sd">        rtype: list[str]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_parts</span></div>
+
+
+<div class="viewcode-block" id="AssertPath.get_max_size">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.AssertPath.get_max_size">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the max size</span>
+
+<span class="sd">        return: int</span>
+<span class="sd">        rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_parts</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AssertPath.get_path_for_depth">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.AssertPath.get_path_for_depth">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_path_for_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a concatination of the path parts up to a given depth</span>
+
+<span class="sd">        return: str</span>
+<span class="sd">        rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_parts</span><span class="p">[:</span><span class="n">depth</span><span class="p">])</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_make_path_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assert_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make the path parts by splitting the path string on regex expression</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">REGEXP</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;\s*/\s*(?![^&lt;]*&gt;)&quot;</span>
+
+        <span class="c1"># split the path on the regex expression</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">REGEXP</span><span class="p">,</span> <span class="n">assert_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TravHarvConfig">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.TravHarvConfig">[docs]</a>
+<span class="k">class</span> <span class="nc">TravHarvConfig</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration for the travharv</span>
+<span class="sd">    This class contains the following:</span>
+<span class="sd">        - NSM: NamespaceManager object from rdflib</span>
+<span class="sd">        - tasks: a list of tasks</span>
+<span class="sd">        - configname: a string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">travharv_config</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialise the travharv config.</span>
+
+<span class="sd">        :param travharv_config: The configuration for the travharv config.</span>
+<span class="sd">        :type travharv_config: dict</span>
+<span class="sd">        :return: A TravHarvConfig object.</span>
+<span class="sd">        :rtype: TravHarvConfig</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">travharv_config</span> <span class="o">=</span> <span class="n">travharv_config</span>
+
+<div class="viewcode-block" id="TravHarvConfig.get_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.TravHarvConfig.get_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">travharv_config</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">NSM</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">travharv_config</span><span class="p">[</span><span class="s2">&quot;NSM&quot;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">travharv_config</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">configname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">travharv_config</span><span class="p">[</span><span class="s2">&quot;configname&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="TravHarvConfigBuilder">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.TravHarvConfigBuilder">[docs]</a>
+<span class="k">class</span> <span class="nc">TravHarvConfigBuilder</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">rdf_store_access</span><span class="p">:</span> <span class="n">RDFStoreAccess</span><span class="p">,</span> <span class="n">config_folder</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the TravHarvConfigBuilder.</span>
+
+<span class="sd">        :param rdf_store_access: The RDF store access.</span>
+<span class="sd">        :type rdf_store_access: RDFStoreAccess</span>
+<span class="sd">        :param config_folder: The folder containing the config files.</span>
+<span class="sd">        :type config_folder: str</span>
+<span class="sd">        :return: A TravHarvConfigBuilder object.</span>
+<span class="sd">        :rtype: TravHarvConfigBuilder</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">config_folder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;Config folder is None,</span>
+<span class="sd">                using current working directory as config folder&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_files_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config_folder</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rdf_store_access</span> <span class="o">=</span> <span class="n">rdf_store_access</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;TravHarvConfigBuilder initialized&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TravHarvConfigBuilder.build_from_config">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.TravHarvConfigBuilder.build_from_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_from_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_name</span><span class="o">=</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a TravHarvConfig from a given config file.</span>
+
+<span class="sd">        :param config_name: The name of the config file.</span>
+<span class="sd">        :type config_name: str</span>
+<span class="sd">        :return: A TravHarvConfig object.</span>
+<span class="sd">        :rtype: TravHarvConfig</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_files_folder</span> <span class="o">/</span> <span class="n">config_name</span><span class="p">)</span>
+        <span class="n">dict_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_yml_to_dict</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+        <span class="n">relative_name_config</span> <span class="o">=</span> <span class="n">relative_pathname</span><span class="p">(</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">config_file</span><span class="p">),</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_files_folder</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config_file</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_makeTravHarvConfigPartFromDict</span><span class="p">(</span>
+            <span class="n">dict_object</span><span class="p">,</span> <span class="n">relative_name_config</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TravHarvConfigBuilder.build_from_folder">
+<a class="viewcode-back" href="../../travharv.html#travharv.config_build.TravHarvConfigBuilder.build_from_folder">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_from_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build a list of TravHarvConfig objects from a given folder.</span>
+
+<span class="sd">        :return: A list of TravHarvConfig objects.</span>
+<span class="sd">        :rtype: list[TravHarvConfig]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">config_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files_folder</span><span class="p">()</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">config_file</span> <span class="ow">in</span> <span class="n">config_files</span><span class="p">:</span>
+            <span class="n">path_config_file</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_files_folder</span> <span class="o">/</span> <span class="n">config_file</span>
+            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path_config_file</span><span class="si">=}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">dict_object</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_yml_to_dict</span><span class="p">(</span><span class="n">path_config_file</span><span class="p">)</span>
+            <span class="n">configs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_makeTravHarvConfigPartFromDict</span><span class="p">(</span><span class="n">dict_object</span><span class="p">,</span> <span class="n">config_file</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">configs</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_assert_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subjects</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="s2">&quot;Subjects must be a dictionary&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="s2">&quot;literal&quot;</span> <span class="ow">in</span> <span class="n">subjects</span> <span class="ow">or</span> <span class="s2">&quot;SPARQL&quot;</span> <span class="ow">in</span> <span class="n">subjects</span>
+        <span class="p">),</span> <span class="s2">&quot;Subjects must contain &#39;literal&#39; or &#39;SPARQL&#39;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">subjects</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;literal&quot;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span> <span class="nb">list</span>
+                <span class="p">),</span> <span class="s2">&quot;Subjects of type literal must be a list of strings&quot;</span>
+                <span class="k">for</span> <span class="n">subject</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                        <span class="n">subject</span><span class="p">,</span> <span class="nb">str</span>
+                    <span class="p">),</span> <span class="s2">&quot;Subjects of type literal must be a list of strings&quot;</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;SPARQL&quot;</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                    <span class="n">value</span><span class="p">,</span> <span class="nb">str</span>
+                <span class="p">),</span> <span class="s2">&quot;Subjects of type SPARQL must be a string&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_assert_valid_sparql_syntax</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="c1"># Add more assertions as needed...</span>
+
+    <span class="k">def</span> <span class="nf">_assert_valid_sparql_syntax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sparql_query</span><span class="p">):</span>
+        <span class="n">parseQuery</span><span class="p">(</span><span class="n">sparql_query</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sparql_query</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;SPARQL query must be a string&quot;</span>
+        <span class="c1"># Add more assertions as needed...</span>
+
+    <span class="k">def</span> <span class="nf">_files_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_files_folder</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">&quot;.yml&quot;</span><span class="p">,</span> <span class="s2">&quot;.yaml&quot;</span><span class="p">))</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_load_yml_to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">yaml</span><span class="o">.</span><span class="n">YAMLError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_makeTravHarvConfigPartFromDict</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dict_object</span><span class="p">,</span>
+        <span class="n">name_config</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span>
+        <span class="c1"># TODO reconsider this &quot;default&quot; for name_config - not self-explaining</span>
+    <span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Making TravHarvConfig from dict for </span><span class="si">{</span><span class="n">name_config</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># make it so that the assertions are always checked for lowercase</span>
+        <span class="c1"># TODO - apply this as a general rule on the level of the yml load</span>
+        <span class="c1">#  thus ensuring that it applies across the board</span>
+        <span class="c1">#  and that users know the yml keys are in fact ignoring case</span>
+        <span class="n">dict_object</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dict_object</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="s2">&quot;snooze-till-graph-age-minutes&quot;</span> <span class="ow">in</span> <span class="n">dict_object</span>
+        <span class="p">),</span> <span class="s2">&quot;snooze-till-graph-age-minutes must be defined&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;assert&quot;</span> <span class="ow">in</span> <span class="n">dict_object</span><span class="p">,</span> <span class="s2">&quot;assert must be defined&quot;</span>
+        <span class="k">for</span> <span class="n">assert_task</span> <span class="ow">in</span> <span class="n">dict_object</span><span class="p">[</span><span class="s2">&quot;assert&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_assert_subjects</span><span class="p">(</span><span class="n">assert_task</span><span class="p">[</span><span class="s2">&quot;subjects&quot;</span><span class="p">])</span>
+        <span class="c1"># Add more assertions as needed...</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># function here to check if the snooze-till-graph-age-minutes</span>
+            <span class="c1"># if older then the last modified date of the admin graph</span>
+            <span class="c1"># if it is older then the last modified date</span>
+            <span class="c1"># of the admin graph then we can continue</span>
+            <span class="c1"># if it is not older then the last modified date</span>
+            <span class="c1"># of the admin graph then we can snooze the config</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_snooze</span><span class="p">(</span>
+                <span class="n">dict_object</span><span class="p">[</span><span class="s2">&quot;snooze-till-graph-age-minutes&quot;</span><span class="p">],</span>
+                <span class="n">name_config</span><span class="p">,</span>
+            <span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span><span class="si">{</span><span class="n">name_config</span><span class="si">=}</span><span class="s2"> snoozed for</span>
+<span class="s2">                    </span><span class="si">{</span><span class="n">dict_object</span><span class="p">[</span><span class="s1">&#39;snooze-till-graph-age-minutes&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> minutes</span>
+<span class="s2">                    &quot;&quot;&quot;</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span> <span class="o">=</span> <span class="n">makeNSM</span><span class="p">(</span><span class="n">dict_object</span><span class="p">[</span><span class="s2">&quot;prefix&quot;</span><span class="p">])</span>
+
+        <span class="n">travharvconfig</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;configname&quot;</span><span class="p">:</span> <span class="n">name_config</span><span class="p">,</span>
+            <span class="s2">&quot;NSM&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span>
+            <span class="s2">&quot;tasks&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="n">TravHarvTask</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">&quot;subject_definition&quot;</span><span class="p">:</span> <span class="p">(</span>
+                            <span class="n">LiteralSubjectDefinition</span><span class="p">(</span>
+                                <span class="n">assert_task</span><span class="p">[</span><span class="s2">&quot;subjects&quot;</span><span class="p">][</span><span class="s2">&quot;literal&quot;</span><span class="p">]</span>
+                            <span class="p">)</span>
+                            <span class="k">if</span> <span class="s2">&quot;literal&quot;</span> <span class="ow">in</span> <span class="n">assert_task</span><span class="p">[</span><span class="s2">&quot;subjects&quot;</span><span class="p">]</span>
+                            <span class="k">else</span> <span class="n">SPARQLSubjectDefinition</span><span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span>
+                                <span class="n">assert_task</span><span class="p">[</span><span class="s2">&quot;subjects&quot;</span><span class="p">][</span><span class="s2">&quot;SPARQL&quot;</span><span class="p">],</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_rdf_store_access</span><span class="p">,</span>
+                            <span class="p">)</span>
+                        <span class="p">),</span>
+                        <span class="s2">&quot;assert_path_set&quot;</span><span class="p">:</span> <span class="n">AssertPathSet</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">NSM</span><span class="p">,</span> <span class="n">assert_task</span><span class="p">[</span><span class="s2">&quot;paths&quot;</span><span class="p">]</span>
+                        <span class="p">),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">assert_task</span> <span class="ow">in</span> <span class="n">dict_object</span><span class="p">[</span><span class="s2">&quot;assert&quot;</span><span class="p">]</span>
+            <span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">TravHarvConfig</span><span class="p">(</span><span class="n">travharvconfig</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_snooze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snooze_time</span><span class="p">,</span> <span class="n">name_config</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># First get the lastmod_ts of the named graph</span>
+            <span class="c1"># if there is one and check if that one is older</span>
+            <span class="c1"># then the lastmod of the config file</span>
+            <span class="n">config_lastmod_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config_files_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">name_config</span>
+            <span class="n">lastmod_file</span> <span class="o">=</span> <span class="n">config_lastmod_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Last modified date of config file:</span>
+<span class="s2">                    </span><span class="si">{</span><span class="n">name_config</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">lastmod_file</span><span class="si">}</span>
+<span class="s2">                &quot;&quot;&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">lastmod_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rdf_store_access</span><span class="o">.</span><span class="n">lastmod_ts_for_config</span><span class="p">(</span>
+                <span class="n">name_config</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">lastmod_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">lastmod_file</span> <span class="o">&gt;</span> <span class="n">lastmod_config</span><span class="o">.</span><span class="n">timestamp</span><span class="p">():</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+<span class="w">                        </span><span class="sd">&quot;&quot;&quot;Config file is newer then the last modified</span>
+<span class="sd">                        of the config in the admin graph. Bypassing snooze.&quot;&quot;&quot;</span>
+                    <span class="p">)</span>
+                    <span class="c1"># if the config file is newer then the last modified</span>
+                    <span class="c1"># of the config in the admin graph then we can bypass</span>
+                    <span class="c1"># the snooze and continue</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Last modified of config in admin graph:</span>
+<span class="s2">                </span><span class="si">{</span><span class="n">name_config</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">lastmod_config</span><span class="si">}</span><span class="s2">&quot;&quot;&quot;</span>
+            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Checking if config </span><span class="si">{</span><span class="n">name_config</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;is older then </span><span class="si">{</span><span class="n">snooze_time</span><span class="si">}</span><span class="s2"> minutes&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rdf_store_access</span><span class="o">.</span><span class="n">verify_max_age_of_config</span><span class="p">(</span>
+                <span class="n">name_config</span><span class="p">,</span> <span class="n">snooze_time</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Flanders Marine Institute, VLIZ vzw.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
