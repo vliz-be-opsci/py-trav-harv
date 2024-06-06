@@ -23,7 +23,7 @@ def test_travharv_executor(decorated_rdf_stores):
         # extract values from travharvobject and pass them to travharvexecutor
         TravHarvExecutor(
             travharvobject.configname,
-            travharvobject.prefixset,
+            travharvobject.NSM,
             travharvobject.tasks,
             rdf_store,
         ).assert_all_paths()

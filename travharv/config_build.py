@@ -2,14 +2,21 @@ import logging
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+from typing import List
 
 import yaml
+from rdflib.namespace import NamespaceManager
 from rdflib.plugins.sparql.parser import parseQuery
 
+from travharv.helper import makeNSM, resolve_ppaths, resolve_sparql
 from travharv.store import RDFStoreAccess
 
 log = logging.getLogger(__name__)
+
+
+def relative_pathname(subpath: Path, ancestorpath: Path) -> str:
+    """gives the relative part pointing to the subpath from the ancestorpath"""
+    return str(subpath.absolute().relative_to(ancestorpath.absolute()))
 
 
 class TravHarvTask:
@@ -29,9 +36,6 @@ class TravHarvTask:
         """
         self.task = task
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        return self.task
-
     @property
     def subject_definition(self):
         return self.task["subject_definition"]
@@ -43,11 +47,7 @@ class TravHarvTask:
 
 class SubjectDefinition(ABC):
     @abstractmethod
-    def listSubjects(self) -> list[str]:
-        pass
-
-    @abstractmethod
-    def __call__(self, *args: Any, **kwds: Any) -> list[str]:
+    def list_subjects(self) -> list[str]:
         pass
 
 
@@ -65,11 +65,7 @@ class LiteralSubjectDefinition(SubjectDefinition):
         """
         self.subjects = subjects
 
-    def __call__(self, *args: Any, **kwds: Any) -> list[str]:
-        log.debug(self.subjects)
-        return self.subjects
-
-    def listSubjects(self) -> list[str]:
+    def list_subjects(self) -> list[str]:
         """
         Get the subjects
 
@@ -84,7 +80,12 @@ class SPARQLSubjectDefinition(SubjectDefinition):
     A subject definition that is a SPARQL query
     """
 
-    def __init__(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
+    def __init__(
+        self,
+        NSM: NamespaceManager,
+        SPARQL=str,
+        rdf_store_access=RDFStoreAccess,
+    ):
         """
         Initialise the SPARQL subject definition
 
@@ -94,20 +95,19 @@ class SPARQLSubjectDefinition(SubjectDefinition):
         :type targetstore: TargetStore
         """
         log.debug("init SPARQL subjects")
-        self.subjects = self._get_subjects(SPARQL, rdf_store_access)
-        log.debug(self.subjects)
+        log.debug(f"{NSM=}")
+        self.NSM = NSM
+        self.sparql = resolve_sparql(SPARQL, self.NSM)
+        self.rdf_store_access = rdf_store_access
 
-    def __call__(self, *args: Any, **kwds: Any) -> list[str]:
-        return self.subjects
-
-    def listSubjects(self) -> list[str]:
+    def list_subjects(self) -> list[str]:
         """
         Get the subjects
 
         :return: list[str]
         :rtype: list[str]
         """
-        return self.subjects
+        return self._get_subjects(self.sparql, self.rdf_store_access)
 
     def _get_subjects(self, SPARQL=str, rdf_store_access=RDFStoreAccess):
         log.debug("getting subjects")
@@ -119,20 +119,25 @@ class AssertPathSet:
     A set/list of assert paths
     """
 
-    def __init__(self, assert_path_set):
+    def __init__(self, NSM: NamespaceManager, assert_paths: List[str]):
         """
         Initialise the assert path set
 
         :param assert_path_set: The set of assert paths.
         :type assert_path_set: list[AssertPath]
         """
-        self.assert_path_set = assert_path_set
+        self.NSM = NSM
+        self.pre_assert_paths = resolve_ppaths(assert_paths, self.NSM)
+        self.assert_paths = [AssertPath(p) for p in self.pre_assert_paths]
 
-    def __call__(self):
+    def list_assertion_paths(self) -> List:
         """
-        Get the assert path set
+        Get the assertion paths
+
+        :return: list[AssertPath]
+        :rtype: list[AssertPath]
         """
-        return self.assert_path_set
+        return self.assert_paths
 
 
 class AssertPath:
@@ -152,9 +157,6 @@ class AssertPath:
         :type assert_path: str
         """
         self.path_parts = self._make_path_parts(assert_path)
-
-    def __str__(self) -> str:
-        return "/".join(self.path_parts)
 
     def get_path_parts(self):
         """
@@ -187,17 +189,17 @@ class AssertPath:
         """
         Make the path parts by splitting the path string on regex expression
         """
-        REGEXP = r"(?:\w+:\w+|<[^>]+>)"
+        REGEXP = r"\s*/\s*(?![^<]*>)"
 
         # split the path on the regex expression
-        return re.findall(REGEXP, assert_path)
+        return re.split(REGEXP, assert_path)
 
 
 class TravHarvConfig:
     """
     Configuration for the travharv
     This class contains the following:
-        - prefixset: a dictionary of prefixes
+        - NSM: NamespaceManager object from rdflib
         - tasks: a list of tasks
         - configname: a string
     """
@@ -213,12 +215,12 @@ class TravHarvConfig:
         """
         self.travharv_config = travharv_config
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    def get_config(self):
         return self.travharv_config
 
     @property
-    def prefixset(self):
-        return self.travharv_config["prefixset"]
+    def NSM(self):
+        return self.travharv_config["NSM"]
 
     @property
     def tasks(self):
@@ -227,9 +229,6 @@ class TravHarvConfig:
     @property
     def configname(self):
         return self.travharv_config["configname"]
-
-    def __str__(self):
-        return str(self.travharv_config)
 
 
 class TravHarvConfigBuilder:
@@ -267,7 +266,16 @@ class TravHarvConfigBuilder:
         """
         config_file = str(Path.cwd() / self.config_files_folder / config_name)
         dict_object = self._load_yml_to_dict(config_file)
-        return self._makeTravHarvConfigPartFromDict(dict_object, config_name)
+
+        relative_name_config = relative_pathname(
+            Path(config_file), Path.cwd() / self.config_files_folder
+        )
+
+        log.debug(f"{config_file=}")
+
+        return self._makeTravHarvConfigPartFromDict(
+            dict_object, relative_name_config
+        )
 
     def build_from_folder(self):
         """
@@ -282,6 +290,7 @@ class TravHarvConfigBuilder:
             path_config_file = (
                 Path.cwd() / self.config_files_folder / config_file
             )
+            log.debug(f"{path_config_file=}")
             dict_object = self._load_yml_to_dict(path_config_file)
             configs.append(
                 self._makeTravHarvConfigPartFromDict(dict_object, config_file)
@@ -334,7 +343,7 @@ class TravHarvConfigBuilder:
         name_config: str = "default",
         # TODO reconsider this "default" for name_config - not self-explaining
     ):
-        log.debug("Making TravHarvConfig from dict for {}".format(name_config))
+        log.debug(f"Making TravHarvConfig from dict for {name_config}")
         # make it so that the assertions are always checked for lowercase
         # TODO - apply this as a general rule on the level of the yml load
         #  thus ensuring that it applies across the board
@@ -359,19 +368,20 @@ class TravHarvConfigBuilder:
                 name_config,
             ):
                 log.info(
-                    "Snoozing config {} for {} minutes".format(
-                        name_config,
-                        dict_object["snooze-till-graph-age-minutes"],
-                    )
+                    f"""{name_config=} snoozed for
+                    {dict_object['snooze-till-graph-age-minutes']} minutes
+                    """
                 )
                 return
         except Exception as e:
             log.exception(e)
-            log.warning("{}".format(e))
+            log.warning(f"{e}")
+
+        self.NSM = makeNSM(dict_object["prefix"])
 
         travharvconfig = {
             "configname": name_config,
-            "prefixset": dict_object["prefix"],
+            "NSM": self.NSM,
             "tasks": [
                 TravHarvTask(
                     {
@@ -381,12 +391,13 @@ class TravHarvConfigBuilder:
                             )
                             if "literal" in assert_task["subjects"]
                             else SPARQLSubjectDefinition(
+                                self.NSM,
                                 assert_task["subjects"]["SPARQL"],
                                 self._rdf_store_access,
                             )
                         ),
                         "assert_path_set": AssertPathSet(
-                            [AssertPath(path) for path in assert_task["paths"]]
+                            self.NSM, assert_task["paths"]
                         ),
                     }
                 )
@@ -429,9 +440,8 @@ class TravHarvConfigBuilder:
                 {name_config}: {lastmod_config}"""
             )
             log.debug(
-                "Checking if config {} is older then {} minutes".format(
-                    name_config, snooze_time
-                )
+                f"Checking if config {name_config}"
+                f"is older then {snooze_time} minutes"
             )
             return not self._rdf_store_access.verify_max_age_of_config(
                 name_config, snooze_time

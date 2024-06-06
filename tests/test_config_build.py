@@ -9,6 +9,7 @@ from travharv.config_build import (
     SPARQLSubjectDefinition,
     TravHarvConfigBuilder,
 )
+from travharv.helper import makeNSM, resolve_ppaths
 
 
 @pytest.mark.usefixtures("decorated_rdf_stores", "sample_file_graph")
@@ -56,9 +57,7 @@ def test_literal_subject_definition():
 
     literal_subject_definition = LiteralSubjectDefinition(subjects)
     assert literal_subject_definition is not None
-
-    assert literal_subject_definition() == subjects
-    assert literal_subject_definition.listSubjects() == subjects
+    assert literal_subject_definition.list_subjects() == subjects
 
 
 @pytest.mark.usefixtures("decorated_rdf_stores", "sample_file_graph")
@@ -77,24 +76,35 @@ def test_sparql_subject_definition(decorated_rdf_stores, sample_file_graph):
         assert len(sparql_subject_definition.listSubjects()) == 99
 
 
+yml_pfx_declarations = dict(
+    schema="https://schema.org#",
+    ex="https://example.org/",
+)
+
+
 def test_assert_path():
-    assertion_path_str = (
-        "mr:isPartOf/<https://schema.org/geo>/<https://schema.org/latitude>"
+    NSM = makeNSM(yml_pfx_declarations)
+
+    resolved_ppaths = resolve_ppaths(
+        [
+            "schema:geo/ex:example/<https://marineregions.org#test>",
+        ],
+        NSM,
     )
-    assertion_path = AssertPath(assertion_path_str)
+
+    assertion_path = AssertPath(resolved_ppaths[0])
 
     assert assertion_path is not None
-    assert str(assertion_path) == assertion_path_str
     assert assertion_path.get_max_size() == 3
     assert assertion_path.get_path_parts() == [
-        "mr:isPartOf",
-        "<https://schema.org/geo>",
-        "<https://schema.org/latitude>",
+        "<https://schema.org#geo>",
+        "<https://example.org/example>",
+        "<https://marineregions.org#test>",
     ]
-    assert assertion_path.get_path_for_depth(1) == "mr:isPartOf"
+    assert assertion_path.get_path_for_depth(1) == "<https://schema.org#geo>"
     assert (
         assertion_path.get_path_for_depth(2)
-        == "mr:isPartOf/<https://schema.org/geo>"
+        == "<https://schema.org#geo>/<https://example.org/example>"
     )
 
 
@@ -114,11 +124,9 @@ def test_travharvconfig(decorated_rdf_stores, sample_file_graph):
 
         # config should contain the following keys
         assert "configname" in travharvconfig()
-        assert "prefixset" in travharvconfig()
+        assert "NPM" in travharvconfig()
         assert "tasks" in travharvconfig()
-
         assert travharvconfig.configname == "base_test.yml"
-        assert len(travharvconfig.prefixset) == 3
         assert len(travharvconfig.tasks) == 3
 
 

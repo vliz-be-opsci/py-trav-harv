@@ -1,13 +1,14 @@
 import logging
 from pathlib import Path
 from typing import Iterable, List
-from urllib.parse import quote, unquote
 
 from pyrdfj2 import J2RDFSyntaxBuilder
-from pyrdfstore import RDFStore
+from pyrdfstore import GraphNameMapper, RDFStore
 from pyrdfstore.store import RDFStoreDecorator
 from rdflib import Graph
 from rdflib.plugins.sparql.processor import Result
+
+from travharv.helper import resolve_sparql
 
 log = logging.getLogger(__name__)
 
@@ -21,65 +22,13 @@ QUERY_BUILDER: J2RDFSyntaxBuilder = J2RDFSyntaxBuilder(
 DEFAULT_URN_BASE = "urn:traversal-harvesting:"
 
 
-class GraphConfigNameMapper:
-    """Helper class to convert config names into graph-names."""
-
-    def __init__(self, base: str = DEFAULT_URN_BASE) -> None:
-        """constructor
-
-        :param base: (optional) base_uri to apply,
-        - defaults to DEFAULT_URN_BASE = 'urn:traversal-harvesting:'
-        :type base: str
-        """
-        self._base = str(base)
-
-    def cfgname_to_ng(self, cfgname: str) -> str:
-        """converts local filename to a named_graph
-
-        :param cfgname: name of the config (trav-harv job context)
-        :type cfgname: str
-        :returns: urn representing the filename to be used as named-graph
-        :rtype: str
-        """
-        return f"{self._base}{quote(cfgname)}"
-
-    def ng_to_cfgname(self, ng: str) -> str:
-        """converts named_graph urn back into the local context name
-
-        :param ng: uri of the named-graph
-        :type ng: str
-        :returns: the name of the matchoing travharv config context
-        :rtype: str
-        """
-        assert ng.startswith(self._base), (
-            f"Unknown {ng=}. " f"It should start with {self._base=}"
-        )
-        lead: int = len(self._base)
-        return unquote(ng[lead:])
-
-    def get_cfgnames_in_store(self, store: RDFStore) -> Iterable[str]:
-        """selects those named graphs in the store.named_graphs under our base
-        and converts them into travharv config names
-
-        :param store: the store to grab & filter the named_graphs from
-        :type store: RDFStore
-        :returns: list of trvharv config names in that store
-        :rtype: List[str]
-        """
-        return [
-            self.ng_to_cfgname(ng)
-            for ng in store.named_graphs
-            if ng.startswith(self._base)
-        ]  # filter and convert the named_graphs to config names we handle
-
-
 class RDFStoreAccess(RDFStoreDecorator):
     """Decorator class adding some trav-harv specific features"""
 
     def __init__(
         self,
         core: RDFStore,
-        name_mapper: GraphConfigNameMapper = GraphConfigNameMapper(),
+        name_mapper: GraphNameMapper = GraphNameMapper(base=DEFAULT_URN_BASE),
     ):
         super().__init__(core)
         self._qryBuilder = QUERY_BUILDER
@@ -91,15 +40,26 @@ class RDFStoreAccess(RDFStoreDecorator):
         # todo convert response into list of subjects
         list_of_subjects = [row[0] for row in result]
         log.debug(f"length list_of_subjects: {len(list_of_subjects)}")
+        log.debug(f"list_of_subjects: {list_of_subjects}")
         return list_of_subjects
 
-    def verify_path(self, subject, property_path, prefixes=None):
-        sparql = self._qryBuilder.build_syntax(
+    def select_subjects_for_ppath(self, subject, property_path, NSM):
+        pre_sparql = self._qryBuilder.build_syntax(
             "trajectory.sparql",
             subject=subject,
             property_trajectory=property_path,
-            prefixes=prefixes,
         )
+        sparql = resolve_sparql(pre_sparql, NSM)
+        log.debug(f"{sparql=}")
+        return self.select_subjects(sparql)
+
+    def verify_path(self, subject, property_path, NSM):
+        pre_sparql = self._qryBuilder.build_syntax(
+            "trajectory.sparql",
+            subject=subject,
+            property_trajectory=property_path,
+        )
+        sparql = resolve_sparql(pre_sparql, NSM)
         result: Result = self.select(sparql)
 
         list_of_bindings = [row for row in result]
@@ -118,7 +78,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         :type name_config: str
         :rtype: None
         """
-        ng: str = self._nmapper.cfgname_to_ng(name_config)
+        ng: str = self._nmapper.key_to_ng(name_config)
         # chekc if graph is not Nonetype or empty
         if graph is None or len(graph) == 0:
             log.warning(
@@ -128,7 +88,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         return self.insert(graph, ng)
 
     def lastmod_ts_for_config(self, name_config: str):
-        ng: str = self._nmapper.cfgname_to_ng(name_config)
+        ng: str = self._nmapper.key_to_ng(name_config)
         return self.lastmod_ts(ng)
 
     def verify_max_age_of_config(
@@ -146,7 +106,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         minutes in the argument, else False
         :rtype: bool
         """
-        ng: str = self._nmapper.cfgname_to_ng(name_config)
+        ng: str = self._nmapper.key_to_ng(name_config)
         return self.verify_max_age(ng, age_minutes)
 
     @property
@@ -157,7 +117,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         (but possibly already deleted, but not forgotten) in this store
         :rtype: List[str]
         """
-        return self._nmapper.get_cfgnames_in_store(self)
+        return self._nmapper.get_kets_in_store(self)
 
     def drop_graph_for_config(self, name_config: str) -> None:
         """drops the content in rdf_store associated to specified name_config
@@ -167,7 +127,7 @@ class RDFStoreAccess(RDFStoreDecorator):
         :type name_config: str
         :rtype: None
         """
-        ng: str = self._nmapper.cfgname_to_ng(name_config)
+        ng: str = self._nmapper.key_to_ng(name_config)
         return self.drop_graph(ng)
 
     def forget_graph_for_config(self, name_config: str) -> None:
@@ -180,5 +140,5 @@ class RDFStoreAccess(RDFStoreDecorator):
         :type name_config: str
         :rtype: None
         """
-        ng: str = self._nmapper.cfgname_to_ng(name_config)
+        ng: str = self._nmapper.key_to_ng(name_config)
         return self.forget_graph(ng)

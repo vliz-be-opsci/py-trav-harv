@@ -67,9 +67,7 @@ class TravHarv:
                     self.travharv_config_builder.build_from_folder()
                 )
                 log.debug(
-                    "self.travHarvConfigList: {}".format(
-                        self.travHarvConfigList
-                    )
+                    f"""self.travHarvConfigList: {self.travHarvConfigList}"""
                 )
                 for trav_harv_config in self.travHarvConfigList:
                     if trav_harv_config is None:
@@ -77,7 +75,7 @@ class TravHarv:
 
                     self.travharvexecutor = TravHarvExecutor(
                         trav_harv_config.configname,
-                        trav_harv_config.prefixset,
+                        trav_harv_config.NSM,
                         trav_harv_config.tasks,
                         self.target_store,
                     )
@@ -89,14 +87,12 @@ class TravHarv:
 
                 if trav_harv_config is None:
                     log.error(
-                        "No configuration found with name: {}".format(
-                            self.config
-                        )
+                        f"No configuration found with name: {self.config}"
                     )
                     return
                 self.travharvexecutor = TravHarvExecutor(
                     trav_harv_config.configname,
-                    trav_harv_config.prefixset,
+                    trav_harv_config.NSM,
                     trav_harv_config.tasks,
                     self.target_store,
                 )

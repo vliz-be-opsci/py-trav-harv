@@ -24,7 +24,7 @@ def test_main(outpath: Path, store_info_sets: tuple):
         if (len(store_part)) > 0:
             argsline += f" --store {store_part}"
 
-        log.debug(f"testing equivalent of python -mtravharv {argsline}")
+        log.debug(f"testing equivlnt of python -m travharv {argsline}")
         main(*argsline.split(" "))  # pass as individual arguments
         assert dump_path.exists(), "run did not create expected output"
 
